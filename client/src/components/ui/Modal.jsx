@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import clsx from 'clsx';
 
 export default function Modal({ isOpen, onClose, title, children }) {
   const overlayRef = useRef(null);
@@ -25,17 +24,20 @@ export default function Modal({ isOpen, onClose, title, children }) {
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
       onClick={(e) => e.target === overlayRef.current && onClose()}
     >
-      <div className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-bold text-lg">{title}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
-            ✕
+      <div className="bg-surface-container-lowest rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-5 border-b border-outline-variant/10">
+          <h3 className="font-bold text-lg text-on-surface font-headline">{title}</h3>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-surface-container-low transition text-on-surface-variant"
+          >
+            <span className="material-symbols-outlined">close</span>
           </button>
         </div>
-        <div className="p-4">{children}</div>
+        <div className="p-5">{children}</div>
       </div>
     </div>
   );

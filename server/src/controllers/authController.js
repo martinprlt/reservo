@@ -1,9 +1,10 @@
-import authService from '../../services/authService.js';
+import { login, obtenerAdmin } from '../services/authService.js';
 
 export default {
   async login(req, res, next) {
     try {
-      const result = await authService.login(req.body.email, req.body.password, req.body.tenantId);
+      const tenantId = req.body.tenantId || req.query.tenant;
+      const result = await login(req.body.email, req.body.password, tenantId);
       res.cookie('token', result.token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -23,7 +24,7 @@ export default {
 
   async me(req, res, next) {
     try {
-      const admin = await authService.obtenerAdmin(req.adminId);
+      const admin = await obtenerAdmin(req.adminId);
       res.json(admin);
     } catch (error) {
       next(error);

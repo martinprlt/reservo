@@ -1,4 +1,5 @@
-import { Twilio } from 'twilio';
+import pkg from 'twilio';
+const { Twilio } = pkg;
 import env from './env.js';
 
 const client = new Twilio(env.TWILIO_ACCOUNT_SID, env.TWILIO_AUTH_TOKEN);

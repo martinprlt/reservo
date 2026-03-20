@@ -1,20 +1,34 @@
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import api from '../../api/client';
-import { useAdminStore } from '../../store/adminStore';
 
 export default function PrivateRoute({ children }) {
   const [checking, setChecking] = useState(true);
-  const { setAdmin, isAuthenticated } = useAdminStore();
+  const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
     api.get('/auth/me')
-      .then((r) => setAdmin(r.data))
-      .catch(() => {})
-      .finally(() => setChecking(false));
-  }, [setAdmin]);
+      .then(() => {
+        setIsAuth(true);
+        setChecking(false);
+      })
+      .catch(() => {
+        setIsAuth(false);
+        setChecking(false);
+      });
+  }, []);
 
-  if (checking) return <div className="p-8 text-center">Cargando...</div>;
-  if (isAuthenticated !== true) return <Navigate to="/admin/login" />;
+  if (checking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!isAuth) {
+    return <Navigate to="/admin/login" replace />;
+  }
+
   return children;
 }

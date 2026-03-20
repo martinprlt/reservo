@@ -1,12 +1,21 @@
-import bcrypt from 'bcrypt';
-import prisma from '../../config/prisma.js';
-import { signToken } from '../../utils/jwt.js';
+import bcrypt from 'bcryptjs';
+import prisma from '../config/prisma.js';
+import { signToken } from '../utils/jwt.js';
 
-export async function login(email, password, tenantId) {
-  if (!tenantId) throw new Error('VALIDATION_ERROR');
+export async function login(email, password, tenantSlugOrId) {
+  if (!tenantSlugOrId) throw new Error('VALIDATION_ERROR');
+
+  let tenant;
+  if (tenantSlugOrId.includes('-')) {
+    tenant = await prisma.tenant.findUnique({ where: { id: tenantSlugOrId } });
+  } else {
+    tenant = await prisma.tenant.findUnique({ where: { slug: tenantSlugOrId } });
+  }
+
+  if (!tenant) throw new Error('VALIDATION_ERROR');
 
   const admin = await prisma.admin.findUnique({
-    where: { tenantId_email: { tenantId, email } },
+    where: { tenantId_email: { tenantId: tenant.id, email } },
   });
 
   if (!admin) throw new Error('CREDENCIALES_INVALIDAS');

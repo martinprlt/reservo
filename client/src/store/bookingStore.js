@@ -7,6 +7,8 @@ export const useBookingStore = create((set, get) => ({
   fechaSeleccionada: null,
   slotSeleccionado: null,
   datosCliente: null,
+  notas: '',
+  fotoUrl: null,
   turnoId: null,
   initPoint: null,
   error: null,
@@ -15,26 +17,45 @@ export const useBookingStore = create((set, get) => ({
     set({
       servicioSeleccionado: servicio,
       varianteSeleccionada: variante,
-      paso: 2
+      paso: 2,
+      error: null,
     }),
 
   seleccionarSlot: (fecha, slot) =>
     set({
       fechaSeleccionada: fecha,
       slotSeleccionado: slot,
-      paso: 3
+      paso: 3,
+      error: null,
     }),
 
   setDatosCliente: (datos) =>
     set({
       datosCliente: datos,
-      paso: 4
+      paso: 4,
+      error: null,
+    }),
+
+  setNotas: (notas, fotoUrl = null) =>
+    set({
+      notas,
+      fotoUrl,
+      paso: 5,
+      error: null,
     }),
 
   setTurno: (turnoId, initPoint) =>
-    set({ turnoId, initPoint, paso: 'confirmacion' }),
+    set({ turnoId, initPoint, paso: 'confirmacion', error: null }),
 
   setError: (error) => set({ error }),
+
+  goBack: () => {
+    const { paso } = get();
+    if (paso === 2) return set({ paso: 1 });
+    if (paso === 3) return set({ paso: 2 });
+    if (paso === 4) return set({ paso: 3 });
+    if (paso === 5) return set({ paso: 4 });
+  },
 
   reset: () =>
     set({
@@ -44,6 +65,8 @@ export const useBookingStore = create((set, get) => ({
       fechaSeleccionada: null,
       slotSeleccionado: null,
       datosCliente: null,
+      notas: '',
+      fotoUrl: null,
       turnoId: null,
       initPoint: null,
       error: null,

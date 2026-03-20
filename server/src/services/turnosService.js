@@ -1,10 +1,8 @@
-import prisma from '../../config/prisma.js';
-import { MercadoPagoConfig, Preference } from 'mercadopago';
-import disponibilidadService from './disponibilidadService.js';
-import pagosService from './pagosService.js';
-import notificacionesService from './notificacionesService.js';
+import prisma from '../config/prisma.js';
+import { calcularSlotsLibres } from './disponibilidadService.js';
+import { procesarPagoAprobado } from './pagosService.js';
 
-export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono }) {
+export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas }) {
   const servicio = await prisma.servicio.findFirst({
     where: { id: servicioId, tenantId, activo: true },
   });
@@ -18,7 +16,7 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
   const montoSenia = servicio.montoSenia + precioExtra;
 
   const fecha = new Date(fechaHora);
-  const slots = await disponibilidadService.calcularSlotsLibres(tenantId, servicioId, fecha);
+  const slots = await calcularSlotsLibres(tenantId, servicioId, fecha);
 
   const slotLibre = slots.find(s => s.inicio.getTime() === fecha.getTime());
   if (!slotLibre) throw new Error('SLOT_NO_DISPONIBLE');
@@ -42,35 +40,43 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
       precioTotal: servicio.precio + precioExtra,
       montoSenia,
       expiraEn: new Date(Date.now() + 15 * 60 * 1000),
+      notas: notas || null,
     },
   });
 
-  const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
-  const pref = await new Preference(mpClient).create({
-    body: {
-      items: [{
-        title: servicio.nombre + (variante ? ` - ${variante.nombre}` : ''),
-        unit_price: montoSenia,
-        quantity: 1,
-        currency_id: 'ARS',
-      }],
-      payer: { name: nombre, surname: apellido },
-      back_urls: {
-        success: `${process.env.MP_BACK_URL}?turnoId=${turno.id}&status=success`,
-        failure: `${process.env.MP_BACK_URL}?turnoId=${turno.id}&status=failure`,
-        pending: `${process.env.MP_BACK_URL}?turnoId=${turno.id}&status=pending`,
+  let initPoint = null;
+
+  if (process.env.MP_ACCESS_TOKEN) {
+    const { MercadoPagoConfig, Preference } = await import('mercadopago');
+    const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+    const pref = await new Preference(mpClient).create({
+      body: {
+        items: [{
+          title: servicio.nombre + (variante ? ` - ${variante.nombre}` : ''),
+          unit_price: montoSenia,
+          quantity: 1,
+          currency_id: 'ARS',
+        }],
+        payer: { name: nombre, surname: apellido },
+        back_urls: {
+          success: `${process.env.MP_BACK_URL}?turnoId=${turno.id}&status=success`,
+          failure: `${process.env.MP_BACK_URL}?turnoId=${turno.id}&status=failure`,
+          pending: `${process.env.MP_BACK_URL}?turnoId=${turno.id}&status=pending`,
+        },
+        auto_return: 'approved',
+        external_reference: turno.id,
       },
-      auto_return: 'approved',
-      external_reference: turno.id,
-    },
-  });
+    });
 
-  await prisma.turno.update({
-    where: { id: turno.id },
-    data: { mpPrefId: pref.id },
-  });
+    await prisma.turno.update({
+      where: { id: turno.id },
+      data: { mpPrefId: pref.id },
+    });
 
-  return { turnoId: turno.id, initPoint: pref.init_point };
+    initPoint = pref.init_point;
+  }
+
+  return { turnoId: turno.id, initPoint };
 }
 
 export async function obtenerEstado(turnoId) {
@@ -91,5 +97,5 @@ export async function obtenerEstado(turnoId) {
 }
 
 export async function confirmarPago(turnoId, mpPaymentId) {
-  return pagosService.procesarPagoAprobado(turnoId, mpPaymentId);
+  return procesarPagoAprobado(turnoId, mpPaymentId);
 }

@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
-import clientesService from './clientesService.js';
-import serviciosService from './serviciosService.js';
+import { listar as listarClientes, obtenerPorId } from './clientesService.js';
+import { listar as listarServicios } from './serviciosService.js';
 
 export async function listarTurnos(tenantId, { fecha, estado }) {
   const where = { tenantId };
@@ -25,6 +25,19 @@ export async function listarTurnos(tenantId, { fecha, estado }) {
   });
 }
 
+export async function obtenerTurno(tenantId, turnoId) {
+  const turno = await prisma.turno.findUnique({
+    where: { id: turnoId },
+    include: { servicio: true, cliente: true, pagos: true },
+  });
+
+  if (!turno || turno.tenantId !== tenantId) {
+    throw new Error('RECURSO_NO_ENCONTRADO');
+  }
+
+  return turno;
+}
+
 export async function actualizarTurno(tenantId, turnoId, { estado, notas }) {
   const turno = await prisma.turno.findUnique({ where: { id: turnoId } });
 
@@ -39,28 +52,59 @@ export async function actualizarTurno(tenantId, turnoId, { estado, notas }) {
   });
 }
 
-export async function listarClientes(tenantId, params) {
-  return clientesService.listar(tenantId, params);
+export async function eliminarTurno(tenantId, turnoId) {
+  const turno = await prisma.turno.findUnique({ where: { id: turnoId } });
+
+  if (!turno || turno.tenantId !== tenantId) {
+    throw new Error('RECURSO_NO_ENCONTRADO');
+  }
+
+  return prisma.turno.update({
+    where: { id: turnoId },
+    data: { estado: 'CANCELADO' },
+  });
+}
+
+export async function eliminarTurnosMasivo(tenantId, ids) {
+  await prisma.turno.updateMany({
+    where: { id: { in: ids }, tenantId },
+    data: { estado: 'CANCELADO' },
+  });
+}
+
+export async function eliminarTurnosCliente(tenantId, clienteId) {
+  const result = await prisma.turno.updateMany({
+    where: { clienteId, tenantId, estado: { not: 'CANCELADO' } },
+    data: { estado: 'CANCELADO' },
+  });
+  return result.count;
+}
+
+export async function listarClientesService(tenantId, params) {
+  return listarClientes(tenantId, params);
 }
 
 export async function obtenerCliente(tenantId, clienteId) {
-  return clientesService.obtenerPorId(tenantId, clienteId);
+  return obtenerPorId(tenantId, clienteId);
 }
 
-export async function listarServicios(tenantId) {
-  return serviciosService.listar(tenantId);
+export async function listarServiciosAdmin(tenantId) {
+  return listarServicios(tenantId);
 }
 
 export async function crearServicio(tenantId, data) {
-  return serviciosService.crear(tenantId, data);
+  const { crear } = await import('./serviciosService.js');
+  return crear(tenantId, data);
 }
 
 export async function actualizarServicio(tenantId, servicioId, data) {
-  return serviciosService.actualizar(tenantId, servicioId, data);
+  const { actualizar } = await import('./serviciosService.js');
+  return actualizar(tenantId, servicioId, data);
 }
 
 export async function eliminarServicio(tenantId, servicioId) {
-  return serviciosService.eliminar(tenantId, servicioId);
+  const { eliminar } = await import('./serviciosService.js');
+  return eliminar(tenantId, servicioId);
 }
 
 export async function obtenerConfig(tenantId) {
@@ -73,9 +117,16 @@ export async function obtenerConfig(tenantId) {
 }
 
 export async function actualizarConfig(tenantId, config) {
+  const current = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: { config: true },
+  });
+
+  const merged = { ...current.config, ...config };
+
   return prisma.tenant.update({
     where: { id: tenantId },
-    data: { config },
+    data: { config: merged },
     select: { config: true },
   });
 }

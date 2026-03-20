@@ -1,8 +1,11 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: window.location.origin + '/api',
+  baseURL: `${window.location.origin}/api`,
   withCredentials: true,
+  params: {
+    tenant: 'tusnailslr',
+  },
 });
 
 api.interceptors.response.use(

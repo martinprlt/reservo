@@ -1,14 +1,13 @@
-import disponibilidadService from '../../services/disponibilidadService.js';
+import { calcularSlotsLibres } from '../services/disponibilidadService.js';
 
 export default {
   async obtenerSlots(req, res, next) {
     try {
       const { servicioId, fecha } = req.query;
-      const fechaDate = new Date(fecha);
-      const slots = await disponibilidadService.calcularSlotsLibres(
+      const slots = await calcularSlotsLibres(
         req.tenantId,
         servicioId,
-        fechaDate
+        fecha
       );
       res.json(slots);
     } catch (error) {

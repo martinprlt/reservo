@@ -1,25 +1,41 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from './store/themeContext';
+import { LanguageProvider } from './store/languageContext';
+import { ToastProvider } from './store/toastContext';
+import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import BookingPage from './pages/booking/BookingPage';
 import LoginPage from './pages/admin/LoginPage';
-import AgendaPage from './pages/admin/AgendaPage';
+import AdminLayout from './pages/admin/AdminLayout';
+import NotFound from './pages/NotFound';
 import PrivateRoute from './components/admin/PrivateRoute';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/booking" element={<BookingPage />} />
-        <Route path="/admin/login" element={<LoginPage />} />
-        <Route
-          path="/admin/*"
-          element={
-            <PrivateRoute>
-              <AgendaPage />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <LanguageProvider>
+          <ToastProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Navigate to="/booking" replace />} />
+                <Route path="/booking" element={<BookingPage />} />
+                <Route path="/booking/confirmacion" element={<BookingPage />} />
+                <Route path="/admin/login" element={<LoginPage />} />
+                <Route
+                  path="/admin/*"
+                  element={
+                    <PrivateRoute>
+                      <AdminLayout />
+                    </PrivateRoute>
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </ToastProvider>
+        </LanguageProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

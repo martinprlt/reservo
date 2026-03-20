@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import turnosController from '../controllers/turnosController.js';
-import { z } from 'zod';
-import { validate } from '../middleware/validate.js';
 import { bookingLimiter } from '../middleware/rateLimiter.js';
+import { validate } from '../middleware/validate.js';
+import { z } from 'zod';
 
 const crearTurnoSchema = z.object({
   servicioId: z.string().min(1),
@@ -11,6 +11,7 @@ const crearTurnoSchema = z.object({
   nombre: z.string().min(2),
   apellido: z.string().min(2),
   telefono: z.string().min(8),
+  notas: z.string().optional(),
 });
 
 const router = Router();

@@ -1,6 +1,5 @@
-import { enviarWhatsApp } from '../config/twilio.js';
-
 export async function enviarConfirmacionTurno(turno) {
+  const { enviarWhatsApp } = await import('../config/twilio.js');
   const { cliente, servicio, fechaHora, tenant } = turno;
   const config = tenant.config || {};
   const telefonoAdmin = config.telefonoAdmin;
@@ -32,6 +31,7 @@ export async function enviarConfirmacionTurno(turno) {
 }
 
 export async function enviarRecordatorio(turno) {
+  const { enviarWhatsApp } = await import('../config/twilio.js');
   const { cliente, servicio, fechaHora } = turno;
 
   const fechaFormateada = new Date(fechaHora).toLocaleDateString('es-AR', {

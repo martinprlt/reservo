@@ -1,9 +1,7 @@
-import crypto from 'crypto';
-import turnosService from '../../services/turnosService.js';
-import webhookService from '../../services/webhookService.js';
-import { MercadoPagoConfig } from 'mercadopago';
+import { confirmarPago } from '../services/turnosService.js';
 
 function verifySignature(req) {
+  const crypto = require('crypto');
   const sig = req.headers['x-signature'];
   const reqId = req.headers['x-request-id'];
   const dataId = req.query['data.id'];
@@ -36,7 +34,10 @@ export default {
     if (type !== 'payment') return;
 
     try {
-      const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+      const MercadoPago = await import('mercadopago');
+      const mpClient = new MercadoPago.MercadoPagoConfig({ 
+        accessToken: process.env.MP_ACCESS_TOKEN 
+      });
       const payment = await new mpClient.Payment().get({ id: data.id });
 
       if (payment.status !== 'approved') return;
@@ -44,7 +45,7 @@ export default {
       const turnoId = payment.external_reference;
       if (!turnoId) return;
 
-      await turnosService.confirmarPago(turnoId, data.id);
+      await confirmarPago(turnoId, data.id);
     } catch (error) {
       console.error('Error procesando webhook MP:', error.message);
     }

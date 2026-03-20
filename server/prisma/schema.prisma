@@ -7,15 +7,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum EstadoTurno {
+  RESERVADO
+  SENIADO
+  CONFIRMADO
+  COMPLETADO
+  CANCELADO
+}
+
+enum EstadoPago {
+  PENDIENTE
+  APROBADO
+  RECHAZADO
+  REEMBOLSADO
+}
+
+enum Plan {
+  FREE
+  BASICO
+  PRO
+}
+
 model Tenant {
-  id         String    @id @default(cuid())
-  nombre     String
-  slug       String    @unique
-  plan       Plan      @default(FREE)
-  activo     Boolean   @default(true)
-  config     Json      @default("{}")
-  creadoEn   DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id        String   @id @default(cuid())
+  nombre    String
+  slug      String   @unique
+  plan      Plan     @default(FREE)
+  activo    Boolean  @default(true)
+  config    Json     @default("{}")
+  creadoEn  DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   admins     Admin[]
   clientes   Cliente[]
@@ -40,15 +61,15 @@ model Admin {
 }
 
 model Cliente {
-  id         String   @id @default(cuid())
-  tenantId   String
-  nombre     String
-  apellido   String
-  telefono   String
-  puntos     Int      @default(0)
-  notas      String?
-  creadoEn   DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  tenantId  String
+  nombre    String
+  apellido  String
+  telefono  String
+  puntos    Int      @default(0)
+  notas     String?
+  creadoEn  DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   tenant Tenant  @relation(fields: [tenantId], references: [id])
   turnos Turno[]
@@ -65,6 +86,7 @@ model Servicio {
   duracionMinutos Int
   precio          Float
   montoSenia      Float
+  puntosOtorgados Int      @default(1)
   activo          Boolean  @default(true)
   variantes       Json?
   creadoEn        DateTime @default(now())
@@ -126,7 +148,3 @@ model Incentivo {
 
   @@index([tenantId])
 }
-
-enum EstadoTurno { RESERVADO SENIADO CONFIRMADO COMPLETADO CANCELADO }
-enum EstadoPago  { PENDIENTE APROBADO RECHAZADO REEMBOLSADO }
-enum Plan        { FREE BASICO PRO }

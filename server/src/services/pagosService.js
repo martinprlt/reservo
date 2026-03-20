@@ -1,6 +1,6 @@
 import prisma from '../config/prisma.js';
 import logger from '../utils/logger.js';
-import notificacionesService from './notificacionesService.js';
+import { enviarConfirmacionTurno } from './notificacionesService.js';
 
 export async function procesarPagoAprobado(turnoId, mpPaymentId) {
   try {
@@ -28,15 +28,19 @@ export async function procesarPagoAprobado(turnoId, mpPaymentId) {
         },
       });
 
-      await tx.cliente.update({
-        where: { id: turno.clienteId },
-        data: { puntos: { increment: 1 } },
-      });
+      // Only award points if incentivos are enabled
+      const config = turno.tenant?.config || {};
+      if (config.incentivosActivos !== false) {
+        await tx.cliente.update({
+          where: { id: turno.clienteId },
+          data: { puntos: { increment: turno.servicio.puntosOtorgados || 1 } },
+        });
+      }
 
       return turno;
     });
 
-    await notificacionesService.enviarConfirmacionTurno(resultado);
+    await enviarConfirmacionTurno(resultado);
 
     return resultado;
   } catch (error) {

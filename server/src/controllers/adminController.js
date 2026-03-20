@@ -1,4 +1,4 @@
-import adminService from '../services/adminService.js';
+import * as adminService from '../services/adminService.js';
 
 export default {
   async listarTurnos(req, res, next) {
@@ -6,6 +6,15 @@ export default {
       const { fecha, estado } = req.query;
       const turnos = await adminService.listarTurnos(req.tenantId, { fecha, estado });
       res.json(turnos);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async obtenerTurno(req, res, next) {
+    try {
+      const turno = await adminService.obtenerTurno(req.tenantId, req.params.id);
+      res.json(turno);
     } catch (error) {
       next(error);
     }
@@ -20,10 +29,38 @@ export default {
     }
   },
 
+  async eliminarTurno(req, res, next) {
+    try {
+      await adminService.eliminarTurno(req.tenantId, req.params.id);
+      res.json({ ok: true });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async eliminarTurnosMasivo(req, res, next) {
+    try {
+      const { ids } = req.body;
+      await adminService.eliminarTurnosMasivo(req.tenantId, ids);
+      res.json({ ok: true, eliminados: ids.length });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async eliminarTurnosCliente(req, res, next) {
+    try {
+      const count = await adminService.eliminarTurnosCliente(req.tenantId, req.params.id);
+      res.json({ ok: true, eliminados: count });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async listarClientes(req, res, next) {
     try {
       const { page, limit, busqueda } = req.query;
-      const result = await adminService.listarClientes(req.tenantId, { page, limit, busqueda });
+      const result = await adminService.listarClientesService(req.tenantId, { page, limit, busqueda });
       res.json(result);
     } catch (error) {
       next(error);
@@ -41,7 +78,7 @@ export default {
 
   async listarServiciosAdmin(req, res, next) {
     try {
-      const servicios = await adminService.listarServicios(req.tenantId);
+      const servicios = await adminService.listarServiciosAdmin(req.tenantId);
       res.json(servicios);
     } catch (error) {
       next(error);
