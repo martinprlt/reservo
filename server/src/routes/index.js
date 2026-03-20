@@ -8,10 +8,32 @@ import adminRoutes from './admin.routes.js';
 import incentivosRoutes from './incentivos.routes.js';
 import webhooksRoutes from './webhooks.routes.js';
 import resolveTenant from '../middleware/tenant.js';
+import prisma from '../config/prisma.js';
 
 const router = Router();
 
 router.use(resolveTenant);
+
+// Public tenant config for booking
+router.get('/config', async (req, res) => {
+  try {
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: req.tenantId },
+      select: { config: true, nombre: true },
+    });
+    res.json({
+      nombre: tenant?.nombre,
+      horarios: tenant?.config?.horarios || {},
+      telefonoAdmin: tenant?.config?.telefonoAdmin || '',
+      mpLink: tenant?.config?.mpLink || '',
+      billeteraVirtual: tenant?.config?.billeteraVirtual || '',
+      incentivosActivos: tenant?.config?.incentivosActivos !== false,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Error' });
+  }
+});
+
 router.use('/auth', authRoutes);
 router.use('/servicios', serviciosRoutes);
 router.use('/disponibilidad', disponibilidadRoutes);

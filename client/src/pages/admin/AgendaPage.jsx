@@ -3,24 +3,30 @@ import { format, startOfWeek, addDays, isToday, isSameDay } from 'date-fns';
 import { es } from 'date-fns/locale';
 import api from '../../api/client';
 import TurnoDetailPage from './TurnoDetailPage';
+import NuevoTurnoModal from '../../components/admin/NuevoTurnoModal';
 import clsx from 'clsx';
 
 export default function AgendaPage() {
   const [turnos, setTurnos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [fechaSeleccionada, setFechaSeleccionada] = useState(new Date());
+  const [diaSeleccionado, setDiaSeleccionado] = useState(new Date());
   const [selectedTurnoId, setSelectedTurnoId] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalFecha, setModalFecha] = useState(null);
+
+  // Week start based on selected date
+  const inicioSemana = startOfWeek(diaSeleccionado, { weekStartsOn: 1 });
+  const diasSemana = Array.from({ length: 7 }, (_, i) => addDays(inicioSemana, i));
 
   const fetchTurnos = async () => {
     setLoading(true);
     try {
-      const inicioDia = new Date(fechaSeleccionada);
-      inicioDia.setHours(0, 0, 0, 0);
-      const finDia = new Date(fechaSeleccionada);
-      finDia.setHours(23, 59, 59, 999);
+      // Fetch for the whole week
+      const finSemana = addDays(inicioSemana, 6);
+      finSemana.setHours(23, 59, 59, 999);
 
       const { data } = await api.get('/admin/agenda', {
-        params: { desde: inicioDia.toISOString(), hasta: finDia.toISOString() },
+        params: { desde: inicioSemana.toISOString(), hasta: finSemana.toISOString() },
       });
       setTurnos(data);
     } catch (err) {
@@ -32,11 +38,17 @@ export default function AgendaPage() {
 
   useEffect(() => {
     fetchTurnos();
-  }, [fechaSeleccionada]);
+  }, [diaSeleccionado]);
 
-  const inicioSemana = startOfWeek(new Date(), { weekStartsOn: 1 });
-  const diasSemana = Array.from({ length: 7 }, (_, i) => addDays(inicioSemana, i));
   const horas = Array.from({ length: 12 }, (_, i) => i + 8);
+
+  const prevWeek = () => {
+    setDiaSeleccionado(d => addDays(d, -7));
+  };
+
+  const nextWeek = () => {
+    setDiaSeleccionado(d => addDays(d, 7));
+  };
 
   const handleDeleteTurno = async (turnoId, e) => {
     e.stopPropagation();
@@ -49,10 +61,19 @@ export default function AgendaPage() {
     }
   };
 
-  const getTurnosEnHora = (hora) => {
+  // Get turnos for a specific day and hour
+  const getTurnosDiaHora = (dia, hora) => {
     return turnos.filter((t) => {
-      const turnoHora = new Date(t.fechaHora).getHours();
-      return turnoHora === hora;
+      const fechaTurno = new Date(t.fechaHora);
+      return fechaTurno.toDateString() === dia.toDateString() && fechaTurno.getHours() === hora;
+    });
+  };
+
+  // Get all turnos for a specific day
+  const getTurnosDelDia = (dia) => {
+    return turnos.filter((t) => {
+      const fechaTurno = new Date(t.fechaHora);
+      return fechaTurno.toDateString() === dia.toDateString();
     });
   };
 
@@ -70,50 +91,76 @@ export default function AgendaPage() {
 
   return (
     <div>
-      <section className="mb-8">
-        <div className="flex justify-between items-end mb-6">
+      {/* Header */}
+      <section className="mb-6">
+        <div className="flex justify-between items-center mb-4">
           <div>
-            <p className="font-label text-sm uppercase tracking-wider mb-1" style={{ color: 'var(--on-surface-variant)' }}>
-              Agenda del día
+            <p className="font-label text-xs uppercase tracking-wider mb-1" style={{ color: 'var(--on-surface-variant)' }}>
+              Agenda semanal
             </p>
-            <h2 className="text-3xl font-extrabold font-headline" style={{ color: 'var(--on-surface)' }}>
-              {format(fechaSeleccionada, "EEEE, d MMM", { locale: es })}
+            <h2 className="text-2xl font-extrabold font-headline" style={{ color: 'var(--on-surface)' }}>
+              {format(inicioSemana, "d", { locale: es })} — {format(addDays(inicioSemana, 6), "d MMM yyyy", { locale: es })}
             </h2>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={prevWeek} className="p-2 rounded-xl transition" style={{ backgroundColor: 'var(--surface-container-low)' }}>
+              <span className="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button
+              onClick={() => setDiaSeleccionado(new Date())}
+              className="px-3 py-2 rounded-xl text-xs font-bold font-label"
+              style={{ backgroundColor: 'var(--primary)', color: 'var(--on-primary)' }}
+            >
+              Hoy
+            </button>
+            <button onClick={nextWeek} className="p-2 rounded-xl transition" style={{ backgroundColor: 'var(--surface-container-low)' }}>
+              <span className="material-symbols-outlined">chevron_right</span>
+            </button>
           </div>
         </div>
 
-        <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+        {/* Day selector */}
+        <div className="flex gap-2 overflow-x-auto hide-scrollbar pb-2">
           {diasSemana.map((dia) => {
-            const selected = isSameDay(dia, fechaSeleccionada);
+            const selected = isSameDay(dia, diaSeleccionado);
             const today = isToday(dia);
+            const turnosCount = getTurnosDelDia(dia).length;
 
             return (
               <button
                 key={dia.toISOString()}
-                onClick={() => setFechaSeleccionada(dia)}
-                className={clsx(
-                  'flex flex-col items-center min-w-[56px] py-3 rounded-2xl transition-all duration-200',
-                  selected ? 'shadow-xl' : ''
-                )}
+                onClick={() => setDiaSeleccionado(dia)}
+                className="flex flex-col items-center min-w-[56px] py-3 px-2 rounded-2xl transition-all relative"
                 style={{
                   backgroundColor: selected ? 'var(--primary)' : 'var(--surface-container-low)',
                   color: selected ? 'var(--on-primary)' : 'var(--on-surface-variant)',
-                  boxShadow: selected ? '0 8px 32px rgba(0,70,75,0.2)' : 'none',
+                  boxShadow: selected ? '0 4px 16px rgba(0,70,75,0.2)' : 'none',
                 }}
               >
-                <span className="text-xs font-medium font-label uppercase">
+                <span className="text-[10px] font-semibold uppercase font-label">
                   {format(dia, 'EEE', { locale: es }).slice(0, 3)}
                 </span>
                 <span className="text-lg font-bold font-headline leading-tight">
                   {format(dia, 'd')}
                 </span>
+                {turnosCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center"
+                    style={{ backgroundColor: today ? '#22c55e' : 'var(--tertiary)', color: 'white' }}>
+                    {turnosCount}
+                  </span>
+                )}
               </button>
             );
           })}
         </div>
       </section>
 
-      <section className="relative">
+      {/* Timeline for selected day */}
+      <section>
+        <h3 className="font-semibold font-headline mb-3" style={{ color: 'var(--on-surface)' }}>
+          {format(diaSeleccionado, "EEEE d 'de' MMMM", { locale: es })}
+        </h3>
+
         {loading ? (
           <div className="flex justify-center py-12">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2" style={{ borderColor: 'var(--primary)' }}></div>
@@ -121,38 +168,40 @@ export default function AgendaPage() {
         ) : (
           <div className="flex flex-col">
             {horas.map((hora) => {
-              const turnosEnHora = getTurnosEnHora(hora);
+              const turnosEnHora = getTurnosDiaHora(diaSeleccionado, hora);
 
               return (
-                <div key={hora} className="flex min-h-[90px] group">
-                  <div className="w-14 pt-2 pr-4 text-right shrink-0">
-                    <span className="text-xs font-semibold font-label" style={{ color: 'var(--on-surface-variant)', opacity: 0.6 }}>
+                <div key={hora} className="flex min-h-[80px]">
+                  <div className="w-14 pt-2 pr-3 text-right shrink-0">
+                    <span className="text-xs font-semibold font-label" style={{ color: 'var(--on-surface-variant)' }}>
                       {String(hora).padStart(2, '0')}:00
                     </span>
                   </div>
-                  <div className="flex-1 border-t transition-colors relative" style={{ borderColor: 'var(--outline-variant)', opacity: 0.1 }}>
+                  <div className="flex-1 border-t relative" style={{ borderColor: 'var(--outline-variant)', opacity: 0.2 }}>
                     {turnosEnHora.map((turno) => (
                       <div
                         key={turno.id}
                         onClick={() => setSelectedTurnoId(turno.id)}
-                        className="absolute top-2 left-2 right-4 bottom-2 p-3 rounded-lg shadow-sm hover:scale-[1.01] transition-transform cursor-pointer border-l-4"
+                        className="absolute top-1 left-1 right-3 bottom-1 p-3 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.01] transition-all cursor-pointer border-l-4"
                         style={{
-                          backgroundColor: 'var(--primary-fixed)',
-                          borderLeftColor: 'var(--primary)',
-                          opacity: 0.4,
+                          backgroundColor: turno.estado === 'CANCELADO' ? 'var(--surface-container)' : 'var(--surface-container-lowest)',
+                          borderLeftColor: turno.estado === 'SENIADO' ? '#22c55e' :
+                                           turno.estado === 'RESERVADO' ? '#eab308' :
+                                           turno.estado === 'CONFIRMADO' ? '#3b82f6' :
+                                           'var(--primary)',
                         }}
                       >
                         <div className="flex justify-between items-start">
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-sm font-bold leading-tight" style={{ color: 'var(--on-surface)' }}>
+                            <h4 className="text-sm font-bold leading-tight" style={{ color: '#181c20', fontFamily: "'Manrope', sans-serif" }}>
                               {turno.servicio.nombre}
                             </h4>
-                            <p className="text-xs mt-1 flex items-center gap-1" style={{ color: 'var(--on-surface-variant)' }}>
+                            <p className="text-xs mt-1 flex items-center gap-1" style={{ color: '#3f4949', fontWeight: 500 }}>
                               <span className="material-symbols-outlined text-[14px]">person</span>
                               {turno.cliente.nombre} {turno.cliente.apellido}
                             </p>
                             {turno.notas && (
-                              <p className="text-xs mt-1 italic truncate" style={{ color: 'var(--on-surface-variant)', opacity: 0.7 }}>
+                              <p className="text-xs mt-1 italic truncate" style={{ color: '#6f7979' }}>
                                 "{turno.notas}"
                               </p>
                             )}
@@ -162,6 +211,8 @@ export default function AgendaPage() {
                               'text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter',
                               turno.estado === 'SENIADO' ? 'bg-green-100 text-green-800' :
                               turno.estado === 'RESERVADO' ? 'bg-yellow-100 text-yellow-800' :
+                              turno.estado === 'CONFIRMADO' ? 'bg-blue-100 text-blue-800' :
+                              turno.estado === 'CANCELADO' ? 'bg-red-100 text-red-600' :
                               'bg-gray-100 text-gray-600'
                             )}>
                               {turno.estado}
@@ -179,6 +230,24 @@ export default function AgendaPage() {
                         </div>
                       </div>
                     ))}
+
+                    {/* Empty slot hover hint */}
+                    {turnosEnHora.length === 0 && (
+                      <div
+                        className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
+                        onClick={() => {
+                          const fecha = new Date(diaSeleccionado);
+                          fecha.setHours(hora, 0, 0, 0);
+                          setModalFecha(fecha);
+                          setModalOpen(true);
+                        }}
+                      >
+                        <div className="flex items-center gap-1 opacity-30">
+                          <span className="material-symbols-outlined text-lg">add_circle</span>
+                          <span className="text-xs font-label">Crear turno</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -186,6 +255,25 @@ export default function AgendaPage() {
           </div>
         )}
       </section>
+
+      {/* FAB */}
+      <button
+        onClick={() => {
+          setModalFecha(diaSeleccionado);
+          setModalOpen(true);
+        }}
+        className="fixed bottom-24 right-6 w-14 h-14 rounded-2xl shadow-xl flex items-center justify-center z-40 active:scale-90 transition-transform"
+        style={{ background: `linear-gradient(135deg, var(--primary), var(--primary-container))`, color: 'var(--on-primary)' }}
+      >
+        <span className="material-symbols-outlined text-3xl">add</span>
+      </button>
+
+      <NuevoTurnoModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        fechaInicial={modalFecha}
+        onCreated={() => fetchTurnos()}
+      />
     </div>
   );
 }

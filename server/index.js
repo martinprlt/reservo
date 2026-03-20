@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import './src/jobs/liberarReservas.job.js';
+import './src/jobs/recordatoriosWhatsApp.job.js';
 import app from './app.js';
 import env from './src/config/env.js';
 import logger from './src/utils/logger.js';

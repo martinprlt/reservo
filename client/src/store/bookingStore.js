@@ -9,9 +9,12 @@ export const useBookingStore = create((set, get) => ({
   datosCliente: null,
   notas: '',
   fotoUrl: null,
+  aDomicilio: false,
   turnoId: null,
   initPoint: null,
   error: null,
+
+  setADomicilio: (value) => set({ aDomicilio: value }),
 
   seleccionarServicio: (servicio, variante = null) =>
     set({
@@ -67,6 +70,7 @@ export const useBookingStore = create((set, get) => ({
       datosCliente: null,
       notas: '',
       fotoUrl: null,
+      aDomicilio: false,
       turnoId: null,
       initPoint: null,
       error: null,

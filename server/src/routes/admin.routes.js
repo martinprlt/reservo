@@ -6,8 +6,10 @@ import verifyJWT from '../middleware/auth.js';
 const router = Router();
 
 router.use(verifyJWT);
+router.get('/stats', adminController.obtenerStats);
 router.get('/agenda', adminController.obtenerAgenda);
 router.get('/turnos', adminController.listarTurnos);
+router.post('/turnos', adminController.crearTurnoAdmin);
 router.get('/turnos/:id', adminController.obtenerTurno);
 router.patch('/turnos/:id', adminController.actualizarTurno);
 router.delete('/turnos/:id', adminController.eliminarTurno);

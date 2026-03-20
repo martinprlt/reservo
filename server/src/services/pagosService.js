@@ -28,15 +28,7 @@ export async function procesarPagoAprobado(turnoId, mpPaymentId) {
         },
       });
 
-      // Only award points if incentivos are enabled
-      const config = turno.tenant?.config || {};
-      if (config.incentivosActivos !== false) {
-        await tx.cliente.update({
-          where: { id: turno.clienteId },
-          data: { puntos: { increment: turno.servicio.puntosOtorgados || 1 } },
-        });
-      }
-
+      // Points are awarded when the turn is COMPLETED, not here
       return turno;
     });
 

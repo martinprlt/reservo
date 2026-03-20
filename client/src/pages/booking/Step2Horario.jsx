@@ -7,12 +7,15 @@ import { useLanguage } from '../../store/languageContext';
 import { useToast } from '../../store/toastContext';
 import clsx from 'clsx';
 
+const DIAS_SEMANA = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
+
 export default function Step2Horario() {
   const { servicioSeleccionado, seleccionarSlot, goBack } = useBookingStore();
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
   const [slotSeleccionado, setSlotSeleccionado] = useState(null);
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [horarios, setHorarios] = useState(null);
   const { t } = useLanguage();
   const toast = useToast();
 
@@ -20,6 +23,14 @@ export default function Step2Horario() {
   const inicioSemana = startOfWeek(hoy, { weekStartsOn: 1 });
   const dias = Array.from({ length: 14 }, (_, i) => addDays(inicioSemana, i));
 
+  // Fetch horarios config
+  useEffect(() => {
+    api.get('/config')
+      .then(({ data }) => setHorarios(data.horarios || {}))
+      .catch(() => {});
+  }, []);
+
+  // Fetch slots when date changes
   useEffect(() => {
     if (fechaSeleccionada) {
       setLoading(true);
@@ -34,13 +45,12 @@ export default function Step2Horario() {
           setSlots(r.data);
           setLoading(false);
           if (r.data.length === 0) {
-            toast.info('No hay horarios disponibles para este día');
+            toast.info('No hay horarios disponibles');
           }
         })
         .catch(() => {
           setSlots([]);
           setLoading(false);
-          toast.error('Error al cargar horarios');
         });
     }
   }, [fechaSeleccionada, servicioSeleccionado]);
@@ -51,33 +61,85 @@ export default function Step2Horario() {
     }
   };
 
+  // Check if a day is a working day
+  const esDiaLaboral = (dia) => {
+    if (!horarios) return true; // Default to working if config not loaded
+    const nombreDia = DIAS_SEMANA[dia.getDay()];
+    const config = horarios[nombreDia];
+    if (!config) return true;
+    return config.activo !== false;
+  };
+
+  // Get horario text for a day
+  const getHorarioTexto = (dia) => {
+    if (!horarios) return null;
+    const nombreDia = DIAS_SEMANA[dia.getDay()];
+    const config = horarios[nombreDia];
+    if (!config || config.activo === false || !config.apertura) return null;
+    return `${config.apertura} - ${config.cierre}`;
+  };
+
   return (
     <div>
       <div className="mb-6">
         <button
           onClick={goBack}
-          className="text-primary hover:text-primary-container text-sm font-medium mb-4 transition flex items-center gap-1 font-label"
+          className="text-sm font-medium mb-4 transition flex items-center gap-1 font-label"
+          style={{ color: 'var(--primary)' }}
         >
           <span className="material-symbols-outlined text-lg">arrow_back</span>
           Cambiar servicio
         </button>
-        <h2 className="text-2xl font-extrabold font-headline text-on-surface">{t('booking.choose_date')}</h2>
-        <div className="mt-3 bg-primary-fixed/20 rounded-xl px-4 py-3 inline-block">
-          <p className="text-primary font-bold font-headline">{servicioSeleccionado.nombre}</p>
-          <p className="text-sm text-on-surface-variant font-body">
+        <h2 className="text-2xl font-extrabold font-headline" style={{ color: 'var(--on-surface)' }}>{t('booking.choose_date')}</h2>
+        <div className="mt-3 p-4 rounded-xl" style={{ backgroundColor: 'rgba(161, 239, 247, 0.2)' }}>
+          <p className="font-bold font-headline" style={{ color: 'var(--primary)' }}>{servicioSeleccionado.nombre}</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--on-surface-variant)' }}>
             {servicioSeleccionado.duracionMinutos} {t('general.min')} · ${servicioSeleccionado.precio?.toLocaleString('es-AR')}
           </p>
         </div>
       </div>
 
-      {/* Date Picker */}
+      {/* Dias y horarios de atención */}
+      {horarios && (
+        <div className="mb-6 p-4 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="material-symbols-outlined text-lg" style={{ color: 'var(--primary)' }}>schedule</span>
+            <h3 className="text-sm font-bold font-label" style={{ color: 'var(--on-surface)' }}>Días y horarios de atención</h3>
+          </div>
+          <div className="grid grid-cols-7 gap-1 text-center">
+            {['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'].map((nombre, i) => {
+              const diaKey = DIAS_SEMANA[i];
+              const config = horarios[diaKey];
+              const activo = config && config.activo !== false && config.apertura;
+              return (
+                <div key={i} className="text-xs">
+                  <p className="font-bold font-label" style={{ color: activo ? 'var(--on-surface)' : 'var(--on-surface-variant)', opacity: activo ? 1 : 0.4 }}>
+                    {nombre}
+                  </p>
+                  {activo ? (
+                    <p className="text-[10px] font-label" style={{ color: 'var(--on-surface-variant)' }}>
+                      {config.apertura?.slice(0,5)}-{config.cierre?.slice(0,5)}
+                    </p>
+                  ) : (
+                    <p className="text-[10px] text-red-400 font-label">Cerrado</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Date Picker - Solo días laborales */}
       <div className="mb-8">
-        <h3 className="font-semibold text-on-surface mb-3 font-headline">{t('booking.choose_day')}</h3>
+        <h3 className="font-semibold mb-3 font-headline" style={{ color: 'var(--on-surface)' }}>{t('booking.choose_day')}</h3>
         <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
           {dias.map((dia) => {
-            const disabled = isBefore(dia, hoy) && !isToday(dia);
+            const esLaboral = esDiaLaboral(dia);
+            const disabled = !esLaboral || (isBefore(dia, hoy) && !isToday(dia));
             const selected = fechaSeleccionada && isSameDay(dia, fechaSeleccionada);
             const today = isToday(dia);
+            const horarioTexto = getHorarioTexto(dia);
 
             return (
               <button
@@ -85,8 +147,8 @@ export default function Step2Horario() {
                 onClick={() => !disabled && setFechaSeleccionada(dia)}
                 disabled={disabled}
                 className={clsx(
-                  'flex flex-col items-center min-w-[56px] py-3 rounded-2xl transition-all duration-200',
-                  disabled && 'opacity-40 cursor-not-allowed',
+                  'flex flex-col items-center min-w-[56px] py-3 rounded-2xl transition-all duration-200 relative',
+                  disabled && 'opacity-30 cursor-not-allowed',
                   today && !selected && 'ring-2 ring-primary/20'
                 )}
                 style={{
@@ -101,6 +163,16 @@ export default function Step2Horario() {
                 <span className="leading-tight" style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 800, fontSize: '18px' }}>
                   {format(dia, 'd')}
                 </span>
+                {horarioTexto && !selected && (
+                  <span className="text-[9px] mt-0.5 font-label" style={{ color: 'var(--primary)', opacity: 0.7 }}>
+                    {horarioTexto.split(' - ')[0]}
+                  </span>
+                )}
+                {!esLaboral && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-100 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[10px] text-red-500">close</span>
+                  </span>
+                )}
               </button>
             );
           })}
@@ -110,18 +182,23 @@ export default function Step2Horario() {
       {/* Time Slots */}
       {fechaSeleccionada && (
         <div className="mb-8">
-          <h3 className="font-semibold text-on-surface mb-3 font-headline">
+          <h3 className="font-semibold mb-3 font-headline" style={{ color: 'var(--on-surface)' }}>
             Horarios — {format(fechaSeleccionada, "d 'de' MMMM", { locale: es })}
+            {getHorarioTexto(fechaSeleccionada) && (
+              <span className="text-sm font-normal ml-2" style={{ color: 'var(--on-surface-variant)' }}>
+                ({getHorarioTexto(fechaSeleccionada)})
+              </span>
+            )}
           </h3>
           {loading ? (
             <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: 'var(--primary)' }}></div>
             </div>
           ) : slots.length === 0 ? (
             <div className="text-center py-8">
               <div className="text-3xl mb-2">😔</div>
-              <p className="text-on-surface-variant font-body">{t('booking.no_slots')}</p>
-              <p className="text-on-surface-variant/60 text-sm font-body">{t('booking.no_slots_subtitle')}</p>
+              <p style={{ color: 'var(--on-surface-variant)' }}>{t('booking.no_slots')}</p>
+              <p className="text-sm" style={{ color: 'var(--on-surface-variant)', opacity: 0.6 }}>{t('booking.no_slots_subtitle')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
@@ -134,9 +211,7 @@ export default function Step2Horario() {
                     onClick={() => setSlotSeleccionado(slot)}
                     className={clsx(
                       'py-3 rounded-xl text-center transition-all duration-200',
-                      selected
-                        ? 'shadow-lg scale-105'
-                        : 'border hover:border-primary hover:text-primary'
+                      selected ? 'shadow-lg scale-105' : 'border hover:border-primary hover:text-primary'
                     )}
                     style={{
                       backgroundColor: selected ? 'var(--primary)' : 'var(--surface-container-lowest)',
@@ -161,7 +236,8 @@ export default function Step2Horario() {
       {slotSeleccionado && (
         <button
           onClick={handleConfirmar}
-          className="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-4 rounded-xl font-bold text-lg font-headline shadow-lg shadow-primary/20 hover:shadow-xl active:scale-[0.98] transition-all duration-200"
+          className="w-full py-4 rounded-xl font-bold text-lg font-headline shadow-lg active:scale-[0.98] transition-all duration-200"
+          style={{ backgroundColor: 'var(--primary)', color: 'var(--on-primary)' }}
         >
           {t('booking.select_slot')} — {format(new Date(slotSeleccionado.inicio), 'HH:mm')}
         </button>

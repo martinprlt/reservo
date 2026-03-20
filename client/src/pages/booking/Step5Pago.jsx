@@ -7,7 +7,7 @@ import { useToast } from '../../store/toastContext';
 import api from '../../api/client';
 
 export default function Step5Pago() {
-  const { servicioSeleccionado, varianteSeleccionada, slotSeleccionado, datosCliente, notas, setTurno, setError, error, goBack } = useBookingStore();
+  const { servicioSeleccionado, varianteSeleccionada, slotSeleccionado, datosCliente, notas, aDomicilio, setTurno, setError, error, goBack } = useBookingStore();
   const [loading, setLoading] = useState(false);
   const { t } = useLanguage();
   const toast = useToast();
@@ -19,6 +19,7 @@ export default function Step5Pago() {
     setLoading(true);
     setError(null);
     try {
+      const notasFinales = [notas, aDomicilio ? '(A domicilio)' : ''].filter(Boolean).join(' ');
       const { data } = await api.post('/turnos', {
         servicioId: servicioSeleccionado.id,
         varianteId: varianteSeleccionada?.id,
@@ -26,7 +27,7 @@ export default function Step5Pago() {
         nombre: datosCliente.nombre,
         apellido: datosCliente.apellido,
         telefono: datosCliente.telefono,
-        notas: notas || '',
+        notas: notasFinales,
       });
       
       if (data.initPoint) {

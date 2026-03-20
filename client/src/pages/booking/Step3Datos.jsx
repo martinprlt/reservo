@@ -147,6 +147,30 @@ export default function Step3Datos() {
           </div>
         )}
 
+        {/* A domicilio */}
+        <label className="flex items-center justify-between p-4 rounded-xl border cursor-pointer" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }} onClick={(e) => {
+          e.preventDefault();
+          const store = useBookingStore.getState();
+          store.setADomicilio(!store.aDomicilio);
+        }}>
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined" style={{ color: 'var(--primary)' }}>home</span>
+            <div>
+              <p className="font-medium text-sm font-label" style={{ color: 'var(--on-surface)' }}>Servicio a domicilio</p>
+              <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>Vamos hasta tu ubicación</p>
+            </div>
+          </div>
+          <div
+            className="relative w-12 h-7 rounded-full transition-colors"
+            style={{ backgroundColor: useBookingStore.getState().aDomicilio ? 'var(--primary)' : 'var(--surface-container-highest)' }}
+          >
+            <div
+              className="absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow transition-transform"
+              style={{ transform: useBookingStore.getState().aDomicilio ? 'translateX(20px)' : 'translateX(0)' }}
+            />
+          </div>
+        </label>
+
         {/* Nombre y Apellido */}
         <Controller
           name="nombre"

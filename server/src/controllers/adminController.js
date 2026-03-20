@@ -1,11 +1,29 @@
 import * as adminService from '../services/adminService.js';
 
 export default {
+  async obtenerStats(req, res, next) {
+    try {
+      const stats = await adminService.obtenerStats(req.tenantId);
+      res.json(stats);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async listarTurnos(req, res, next) {
     try {
       const { fecha, estado } = req.query;
       const turnos = await adminService.listarTurnos(req.tenantId, { fecha, estado });
       res.json(turnos);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async crearTurnoAdmin(req, res, next) {
+    try {
+      const result = await adminService.crearTurnoAdmin(req.tenantId, req.body);
+      res.json(result);
     } catch (error) {
       next(error);
     }
