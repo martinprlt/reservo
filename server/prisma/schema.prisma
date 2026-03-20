@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id         String    @id @default(cuid())
+  nombre     String
+  slug       String    @unique
+  plan       Plan      @default(FREE)
+  activo     Boolean   @default(true)
+  config     Json      @default("{}")
+  creadoEn   DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  admins     Admin[]
+  clientes   Cliente[]
+  servicios  Servicio[]
+  turnos     Turno[]
+  incentivos Incentivo[]
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  tenantId     String
+  email        String
+  passwordHash String
+  nombre       String
+  creadoEn     DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+}
+
+model Cliente {
+  id         String   @id @default(cuid())
+  tenantId   String
+  nombre     String
+  apellido   String
+  telefono   String
+  puntos     Int      @default(0)
+  notas      String?
+  creadoEn   DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant Tenant  @relation(fields: [tenantId], references: [id])
+  turnos Turno[]
+
+  @@unique([tenantId, telefono])
+  @@index([tenantId])
+}
+
+model Servicio {
+  id              String   @id @default(cuid())
+  tenantId        String
+  nombre          String
+  rubro           String   @default("general")
+  duracionMinutos Int
+  precio          Float
+  montoSenia      Float
+  activo          Boolean  @default(true)
+  variantes       Json?
+  creadoEn        DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant Tenant  @relation(fields: [tenantId], references: [id])
+  turnos Turno[]
+
+  @@index([tenantId])
+}
+
+model Turno {
+  id            String      @id @default(cuid())
+  tenantId      String
+  clienteId     String
+  servicioId    String
+  fechaHora     DateTime
+  duracion      Int
+  estado        EstadoTurno @default(RESERVADO)
+  precioTotal   Float
+  montoSenia    Float
+  expiraEn      DateTime?
+  notas         String?
+  mpPrefId      String?
+  creadoEn      DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  tenant   Tenant   @relation(fields: [tenantId], references: [id])
+  cliente  Cliente  @relation(fields: [clienteId], references: [id])
+  servicio Servicio @relation(fields: [servicioId], references: [id])
+  pagos    Pago[]
+
+  @@index([tenantId])
+  @@index([tenantId, fechaHora])
+}
+
+model Pago {
+  id          String      @id @default(cuid())
+  turnoId     String
+  mpPaymentId String?     @unique
+  monto       Float
+  estado      EstadoPago  @default(PENDIENTE)
+  fechaPago   DateTime?
+  creadoEn    DateTime    @default(now())
+
+  turno Turno @relation(fields: [turnoId], references: [id])
+}
+
+model Incentivo {
+  id               String  @id @default(cuid())
+  tenantId         String
+  nombre           String
+  puntosRequeridos Int
+  tipoDescuento    String
+  valor            Float
+  activo           Boolean @default(true)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+}
+
+enum EstadoTurno { RESERVADO SENIADO CONFIRMADO COMPLETADO CANCELADO }
+enum EstadoPago  { PENDIENTE APROBADO RECHAZADO REEMBOLSADO }
+enum Plan        { FREE BASICO PRO }
