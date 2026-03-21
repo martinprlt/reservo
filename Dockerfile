@@ -37,5 +37,5 @@ EXPOSE 4000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget -qO- http://localhost:4000/api/health || exit 1
 
-# Start
-CMD ["npm", "start"]
+# Start with database push
+CMD ["sh", "-c", "npx prisma db push --skip-generate && node index.js"]
