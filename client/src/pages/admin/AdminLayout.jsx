@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAdminStore } from '../../store/adminStore';
 import { useLanguage } from '../../store/languageContext';
 import { useTheme } from '../../store/themeContext';
+import api from '../../api/client';
 import DashboardPage from './DashboardPage';
 import AgendaPage from './AgendaPage';
 import ClientesPage from './ClientesPage';
@@ -13,16 +14,25 @@ import clsx from 'clsx';
 
 export default function AdminLayout() {
   const [activePage, setActivePage] = useState('dashboard');
+  const [incentivosActivos, setIncentivosActivos] = useState(true);
   const { admin, logout } = useAdminStore();
   const { t } = useLanguage();
   const { theme } = useTheme();
+
+  useEffect(() => {
+    api.get('/admin/config')
+      .then(({ data }) => {
+        setIncentivosActivos(data.incentivosActivos !== false);
+      })
+      .catch(() => {});
+  }, []);
 
   const navItems = [
     { id: 'dashboard', label: 'Home', icon: 'home' },
     { id: 'agenda', label: t('nav.calendar'), icon: 'calendar_today' },
     { id: 'clientes', label: t('nav.clients'), icon: 'group' },
     { id: 'servicios', label: t('nav.services'), icon: 'spa' },
-    { id: 'incentivos', label: t('nav.rewards'), icon: 'star' },
+    ...(incentivosActivos ? [{ id: 'incentivos', label: t('nav.rewards'), icon: 'star' }] : []),
   ];
 
   const handleLogout = async () => {
@@ -46,9 +56,9 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="bg-surface font-body text-on-surface min-h-screen pb-24 dark:bg-slate-900 dark:text-slate-100">
+    <div className="bg-surface font-body text-on-surface min-h-screen pb-24">
       {/* TopAppBar */}
-      <header className="fixed top-0 w-full flex justify-between items-center px-6 py-4 bg-slate-50/60 dark:bg-slate-900/60 backdrop-blur-md z-50">
+      <header className="fixed top-0 w-full flex justify-between items-center px-6 py-4 bg-slate-50/60 backdrop-blur-md z-50">
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
           <img src="/logo.png" alt="Reservo" style={{ height: 44, width: 'auto', borderRadius: 10 }} />
         </a>
@@ -75,7 +85,7 @@ export default function AdminLayout() {
       </main>
 
       {/* BottomNavBar */}
-      <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-6 pt-3 bg-slate-50/60 dark:bg-slate-900/60 backdrop-blur-md z-50 rounded-t-2xl shadow-nav">
+      <nav className="fixed bottom-0 left-0 w-full flex justify-around items-center px-2 pb-6 pt-3 bg-slate-50/60 backdrop-blur-md z-50 rounded-t-2xl shadow-nav">
         {navItems.map((item) => (
           <button
             key={item.id}
@@ -83,8 +93,8 @@ export default function AdminLayout() {
             className={clsx(
               'flex flex-col items-center justify-center px-2 py-1.5 rounded-xl transition-all duration-200',
               activePage === item.id
-                ? 'bg-teal-100/50 dark:bg-teal-800/40 text-teal-900 dark:text-teal-50 scale-95'
-                : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200/30 dark:hover:bg-slate-800/30'
+                ? 'bg-teal-100/50 text-teal-900 scale-95'
+                : 'text-slate-500 hover:bg-slate-200/30'
             )}
           >
             <span

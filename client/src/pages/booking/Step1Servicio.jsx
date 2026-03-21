@@ -16,13 +16,18 @@ export default function Step1Servicio() {
   const [servicios, setServicios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [incentivosActivos, setIncentivosActivos] = useState(true);
   const { seleccionarServicio } = useBookingStore();
   const { t } = useLanguage();
 
   useEffect(() => {
-    api.get('/servicios')
-      .then((r) => {
-        setServicios(r.data);
+    Promise.all([
+      api.get('/servicios'),
+      api.get('/config'),
+    ])
+      .then(([servRes, configRes]) => {
+        setServicios(servRes.data);
+        setIncentivosActivos(configRes.data.incentivosActivos !== false);
         setLoading(false);
       })
       .catch((err) => {
@@ -101,11 +106,13 @@ export default function Step1Servicio() {
                 <span className="material-symbols-outlined text-[16px] mr-1">schedule</span>
                 {s.duracionMinutos} {t('general.min')}
               </span>
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium"
-                style={{ backgroundColor: 'rgba(49, 82, 160, 0.1)', color: 'var(--tertiary)' }}>
-                <span className="material-symbols-outlined text-[16px] mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                +{s.puntosOtorgados || 1} pts
-              </span>
+              {incentivosActivos && (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium"
+                  style={{ backgroundColor: 'rgba(49, 82, 160, 0.1)', color: 'var(--tertiary)' }}>
+                  <span className="material-symbols-outlined text-[16px] mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                  +{s.puntosOtorgados || 1} pts
+                </span>
+              )}
             </div>
 
             <div className="mt-3 text-xs text-on-surface-variant dark:text-slate-500">

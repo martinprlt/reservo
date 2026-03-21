@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import api from '../../api/client';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { useToast } from '../../store/toastContext';
 import clsx from 'clsx';
 
 const estadoColors = {
@@ -19,6 +21,8 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
   const [loading, setLoading] = useState(true);
   const [cambiandoEstado, setCambiandoEstado] = useState(false);
   const [eliminando, setEliminando] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     api.get(`/admin/turnos/${turnoId}`)
@@ -34,21 +38,26 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
     try {
       const { data } = await api.patch(`/admin/turnos/${turnoId}`, { estado: nuevoEstado });
       setTurno(data);
+      toast.success('Estado actualizado');
     } catch {
-      alert('Error al cambiar estado');
+      toast.error('Error al cambiar estado');
     } finally {
       setCambiandoEstado(false);
     }
   };
 
-  const handleEliminar = async () => {
-    if (!confirm('¿Cancelar este turno?')) return;
+  const handleEliminar = () => {
+    setConfirmOpen(true);
+  };
+
+  const confirmEliminar = async () => {
     setEliminando(true);
     try {
       await api.delete(`/admin/turnos/${turnoId}`);
+      toast.success('Turno cancelado');
       onBack();
     } catch {
-      alert('Error al eliminar');
+      toast.error('Error al eliminar');
     } finally {
       setEliminando(false);
     }
@@ -226,6 +235,17 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
           {turno.estado === 'CANCELADO' ? 'Ya cancelado' : 'Cancelar turno'}
         </button>
       </div>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={confirmEliminar}
+        title="Cancelar turno"
+        message="¿Cancelar este turno? Se notificará al cliente."
+        confirmText="Cancelar turno"
+        variant="warning"
+      />
     </div>
   );
 }

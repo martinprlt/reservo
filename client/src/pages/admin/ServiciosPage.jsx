@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/client';
 import Modal from '../../components/ui/Modal';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { useToast } from '../../store/toastContext';
 import clsx from 'clsx';
 
 const rubroIcons = {
@@ -15,6 +17,8 @@ export default function ServiciosPage() {
   const [servicios, setServicios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [servicioToDelete, setServicioToDelete] = useState(null);
   const [editando, setEditando] = useState(null);
   const [nombre, setNombre] = useState('');
   const [rubro, setRubro] = useState('');
@@ -23,6 +27,7 @@ export default function ServiciosPage() {
   const [seña, setSeña] = useState('');
   const [puntos, setPuntos] = useState('1');
   const [guardando, setGuardando] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     fetchServicios();
@@ -83,20 +88,29 @@ export default function ServiciosPage() {
 
       setModalOpen(false);
       fetchServicios();
+      toast.success(editando ? 'Servicio actualizado' : 'Servicio creado');
     } catch (err) {
-      alert('Error al guardar');
+      toast.error('Error al guardar');
     } finally {
       setGuardando(false);
     }
   };
 
-  const handleEliminar = async (id) => {
-    if (!confirm('¿Eliminar este servicio?')) return;
+  const handleEliminar = (id) => {
+    setServicioToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const confirmEliminar = async () => {
+    if (!servicioToDelete) return;
     try {
-      await api.delete(`/admin/servicios/${id}`);
+      await api.delete(`/admin/servicios/${servicioToDelete}`);
+      toast.success('Servicio eliminado');
       fetchServicios();
     } catch (err) {
-      alert('Error al eliminar');
+      toast.error('Error al eliminar');
+    } finally {
+      setServicioToDelete(null);
     }
   };
 
@@ -301,6 +315,17 @@ export default function ServiciosPage() {
           </button>
         </form>
       </Modal>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={confirmEliminar}
+        title="Eliminar servicio"
+        message="¿Eliminar este servicio? No se podrá usar en nuevas reservas."
+        confirmText="Eliminar"
+        variant="danger"
+      />
     </div>
   );
 }

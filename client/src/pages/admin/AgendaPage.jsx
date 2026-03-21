@@ -4,6 +4,8 @@ import { es } from 'date-fns/locale';
 import api from '../../api/client';
 import TurnoDetailPage from './TurnoDetailPage';
 import NuevoTurnoModal from '../../components/admin/NuevoTurnoModal';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { useToast } from '../../store/toastContext';
 
 const RUBRO_COLORS = {
   uñas: { bg: 'rgba(0, 70, 75, 0.12)', border: '#00464b', text: '#004f54' },
@@ -22,6 +24,9 @@ export default function AgendaPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalFecha, setModalFecha] = useState(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [turnoToDelete, setTurnoToDelete] = useState(null);
+  const toast = useToast();
 
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(new Date()), 60000);
@@ -69,12 +74,20 @@ export default function AgendaPage() {
 
   const handleDeleteTurno = async (turnoId, e) => {
     e.stopPropagation();
-    if (!confirm('¿Cancelar este turno?')) return;
+    setTurnoToDelete(turnoId);
+    setConfirmOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!turnoToDelete) return;
     try {
-      await api.delete(`/admin/turnos/${turnoId}`);
+      await api.delete(`/admin/turnos/${turnoToDelete}`);
+      toast.success('Turno cancelado');
       fetchTurnos();
     } catch {
-      alert('Error');
+      toast.error('Error al cancelar');
+    } finally {
+      setTurnoToDelete(null);
     }
   };
 
@@ -358,6 +371,17 @@ export default function AgendaPage() {
         onClose={() => setModalOpen(false)}
         fechaInicial={modalFecha}
         onCreated={() => fetchTurnos()}
+      />
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        title="Cancelar turno"
+        message="¿Cancelar este turno? Se notificará al cliente."
+        confirmText="Cancelar turno"
+        variant="warning"
       />
     </main>
   );

@@ -3,16 +3,41 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import api from '../../api/client';
 import { useLanguage } from '../../store/languageContext';
+import { useAdminStore } from '../../store/adminStore';
 
 export default function DashboardPage() {
   const [turnosHoy, setTurnosHoy] = useState([]);
   const [stats, setStats] = useState({ turnosHoy: 0, clientesNuevos: 0, clientesTotal: 0, ingresosMes: 0, turnosPorDia: [0,0,0,0,0,0,0] });
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
   const { t } = useLanguage();
+  const { config } = useAdminStore();
 
-  useEffect(() => {
-    fetchDashboard();
-  }, []);
+  const bookingUrl = `${window.location.origin}/booking`;
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(bookingUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      prompt('Copiá este link:', bookingUrl);
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Sacá tu turno',
+          text: 'Reservá tu turno desde acá:',
+          url: bookingUrl,
+        });
+      } catch {}
+    } else {
+      handleCopy();
+    }
+  };
 
   const fetchDashboard = async () => {
     setLoading(true);
@@ -59,6 +84,48 @@ export default function DashboardPage() {
         <p style={{ color: 'var(--on-surface-variant)' }}>
           {format(new Date(), "EEEE, d 'de' MMMM", { locale: es })}
         </p>
+      </section>
+
+      {/* Share Link - Prominent Card */}
+      <section className="mb-8 p-5 rounded-2xl shadow-card" style={{ background: 'linear-gradient(135deg, #00464b, #006066)' }}>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-white font-bold text-lg font-headline mb-1">
+              Tu link de reservas
+            </h2>
+            <p className="text-white/70 text-sm mb-3">
+              Compartilo con tus clientes para que pidan turno
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="bg-white/10 rounded-lg px-4 py-2 text-white font-mono text-sm">
+                {bookingUrl}
+              </div>
+              <button
+                onClick={handleCopy}
+                className="px-4 py-2 bg-white/20 rounded-lg text-white text-sm font-medium hover:bg-white/30 transition flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-lg">
+                  {copied ? 'check' : 'content_copy'}
+                </span>
+                {copied ? '¡Copiado!' : 'Copiar'}
+              </button>
+              {navigator.share && (
+                <button
+                  onClick={handleShare}
+                  className="px-4 py-2 bg-white/20 rounded-lg text-white text-sm font-medium hover:bg-white/30 transition flex items-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-lg">share</span>
+                  Compartir
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="hidden sm:block">
+            <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
+              <span className="material-symbols-outlined text-white text-3xl">link</span>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Metrics */}

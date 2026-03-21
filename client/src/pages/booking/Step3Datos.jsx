@@ -96,7 +96,7 @@ export default function Step3Datos() {
         />
 
         {/* Loyalty Card - Stitch style */}
-        {puntosInfo?.encontrado && (
+        {puntosInfo?.encontrado && puntosInfo?.incentivosActivos !== false && (
           <div className="bg-gradient-to-br from-tertiary-fixed/20 to-primary-fixed/10 rounded-xl p-5 border border-primary/10 shadow-card">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-primary-fixed-dim/30 rounded-full flex items-center justify-center">

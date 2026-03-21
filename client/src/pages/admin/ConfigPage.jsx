@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../../api/client';
 import { useTheme } from '../../store/themeContext';
 import { useLanguage } from '../../store/languageContext';
+import { useToast } from '../../store/toastContext';
 import clsx from 'clsx';
 
 export default function ConfigPage() {
@@ -29,6 +30,8 @@ export default function ConfigPage() {
     }).catch(() => {});
   }, []);
 
+  const toast = useToast();
+
   const handleGuardar = async () => {
     setGuardando(true);
     try {
@@ -42,9 +45,9 @@ export default function ConfigPage() {
         colorPrimario: theme === 'custom' ? colorPrimario : undefined,
         colorSecundario: theme === 'custom' ? colorSecundario : undefined,
       });
-      alert('Guardado');
+      toast.success('Configuración guardada');
     } catch {
-      alert('Error');
+      toast.error('Error al guardar');
     } finally {
       setGuardando(false);
     }

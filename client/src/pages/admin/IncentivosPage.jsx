@@ -1,18 +1,23 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/client';
 import Modal from '../../components/ui/Modal';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { useToast } from '../../store/toastContext';
 import clsx from 'clsx';
 
 export default function IncentivosPage() {
   const [incentivos, setIncentivos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [incentivoToDelete, setIncentivoToDelete] = useState(null);
   const [editando, setEditando] = useState(null);
   const [nombre, setNombre] = useState('');
   const [puntosRequeridos, setPuntosRequeridos] = useState('');
   const [tipoDescuento, setTipoDescuento] = useState('PORCENTAJE');
   const [valor, setValor] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     fetchIncentivos();
@@ -67,20 +72,29 @@ export default function IncentivosPage() {
 
       setModalOpen(false);
       fetchIncentivos();
+      toast.success(editando ? 'Incentivo actualizado' : 'Incentivo creado');
     } catch (err) {
-      alert('Error al guardar');
+      toast.error('Error al guardar');
     } finally {
       setGuardando(false);
     }
   };
 
-  const handleEliminar = async (id) => {
-    if (!confirm('¿Eliminar este incentivo?')) return;
+  const handleEliminar = (id) => {
+    setIncentivoToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const confirmEliminar = async () => {
+    if (!incentivoToDelete) return;
     try {
-      await api.delete(`/incentivos/${id}`);
+      await api.delete(`/incentivos/${incentivoToDelete}`);
+      toast.success('Incentivo eliminado');
       fetchIncentivos();
     } catch (err) {
-      alert('Error al eliminar');
+      toast.error('Error al eliminar');
+    } finally {
+      setIncentivoToDelete(null);
     }
   };
 
@@ -237,6 +251,17 @@ export default function IncentivosPage() {
           </button>
         </form>
       </Modal>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={confirmEliminar}
+        title="Eliminar incentivo"
+        message="¿Eliminar este incentivo? Los clientes no podrán canjearlo."
+        confirmText="Eliminar"
+        variant="danger"
+      />
     </div>
   );
 }
