@@ -143,7 +143,7 @@ export default function LandingPage() {
             ))}
           </div>
           <div style={{ display: "flex", gap: 10 }}>
-            <a href="#planes" className="btn-ghost" style={{ padding: "10px 18px", fontSize: 13 }}>Ver planes</a>
+            <a href="/admin/login" style={{ fontSize: 13, fontWeight: 500, color: "#555550", textDecoration: "none", padding: "10px 18px" }}>Iniciar sesión</a>
             <a href="#contacto" className="btn-primary" style={{ padding: "10px 18px", fontSize: 13 }}>Empezar gratis</a>
           </div>
         </div>
@@ -397,7 +397,7 @@ export default function LandingPage() {
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <a
-              href="https://wa.me/5493804XXXXXXX?text=Hola!%20Quiero%20empezar%20con%20Reservo"
+              href="https://wa.me/5493804100986?text=Hola!%20Quiero%20empezar%20con%20Reservo"
               target="_blank"
               rel="noopener noreferrer"
               style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 32px", borderRadius: 14, background: "#25D366", color: "#fff", textDecoration: "none", fontWeight: 700, fontSize: 16, transition: "all 0.2s", boxShadow: "0 8px 24px rgba(37,211,102,0.3)" }}
