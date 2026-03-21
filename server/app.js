@@ -26,9 +26,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('combined', { stream: logger.stream }));
 
+// Health check BEFORE routes
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+
 // API routes
 app.use('/api', routes);
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
 // Serve static files from client build
 const clientDist = path.join(__dirname, '../client/dist');
