@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+.env
+.git
+.gitignore
+*.md
+DESIGN.md
+skills/
+turnero.html
+codigos.html
+screen.png
+cookies.txt
