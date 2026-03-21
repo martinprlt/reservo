@@ -26,6 +26,9 @@ COPY package.json ./
 
 WORKDIR /app/server
 
+# Re-generate Prisma for debian-openssl-3.0.x
+RUN npx prisma generate
+
 EXPOSE 4000
 
 CMD ["sh", "-c", "npx prisma db push --skip-generate && node index.js"]
