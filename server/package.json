@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
+    "build": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
-    "db:seed": "node prisma/seed.js"
+    "db:seed": "node prisma/seed.js",
+    "deploy": "prisma db push && npm start"
   },
   "dependencies": {
     "@prisma/client": "^5.10.0",

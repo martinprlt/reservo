@@ -3,6 +3,7 @@ import { ThemeProvider } from './store/themeContext';
 import { LanguageProvider } from './store/languageContext';
 import { ToastProvider } from './store/toastContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import LandingPage from './pages/LandingPage';
 import BookingPage from './pages/booking/BookingPage';
 import LoginPage from './pages/admin/LoginPage';
 import AdminLayout from './pages/admin/AdminLayout';
@@ -17,7 +18,7 @@ function App() {
           <ToastProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Navigate to="/booking" replace />} />
+                <Route path="/" element={<LandingPage />} />
                 <Route path="/booking" element={<BookingPage />} />
                 <Route path="/booking/confirmacion" element={<BookingPage />} />
                 <Route path="/admin/login" element={<LoginPage />} />

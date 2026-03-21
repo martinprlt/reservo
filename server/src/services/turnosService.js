@@ -1,6 +1,7 @@
 import prisma from '../config/prisma.js';
 import { calcularSlotsLibres } from './disponibilidadService.js';
 import { procesarPagoAprobado } from './pagosService.js';
+import { notificarNuevoTurno } from './notificacionesService.js';
 
 export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas }) {
   const servicio = await prisma.servicio.findFirst({
@@ -46,9 +47,17 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
 
   let initPoint = null;
 
-  if (process.env.MP_ACCESS_TOKEN) {
+  // Get tenant's MP credentials
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+    select: { config: true },
+  });
+
+  const mpAccessToken = tenant?.config?.mpAccessToken || process.env.MP_ACCESS_TOKEN;
+
+  if (mpAccessToken) {
     const { MercadoPagoConfig, Preference } = await import('mercadopago');
-    const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+    const mpClient = new MercadoPagoConfig({ accessToken: mpAccessToken });
     const pref = await new Preference(mpClient).create({
       body: {
         items: [{
@@ -75,6 +84,11 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
 
     initPoint = pref.init_point;
   }
+
+  // Create notification for admin
+  try {
+    await notificarNuevoTurno(tenantId, { cliente, servicio });
+  } catch {}
 
   return { turnoId: turno.id, initPoint };
 }

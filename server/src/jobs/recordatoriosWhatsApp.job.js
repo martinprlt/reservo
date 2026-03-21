@@ -1,7 +1,8 @@
 import cron from 'node-cron';
 import prisma from '../config/prisma.js';
 import logger from '../utils/logger.js';
-import { enviarRecordatorio } from '../services/notificacionesService.js';
+import { enviarRecordatorio } from '../services/whatsappService.js';
+import { notificarTurnoManana } from '../services/notificacionesService.js';
 
 async function enviarRecordatorios24h() {
   try {

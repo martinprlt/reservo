@@ -8,6 +8,7 @@ import ClientesPage from './ClientesPage';
 import ServiciosPage from './ServiciosPage';
 import IncentivosPage from './IncentivosPage';
 import ConfigPage from './ConfigPage';
+import NotificationBell from '../../components/admin/NotificationBell';
 import clsx from 'clsx';
 
 export default function AdminLayout() {
@@ -48,28 +49,22 @@ export default function AdminLayout() {
     <div className="bg-surface font-body text-on-surface min-h-screen pb-24 dark:bg-slate-900 dark:text-slate-100">
       {/* TopAppBar */}
       <header className="fixed top-0 w-full flex justify-between items-center px-6 py-4 bg-slate-50/60 dark:bg-slate-900/60 backdrop-blur-md z-50">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center overflow-hidden">
-            <span className="text-primary font-bold text-sm">
-              {admin?.nombre?.charAt(0) || 'A'}
-            </span>
-          </div>
-          <h1 className="text-xl font-bold tracking-tight text-teal-900 dark:text-teal-50 font-headline">
-            Reservo
-          </h1>
-        </div>
+        <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
+          <img src="/logo.png" alt="Reservo" style={{ height: 44, width: 'auto', borderRadius: 10 }} />
+        </a>
         <div className="flex items-center gap-2">
+          <NotificationBell />
           <button
             onClick={() => setActivePage('config')}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-teal-50/50 dark:hover:bg-teal-900/30 transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[rgba(0,70,75,0.08)] transition-colors"
           >
-            <span className="material-symbols-outlined text-teal-900 dark:text-teal-50">settings</span>
+            <span className="material-symbols-outlined" style={{ color: '#00464b' }}>settings</span>
           </button>
           <button
             onClick={handleLogout}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-teal-50/50 dark:hover:bg-teal-900/30 transition-colors"
+            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[rgba(0,70,75,0.08)] transition-colors"
           >
-            <span className="material-symbols-outlined text-teal-900 dark:text-teal-50">logout</span>
+            <span className="material-symbols-outlined" style={{ color: '#00464b' }}>logout</span>
           </button>
         </div>
       </header>

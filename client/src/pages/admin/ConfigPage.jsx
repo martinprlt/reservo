@@ -9,6 +9,8 @@ export default function ConfigPage() {
   const [telefonoAdmin, setTelefonoAdmin] = useState('');
   const [mpLink, setMpLink] = useState('');
   const [billeteraVirtual, setBilleteraVirtual] = useState('');
+  const [nombreNegocio, setNombreNegocio] = useState('');
+  const [logoUrl, setLogoUrl] = useState('');
   const [guardando, setGuardando] = useState(false);
   const { theme, setTheme, customColors, setCustomColors } = useTheme();
   const { language, setLanguage, t } = useLanguage();
@@ -22,6 +24,8 @@ export default function ConfigPage() {
       setTelefonoAdmin(data.telefonoAdmin || '');
       setMpLink(data.mpLink || '');
       setBilleteraVirtual(data.billeteraVirtual || '');
+      setNombreNegocio(data.nombreNegocio || '');
+      setLogoUrl(data.logoUrl || '');
     }).catch(() => {});
   }, []);
 
@@ -33,6 +37,8 @@ export default function ConfigPage() {
         telefonoAdmin,
         mpLink,
         billeteraVirtual,
+        nombreNegocio,
+        logoUrl,
         colorPrimario: theme === 'custom' ? colorPrimario : undefined,
         colorSecundario: theme === 'custom' ? colorSecundario : undefined,
       });
@@ -80,6 +86,66 @@ export default function ConfigPage() {
       </section>
 
       <div className="space-y-6">
+        {/* Mi Negocio */}
+        <div className="p-6 rounded-xl shadow-card border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+          <h2 className="text-lg font-bold mb-4 font-headline flex items-center gap-2" style={{ color: 'var(--on-surface)' }}>
+            <span className="material-symbols-outlined" style={{ color: 'var(--primary)' }}>store</span>
+            Mi negocio
+          </h2>
+          <p className="text-xs mb-4 font-label" style={{ color: 'var(--on-surface-variant)' }}>
+            Estos datos aparecerán en la página de reservas de tus clientes.
+          </p>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1.5 font-label" style={{ color: 'var(--on-surface)' }}>
+                Nombre del emprendimiento
+              </label>
+              <input
+                value={nombreNegocio}
+                onChange={(e) => setNombreNegocio(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
+                style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+                placeholder="Ej: TusNailsLR, Salón Carolina, etc."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5 font-label" style={{ color: 'var(--on-surface)' }}>
+                URL del logo
+              </label>
+              <input
+                value={logoUrl}
+                onChange={(e) => {
+                  let url = e.target.value;
+                  // Auto-fix imgur gallery URLs
+                  if (url.includes('imgur.com/') && !url.includes('i.imgur.com')) {
+                    const match = url.match(/imgur\.com\/(?:gallery\/)?(\w+)/);
+                    if (match) {
+                      url = `https://i.imgur.com/${match[1]}.png`;
+                    }
+                  }
+                  setLogoUrl(url);
+                }}
+                className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
+                style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+                placeholder="https://i.imgur.com/tu-logo.png"
+              />
+              <p className="text-xs mt-1 font-label" style={{ color: 'var(--on-surface-variant)' }}>
+                <strong>Imgur:</strong> Usá el link directo de imagen (termina en .png o .jpg), no el link de galería.<br />
+                Ejemplo correcto: <code className="bg-gray-100 px-1 rounded">https://i.imgur.com/ABC123.png</code>
+              </p>
+            </div>
+            {logoUrl && (
+              <div className="flex items-center gap-3 p-3 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)' }}>
+                <img src={logoUrl} alt="Logo preview" className="w-12 h-12 rounded-lg object-cover" onError={(e) => { e.target.style.display = 'none'; }} />
+                <div>
+                  <p className="text-sm font-medium font-label" style={{ color: 'var(--on-surface)' }}>Vista previa</p>
+                  <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>{nombreNegocio || 'Tu negocio'}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Theme - 3 options */}
         <div className="p-6 rounded-xl shadow-card border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
           <h2 className="text-lg font-bold mb-4 font-headline flex items-center gap-2" style={{ color: 'var(--on-surface)' }}>
@@ -294,6 +360,48 @@ export default function ConfigPage() {
               style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
               placeholder="5493804123456"
             />
+          </div>
+        </div>
+
+        {/* MercadoPago */}
+        <div className="p-6 rounded-xl shadow-card border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+          <h2 className="text-lg font-bold mb-4 font-headline flex items-center gap-2" style={{ color: 'var(--on-surface)' }}>
+            <span className="material-symbols-outlined" style={{ color: '#009EE3' }}>account_balance</span>
+            MercadoPago
+          </h2>
+          <p className="text-xs mb-4 font-label" style={{ color: 'var(--on-surface-variant)' }}>
+            Conectá tu cuenta de MercadoPago para cobrar señas automáticamente.
+          </p>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1.5 font-label" style={{ color: 'var(--on-surface)' }}>
+                Access Token
+              </label>
+              <input
+                type="password"
+                value={horarios.mpAccessToken || ''}
+                onChange={(e) => setHorarios(prev => ({ ...prev, mpAccessToken: e.target.value }))}
+                className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
+                style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+                placeholder="APP_USR-0000000000000000-000000-00000000000000000000000000000000-000000000"
+              />
+              <p className="text-xs mt-1 font-label" style={{ color: 'var(--on-surface-variant)' }}>
+                Lo encontrás en MercadoPago → Tu negocio → Credenciales
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5 font-label" style={{ color: 'var(--on-surface)' }}>
+                Webhook Secret
+              </label>
+              <input
+                type="password"
+                value={horarios.mpWebhookSecret || ''}
+                onChange={(e) => setHorarios(prev => ({ ...prev, mpWebhookSecret: e.target.value }))}
+                className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
+                style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+                placeholder="Tu secret del webhook"
+              />
+            </div>
           </div>
         </div>
 

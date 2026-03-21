@@ -43,6 +43,7 @@ model Tenant {
   servicios  Servicio[]
   turnos     Turno[]
   incentivos Incentivo[]
+  notificaciones Notificacion[]
 }
 
 model Admin {
@@ -147,4 +148,20 @@ model Incentivo {
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
   @@index([tenantId])
+}
+
+model Notificacion {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tipo      String   // NUEVO_TURNO, PAGO_RECIBIDO, TURNO_MANANA, etc.
+  titulo    String
+  mensaje   String
+  leida     Boolean  @default(false)
+  link      String?  // Link interno para navegar
+  creadoEn  DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId])
+  @@index([tenantId, leida])
 }

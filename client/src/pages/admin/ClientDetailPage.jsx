@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import api from '../../api/client';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import clsx from 'clsx';
 
 const estadoVariant = (estado) => {
@@ -20,6 +21,9 @@ export default function ClientDetailPage({ clienteId, onBack }) {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('history');
   const [eliminando, setEliminando] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogConfig, setDialogConfig] = useState({});
+  const [turnoAEliminar, setTurnoAEliminar] = useState(null);
 
   const fetchCliente = () => {
     api.get(`/admin/clientes/${clienteId}`)
@@ -34,27 +38,44 @@ export default function ClientDetailPage({ clienteId, onBack }) {
     fetchCliente();
   }, [clienteId]);
 
-  const handleDeleteHistory = async () => {
-    if (!confirm('¿Eliminar todo el historial de turnos de este cliente?')) return;
-    setEliminando(true);
-    try {
-      await api.delete(`/admin/clientes/${clienteId}/turnos`);
-      fetchCliente();
-    } catch {
-      alert('Error');
-    } finally {
-      setEliminando(false);
-    }
+  const handleDeleteHistory = () => {
+    setDialogConfig({
+      title: 'Eliminar historial',
+      message: `¿Cancelar todos los turnos de ${cliente?.nombre} ${cliente?.apellido}? Los turnos cancelados no se pueden recuperar.`,
+      confirmText: 'Eliminar todo',
+      variant: 'danger',
+      onConfirm: async () => {
+        setEliminando(true);
+        try {
+          await api.delete(`/admin/clientes/${clienteId}/turnos`);
+          fetchCliente();
+        } catch {
+          alert('Error');
+        } finally {
+          setEliminando(false);
+        }
+      },
+    });
+    setDialogOpen(true);
   };
 
-  const handleDeleteTurno = async (turnoId) => {
-    if (!confirm('¿Cancelar este turno?')) return;
-    try {
-      await api.delete(`/admin/turnos/${turnoId}`);
-      fetchCliente();
-    } catch {
-      alert('Error');
-    }
+  const handleDeleteTurno = (turnoId) => {
+    setTurnoAEliminar(turnoId);
+    setDialogConfig({
+      title: 'Cancelar turno',
+      message: '¿Cancelar este turno? Se notificará al cliente.',
+      confirmText: 'Cancelar turno',
+      variant: 'warning',
+      onConfirm: async () => {
+        try {
+          await api.delete(`/admin/turnos/${turnoId}`);
+          fetchCliente();
+        } catch {
+          alert('Error');
+        }
+      },
+    });
+    setDialogOpen(true);
   };
 
   if (loading) {
@@ -343,6 +364,17 @@ export default function ClientDetailPage({ clienteId, onBack }) {
           </p>
         </section>
       )}
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onConfirm={dialogConfig.onConfirm}
+        title={dialogConfig.title}
+        message={dialogConfig.message}
+        confirmText={dialogConfig.confirmText}
+        variant={dialogConfig.variant}
+      />
     </div>
   );
 }

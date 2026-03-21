@@ -22,7 +22,8 @@ router.get('/config', async (req, res) => {
       select: { config: true, nombre: true },
     });
     res.json({
-      nombre: tenant?.nombre,
+      nombre: tenant?.config?.nombreNegocio || tenant?.nombre,
+      logo: tenant?.config?.logoUrl || null,
       horarios: tenant?.config?.horarios || {},
       telefonoAdmin: tenant?.config?.telefonoAdmin || '',
       mpLink: tenant?.config?.mpLink || '',
