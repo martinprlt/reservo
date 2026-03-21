@@ -7,9 +7,10 @@ export default {
       const result = await login(req.body.email, req.body.password, tenantId);
       res.cookie('token', result.token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+        secure: false,
+        sameSite: 'lax',
         maxAge: 8 * 60 * 60 * 1000,
+        path: '/',
       });
       res.json({ admin: result.admin });
     } catch (error) {

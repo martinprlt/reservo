@@ -48,17 +48,15 @@ export default function DashboardPage() {
       const finHoy = new Date(hoy);
       finHoy.setHours(23, 59, 59, 999);
 
-      const [agendaRes, statsRes] = await Promise.all([
-        api.get('/admin/agenda', {
-          params: { desde: inicioHoy.toISOString(), hasta: finHoy.toISOString() },
-        }),
-        api.get('/admin/stats'),
-      ]);
-
+      const agendaRes = await api.get('/admin/agenda', {
+        params: { desde: inicioHoy.toISOString(), hasta: finHoy.toISOString() },
+      });
       setTurnosHoy(agendaRes.data || []);
+
+      const statsRes = await api.get('/admin/stats');
       setStats(statsRes.data);
     } catch (err) {
-      console.error('Error:', err);
+      console.error('Dashboard error:', err);
     } finally {
       setLoading(false);
     }
