@@ -14,28 +14,18 @@ RUN npm install
 COPY server/ ./
 RUN npx prisma generate
 
-# Stage 3: Production
-FROM node:20-alpine
+# Stage 3: Production con OpenSSL para Prisma
+FROM node:20-slim
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Copy server
 COPY --from=server-build /app/server ./server
-
-# Copy client build
 COPY --from=client-build /app/client/dist ./client/dist
-
-# Copy root package.json
 COPY package.json ./
 
-# Set working directory to server
 WORKDIR /app/server
 
-# Expose port
 EXPOSE 4000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -qO- http://localhost:4000/api/health || exit 1
-
-# Start with database push
 CMD ["sh", "-c", "npx prisma db push --skip-generate && node index.js"]
