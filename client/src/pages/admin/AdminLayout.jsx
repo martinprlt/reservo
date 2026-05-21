@@ -9,6 +9,7 @@ import ClientesPage from './ClientesPage';
 import ServiciosPage from './ServiciosPage';
 import IncentivosPage from './IncentivosPage';
 import ConfigPage from './ConfigPage';
+import ReportesPage from './ReportesPage';
 import NotificationBell from '../../components/admin/NotificationBell';
 import clsx from 'clsx';
 
@@ -32,6 +33,7 @@ export default function AdminLayout() {
     { id: 'agenda', label: t('nav.calendar'), icon: 'calendar_today' },
     { id: 'clientes', label: t('nav.clients'), icon: 'group' },
     { id: 'servicios', label: t('nav.services'), icon: 'spa' },
+    { id: 'reportes', label: 'Reportes', icon: 'bar_chart' },
     ...(incentivosActivos ? [{ id: 'incentivos', label: t('nav.rewards'), icon: 'star' }] : []),
   ];
 
@@ -51,6 +53,7 @@ export default function AdminLayout() {
       case 'servicios': return <ServiciosPage />;
       case 'incentivos': return <IncentivosPage />;
       case 'config': return <ConfigPage />;
+      case 'reportes': return <ReportesPage />;
       default: return <DashboardPage />;
     }
   };

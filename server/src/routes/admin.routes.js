@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import adminController from '../controllers/adminController.js';
 import exportController from '../controllers/exportController.js';
+import reportesController from '../controllers/reportesController.js';
 import notificacionesController from '../controllers/notificacionesController.js';
 import verifyJWT from '../middleware/auth.js';
 
@@ -30,5 +31,10 @@ router.patch('/notificaciones/:id/leer', notificacionesController.marcarLeida);
 router.post('/notificaciones/leer-todas', notificacionesController.marcarTodasLeidas);
 router.get('/export/clientes', exportController.clientesCSV);
 router.get('/export/turnos', exportController.turnosCSV);
+
+// Reportes
+router.get('/reportes/turnos', reportesController.reporteTurnos);
+router.get('/reportes/ganancias', reportesController.reporteGanancias);
+router.get('/reportes/trabajos', reportesController.reporteTrabajos);
 
 export default router;
