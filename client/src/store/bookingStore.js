@@ -14,6 +14,7 @@ export const useBookingStore = create((set, get) => ({
   initPoint: null,
   error: null,
   incentivosActivos: false,
+  tenantConfig: null,
 
   setADomicilio: (value) => set({ aDomicilio: value }),
 
@@ -28,7 +29,8 @@ export const useBookingStore = create((set, get) => ({
           varianteSeleccionada: variante,
           paso: 2,
           error: null,
-          incentivosActivos
+          incentivosActivos,
+          tenantConfig: config
         });
       })
       .catch(() => {
@@ -37,7 +39,8 @@ export const useBookingStore = create((set, get) => ({
           varianteSeleccionada: variante,
           paso: 2,
           error: null,
-          incentivosActivos: false // Default to false if we can't fetch config
+          incentivosActivos: false, // Default to false if we can't fetch config
+          tenantConfig: null
         });
       });
   },
@@ -70,6 +73,9 @@ export const useBookingStore = create((set, get) => ({
 
   setError: (error) => set({ error }),
 
+  setTenantConfig: (config) =>
+    set({ tenantConfig: config }),
+
   goBack: () => {
     const { paso } = get();
     if (paso === 2) return set({ paso: 1 });
@@ -93,5 +99,6 @@ export const useBookingStore = create((set, get) => ({
       initPoint: null,
       error: null,
       incentivosActivos: false,
+      tenantConfig: null,
     }),
 }));

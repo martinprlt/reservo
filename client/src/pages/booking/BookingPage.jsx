@@ -10,15 +10,18 @@ import Step5Pago from './Step5Pago';
 import Confirmacion from './Confirmacion';
 
 export default function BookingPage() {
-  const { paso, reset, servicioSeleccionado } = useBookingStore();
+  const { paso, reset, servicioSeleccionado, setTenantConfig } = useBookingStore();
   const { t } = useLanguage();
-  const [tenantConfig, setTenantConfig] = useState(null);
+  const [tenantConfig, setTenantConfigLocal] = useState(null);
 
   useEffect(() => {
     api.get('/config')
-      .then(({ data }) => setTenantConfig(data))
+      .then(({ data }) => {
+        setTenantConfigLocal(data);
+        setTenantConfig(data);
+      })
       .catch(() => {});
-  }, []);
+  }, [setTenantConfig]);
 
   const nombreNegocio = tenantConfig?.nombre || 'Reservo';
 
