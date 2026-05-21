@@ -10,12 +10,11 @@ import clsx from 'clsx';
 const DIAS_SEMANA = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
 
 export default function Step2Horario() {
-  const { servicioSeleccionado, seleccionarSlot, goBack } = useBookingStore();
+  const { servicioSeleccionado, seleccionarSlot, goBack, tenantConfig } = useBookingStore();
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
   const [slotSeleccionado, setSlotSeleccionado] = useState(null);
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [horarios, setHorarios] = useState(null);
   const { t } = useLanguage();
   const toast = useToast();
 
@@ -23,12 +22,8 @@ export default function Step2Horario() {
   const inicioSemana = startOfWeek(hoy, { weekStartsOn: 1 });
   const dias = Array.from({ length: 14 }, (_, i) => addDays(inicioSemana, i));
 
-  // Fetch horarios config
-  useEffect(() => {
-    api.get('/config')
-      .then(({ data }) => setHorarios(data.horarios || {}))
-      .catch(() => {});
-  }, []);
+  // Use horarios from tenantConfig in store (loaded once in BookingPage)
+  const horarios = tenantConfig?.horarios || {};
 
   // Fetch slots when date changes
   useEffect(() => {
@@ -63,7 +58,7 @@ export default function Step2Horario() {
 
   // Check if a day is a working day
   const esDiaLaboral = (dia) => {
-    if (!horarios) return true; // Default to working if config not loaded
+    if (!horarios || Object.keys(horarios).length === 0) return true;
     const nombreDia = DIAS_SEMANA[dia.getDay()];
     const config = horarios[nombreDia];
     if (!config) return true;
@@ -72,7 +67,7 @@ export default function Step2Horario() {
 
   // Get horario text for a day
   const getHorarioTexto = (dia) => {
-    if (!horarios) return null;
+    if (!horarios || Object.keys(horarios).length === 0) return null;
     const nombreDia = DIAS_SEMANA[dia.getDay()];
     const config = horarios[nombreDia];
     if (!config || config.activo === false || !config.apertura) return null;
@@ -100,7 +95,7 @@ export default function Step2Horario() {
       </div>
 
       {/* Dias y horarios de atención */}
-      {horarios && (
+      {horarios && Object.keys(horarios).length > 0 && (
         <div className="mb-6 p-4 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
           <div className="flex items-center gap-2 mb-3">
             <span className="material-symbols-outlined text-lg" style={{ color: 'var(--primary)' }}>schedule</span>
