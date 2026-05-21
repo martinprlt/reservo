@@ -7,7 +7,7 @@ import { useToast } from '../../store/toastContext';
 import api from '../../api/client';
 
 export default function Step5Pago() {
-  const { servicioSeleccionado, varianteSeleccionada, slotSeleccionado, datosCliente, notas, aDomicilio, setTurno, setError, error, goBack } = useBookingStore();
+  const { servicioSeleccionado, varianteSeleccionada, slotSeleccionado, datosCliente, notas, aDomicilio, setTurno, setError, error, goBack, incentivosActivos } = useBookingStore();
   const [loading, setLoading] = useState(false);
   const { t } = useLanguage();
   const toast = useToast();
@@ -121,11 +121,18 @@ export default function Step5Pago() {
             <span className="font-bold text-on-surface">${precioTotal.toLocaleString('es-AR')}</span>
           </div>
 
-          <div className="flex justify-between text-lg">
-            <span className="font-bold text-primary font-headline">{t('booking.deposit_amount')}</span>
-            <span className="font-bold text-primary">${seña.toLocaleString('es-AR')}</span>
-          </div>
-        </div>
+           <div className="flex justify-between text-lg">
+             <span className="font-bold text-primary font-headline">{t('booking.deposit_amount')}</span>
+             <span className="font-bold text-primary">${seña.toLocaleString('es-AR')}</span>
+           </div>
+
+           {incentivosActivos && (
+             <div className="flex justify-between mt-3 text-sm font-body">
+               <span className="text-on-surface-variant">{t('booking.points_earned_label')}</span>
+               <span className="font-semibold text-on-surface">{t('booking.points_earned_value')}</span>
+             </div>
+           )}
+         </div>
       </div>
 
       {error && (

@@ -13,16 +13,34 @@ export const useBookingStore = create((set, get) => ({
   turnoId: null,
   initPoint: null,
   error: null,
+  incentivosActivos: false,
 
   setADomicilio: (value) => set({ aDomicilio: value }),
 
-  seleccionarServicio: (servicio, variante = null) =>
-    set({
-      servicioSeleccionado: servicio,
-      varianteSeleccionada: variante,
-      paso: 2,
-      error: null,
-    }),
+  seleccionarServicio: (servicio, variante = null) => {
+    // Fetch tenant config to check if incentives are active
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(config => {
+        const incentivosActivos = config?.horarios?.incentivosActivos !== false;
+        set({
+          servicioSeleccionado: servicio,
+          varianteSeleccionada: variante,
+          paso: 2,
+          error: null,
+          incentivosActivos
+        });
+      })
+      .catch(() => {
+        set({
+          servicioSeleccionado: servicio,
+          varianteSeleccionada: variante,
+          paso: 2,
+          error: null,
+          incentivosActivos: false // Default to false if we can't fetch config
+        });
+      });
+  },
 
   seleccionarSlot: (fecha, slot) =>
     set({
@@ -74,5 +92,6 @@ export const useBookingStore = create((set, get) => ({
       turnoId: null,
       initPoint: null,
       error: null,
+      incentivosActivos: false,
     }),
 }));

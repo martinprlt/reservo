@@ -14,19 +14,26 @@ async function main() {
       slug: 'tusnailslr',
       plan: 'BASICO',
       activo: true,
-      config: {
-        horarios: {
-          lunes: { apertura: '09:00', cierre: '18:00', activo: true },
-          martes: { apertura: '09:00', cierre: '18:00', activo: true },
-          miercoles: { apertura: '09:00', cierre: '18:00', activo: true },
-          jueves: { apertura: '09:00', cierre: '18:00', activo: true },
-          viernes: { apertura: '09:00', cierre: '18:00', activo: true },
-          sabado: { apertura: '10:00', cierre: '14:00', activo: true },
-          domingo: { apertura: '00:00', cierre: '00:00', activo: false },
-        },
-        telefonoAdmin: '5493804123456',
-        colorPrimario: '#E91E63',
-      },
+       config: {
+         horarios: {
+           lunes: { apertura: '09:00', cierre: '18:00', activo: true },
+           martes: { apertura: '09:00', cierre: '18:00', activo: true },
+           miercoles: { apertura: '09:00', cierre: '18:00', activo: true },
+           jueves: { apertura: '09:00', cierre: '18:00', activo: true },
+           viernes: { apertura: '09:00', cierre: '18:00', activo: true },
+           sabado: { apertura: '10:00', cierre: '14:00', activo: true },
+           domingo: { apertura: '00:00', cierre: '00:00', activo: false },
+         },
+         telefonoAdmin: '5493804123456',
+         colorPrimario: '#E91E63',
+         rubros: [
+           { id: 'unas', nombre: 'Uñas', icono: 'front_hand', colorPrimario: '#E91E63', colorSecundario: '#9C27B0' },
+           { id: 'pelo', nombre: 'Pelo', icono: 'cut', colorPrimario: '#3F51B5', colorSecundario: '#2196F3' },
+           { id: 'pestanas', nombre: 'Pestañas', icono: 'visibility', colorPrimario: '#FF9800', colorSecundario: '#FFC107' },
+           { id: 'masajes', nombre: 'Masajes', icono: 'spa', colorPrimario: '#4CAF50', colorSecundario: '#8BC34A' },
+           { id: 'general', nombre: 'General', icono: 'spa', colorPrimario: '#607D8B', colorSecundario: '#78909C' }
+         ]
+       },
     },
   });
 

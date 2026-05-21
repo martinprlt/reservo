@@ -91,6 +91,7 @@ model Servicio {
   puntosOtorgados Int      @default(1)
   activo          Boolean  @default(true)
   variantes       Json?
+  foto            String?  // URL of the service photo
   creadoEn        DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

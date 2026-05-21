@@ -22,6 +22,7 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
   const [cambiandoEstado, setCambiandoEstado] = useState(false);
   const [eliminando, setEliminando] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [guardandoNotas, setGuardandoNotas] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -43,6 +44,19 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
       toast.error('Error al cambiar estado');
     } finally {
       setCambiandoEstado(false);
+    }
+  };
+
+  const handleNotasChange = async (notas) => {
+    setGuardandoNotas(true);
+    try {
+      const { data } = await api.patch(`/admin/turnos/${turnoId}`, { notas });
+      setTurno(data);
+      toast.success('Notas actualizadas');
+    } catch {
+      toast.error('Error al actualizar notas');
+    } finally {
+      setGuardandoNotas(false);
     }
   };
 
@@ -161,16 +175,29 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
         </div>
 
         {/* Notas del cliente */}
-        {turno.notas && (
-          <div className="mt-4 p-4 rounded-lg border" style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)' }}>
-            <p className="text-xs font-bold uppercase tracking-wider mb-1 font-label" style={{ color: 'var(--on-surface-variant)' }}>
-              Nota del cliente
-            </p>
-            <p className="text-sm italic font-body" style={{ color: 'var(--on-surface)' }}>
-              "{turno.notas}"
-            </p>
-          </div>
-        )}
+        <div className="mt-4">
+          <label className="block text-sm font-medium mb-2 font-label" style={{ color: 'var(--on-surface)' }}>
+            Nota del cliente
+          </label>
+          <textarea
+            value={turno.notas || ''}
+            onChange={handleNotasChange}
+            placeholder="Agregar notas sobre el turno..."
+            rows={3}
+            className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition text-sm resize-none leading-relaxed"
+            style={{
+              backgroundColor: 'var(--surface-container-lowest)',
+              borderColor: 'var(--outline-variant)',
+              color: 'var(--on-surface)',
+              fontFamily: "'Inter', sans-serif",
+              fontSize: '14px',
+              lineHeight: '1.7',
+            }}
+          />
+          {guardandoNotas && (
+            <p className="text-xs text-on-surface-variant mt-1">Guardando...</p>
+          )}
+        </div>
 
         {turno.expiraEn && turno.estado === 'RESERVADO' && (
           <div className="mt-4 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
@@ -222,19 +249,77 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
         </div>
       </div>
 
-      {/* Acciones */}
-      <div className="p-6 rounded-xl shadow-card border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
-        <h3 className="text-lg font-bold font-headline mb-4" style={{ color: 'var(--on-surface)' }}>Acciones</h3>
-        <button
-          onClick={handleEliminar}
-          disabled={eliminando || turno.estado === 'CANCELADO'}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm border transition active:scale-95 disabled:opacity-40"
-          style={{ borderColor: '#dc2626', color: '#dc2626', backgroundColor: 'var(--surface-container-lowest)' }}
-        >
-          <span className="material-symbols-outlined text-lg">cancel</span>
-          {turno.estado === 'CANCELADO' ? 'Ya cancelado' : 'Cancelar turno'}
-        </button>
-      </div>
+       {/* Edición de datos del cliente */}
+       <div className="p-6 rounded-xl shadow-card border mb-6" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+         <h3 className="text-lg font-bold font-headline mb-4" style={{ color: 'var(--on-surface)' }}>Datos del cliente</h3>
+         <div className="space-y-4">
+           <div>
+             <label className="block text-sm font-medium mb-2 font-label" style={{ color: 'var(--on-surface)' }}>
+               Nombre
+             </label>
+             <input
+               value={turno.cliente.nombre}
+               onChange={(e) => handleClienteChange('nombre', e.target.value)}
+               placeholder="Nombre"
+               className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition text-sm"
+               style={{
+                 backgroundColor: 'var(--surface-container-lowest)',
+                 borderColor: 'var(--outline-variant)',
+                 color: 'var(--on-surface)',
+               }}
+             />
+           </div>
+           <div>
+             <label className="block text-sm font-medium mb-2 font-label" style={{ color: 'var(--on-surface)' }}>
+               Apellido
+             </label>
+             <input
+               value={turno.cliente.apellido}
+               onChange={(e) => handleClienteChange('apellido', e.target.value)}
+               placeholder="Apellido"
+               className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition text-sm"
+               style={{
+                 backgroundColor: 'var(--surface-container-lowest)',
+                 borderColor: 'var(--outline-variant)',
+                 color: 'var(--on-surface)',
+               }}
+             />
+           </div>
+           <div>
+             <label className="block text-sm font-medium mb-2 font-label" style={{ color: 'var(--on-surface)' }}>
+               Teléfono
+             </label>
+             <input
+               value={turno.cliente.telefono}
+               onChange={(e) => handleClienteChange('telefono', e.target.value)}
+               placeholder="Teléfono"
+               className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition text-sm"
+               style={{
+                 backgroundColor: 'var(--surface-container-lowest)',
+                 borderColor: 'var(--outline-variant)',
+                 color: 'var(--on-surface)',
+               }}
+             />
+           </div>
+           {guardandoCliente && (
+             <p className="text-xs text-on-surface-variant">Guardando...</p>
+           )}
+         </div>
+       </div>
+
+       {/* Acciones */}
+       <div className="p-6 rounded-xl shadow-card border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+         <h3 className="text-lg font-bold font-headline mb-4" style={{ color: 'var(--on-surface)' }}>Acciones</h3>
+         <button
+           onClick={handleEliminar}
+           disabled={eliminando || turno.estado === 'CANCELADO'}
+           className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm border transition active:scale-95 disabled:opacity-40"
+           style={{ borderColor: '#dc2626', color: '#dc2626', backgroundColor: 'var(--surface-container-lowest)' }}
+         >
+           <span className="material-symbols-outlined text-lg">cancel</span>
+           {turno.estado === 'CANCELADO' ? 'Ya cancelado' : 'Cancelar turno'}
+         </button>
+       </div>
 
       {/* Confirm Dialog */}
       <ConfirmDialog

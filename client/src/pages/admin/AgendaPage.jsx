@@ -6,6 +6,7 @@ import TurnoDetailPage from './TurnoDetailPage';
 import NuevoTurnoModal from '../../components/admin/NuevoTurnoModal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useToast } from '../../store/toastContext';
+import { useLanguage } from '../../store/languageContext';
 
 const RUBRO_COLORS = {
   uñas: { bg: 'rgba(0, 70, 75, 0.12)', border: '#00464b', text: '#004f54' },
@@ -17,7 +18,9 @@ const RUBRO_COLORS = {
 
 export default function AgendaPage() {
   const [turnos, setTurnos] = useState([]);
+  const [rubros, setRubros] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [configLoading, setConfigLoading] = useState(true);
   const [semanaOffset, setSemanaOffset] = useState(0);
   const [diaSeleccionado, setDiaSeleccionado] = useState(new Date());
   const [selectedTurnoId, setSelectedTurnoId] = useState(null);
@@ -27,6 +30,7 @@ export default function AgendaPage() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [turnoToDelete, setTurnoToDelete] = useState(null);
   const toast = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const interval = setInterval(() => setCurrentTime(new Date()), 60000);
@@ -58,8 +62,45 @@ export default function AgendaPage() {
     }
   };
 
+  const fetchConfig = async () => {
+    setConfigLoading(true);
+    try {
+      const { data } = await api.get('/admin/config');
+      if (data.rubros && Array.isArray(data.rubros)) {
+        setRubros(data.rubros);
+      }
+    } catch (err) {
+      console.error('Error fetching config:', err);
+      // Fallback to default rubros if config fetch fails
+      setRubros([
+        { id: 'unas', nombre: 'Uñas', colorPrimario: '#00464b', colorSecundario: '#4a6363' },
+        { id: 'pelo', nombre: 'Pelo', colorPrimario: '#133a87', colorSecundario: '#1f428f' },
+        { id: 'pestanas', nombre: 'Pestañas', colorPrimario: '#4a6363', colorSecundario: '#324b4b' },
+        { id: 'masajes', nombre: 'Masajes', colorPrimario: '#3152a0', colorSecundario: '#1f428f' },
+        { id: 'general', nombre: 'General', colorPrimario: '#00464b', colorSecundario: '#004f54' }
+      ]);
+    } finally {
+      setConfigLoading(false);
+    }
+  };
+
+  const getRubroColor = (rubroId) => {
+    if (!rubroId) return { bg: 'rgba(0, 70, 75, 0.12)', border: '#00464b', text: '#004f54' };
+    const rubro = rubros.find(r => r.id === rubroId);
+    if (rubro) {
+      return {
+        bg: `rgba(${parseInt(rubro.colorPrimario.slice(1,3),16)}, ${parseInt(rubro.colorPrimario.slice(3,5),16)}, ${parseInt(rubro.colorPrimario.slice(5,7),16)}, 0.12)`,
+        border: rubro.colorPrimario,
+        text: rubro.colorSecundario
+      };
+    }
+    // Fallback to general
+    return { bg: 'rgba(0, 70, 75, 0.12)', border: '#00464b', text: '#004f54' };
+  };
+
   useEffect(() => {
     fetchTurnos();
+    fetchConfig();
   }, [semanaOffset]);
 
   const horas = Array.from({ length: 12 }, (_, i) => i + 8);

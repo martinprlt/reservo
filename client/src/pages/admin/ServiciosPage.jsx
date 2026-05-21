@@ -3,9 +3,11 @@ import api from '../../api/client';
 import Modal from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useToast } from '../../store/toastContext';
+import { useLanguage } from '../../store/languageContext';
 import clsx from 'clsx';
 
-const rubroIcons = {
+// Rubro icons will be loaded from tenant config with fallbacks
+const defaultRubroIcons = {
   'uñas': 'front_hand',
   'pelo': 'cut',
   'pestañas': 'visibility',
@@ -15,7 +17,9 @@ const rubroIcons = {
 
 export default function ServiciosPage() {
   const [servicios, setServicios] = useState([]);
+  const [rubros, setRubros] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [configLoading, setConfigLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [servicioToDelete, setServicioToDelete] = useState(null);
@@ -25,12 +29,15 @@ export default function ServiciosPage() {
   const [precio, setPrecio] = useState('');
   const [duracion, setDuracion] = useState('');
   const [seña, setSeña] = useState('');
+  const [foto, setFoto] = useState('');
   const [puntos, setPuntos] = useState('1');
   const [guardando, setGuardando] = useState(false);
   const toast = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchServicios();
+    fetchConfig();
   }, []);
 
   const fetchServicios = async () => {
@@ -53,10 +60,39 @@ export default function ServiciosPage() {
     setDuracion('');
     setSeña('');
     setPuntos('1');
+    setFoto('');
     setModalOpen(true);
   };
 
-  const handleEditar = (s) => {
+  const fetchConfig = async () => {
+    setConfigLoading(true);
+    try {
+      const { data } = await api.get('/admin/config');
+      if (data.rubros && Array.isArray(data.rubros)) {
+        setRubros(data.rubros);
+      }
+    } catch (err) {
+      console.error('Error fetching config:', err);
+      // Fallback to default rubros if config fetch fails
+      setRubros([
+        { id: 'unas', nombre: 'Uñas', icono: 'front_hand', colorPrimario: '#E91E63', colorSecundario: '#9C27B0' },
+        { id: 'pelo', nombre: 'Pelo', icono: 'cut', colorPrimario: '#3F51B5', colorSecundario: '#2196F3' },
+        { id: 'pestanas', nombre: 'Pestañas', icono: 'visibility', colorPrimario: '#FF9800', colorSecundario: '#FFC107' },
+        { id: 'masajes', nombre: 'Masajes', icono: 'spa', colorPrimario: '#4CAF50', colorSecundario: '#8BC34A' },
+        { id: 'general', nombre: 'General', icono: 'spa', colorPrimario: '#607D8B', colorSecundario: '#78909C' }
+      ]);
+    } finally {
+      setConfigLoading(false);
+    }
+  };
+
+  const getRubroIcon = (rubroId) => {
+    if (!rubroId) return 'spa';
+    const rubro = rubros.find(r => r.id === rubroId);
+    return rubro ? rubro.icono : 'spa';
+  };
+
+    const handleEditar = (s) => {
     setEditando(s);
     setNombre(s.nombre);
     setRubro(s.rubro || '');
@@ -64,6 +100,7 @@ export default function ServiciosPage() {
     setDuracion(String(s.duracionMinutos));
     setSeña(String(s.montoSenia));
     setPuntos(String(s.puntosOtorgados || 1));
+    setFoto(s.foto || '');
     setModalOpen(true);
   };
 
@@ -160,31 +197,44 @@ export default function ServiciosPage() {
               key={s.id}
               className="bg-surface-container-lowest p-6 rounded-xl shadow-card group hover:scale-[1.02] transition-all duration-300 border border-outline-variant/10 hover:border-primary/20 dark:bg-slate-800 dark:border-slate-700"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div className="w-12 h-12 bg-primary-fixed-dim/20 rounded-lg flex items-center justify-center text-primary dark:bg-teal-900/30">
-                  <span className="material-symbols-outlined text-2xl">
-                    {rubroIcons[s.rubro] || 'spa'}
-                  </span>
-                </div>
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => handleEditar(s)}
-                    className="p-2 rounded-full hover:bg-surface-container-low transition text-on-surface-variant hover:text-primary dark:hover:bg-slate-700"
-                  >
-                    <span className="material-symbols-outlined text-lg">edit</span>
-                  </button>
-                  <button
-                    onClick={() => handleEliminar(s.id)}
-                    className="p-2 rounded-full hover:bg-error-container transition text-on-surface-variant hover:text-error dark:hover:bg-red-900/30"
-                  >
-                    <span className="material-symbols-outlined text-lg">delete</span>
-                  </button>
-                </div>
-              </div>
+               <div className="flex justify-between items-start mb-4">
+                 <div className="w-12 h-12 bg-primary-fixed-dim/20 rounded-lg flex items-center justify-center text-primary dark:bg-teal-900/30">
+                   <span className="material-symbols-outlined text-2xl">
+                     {getRubroIcon(s.rubro) || 'spa'}
+                   </span>
+                 </div>
+                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                   <button
+                     onClick={() => handleEditar(s)}
+                     className="p-2 rounded-full hover:bg-surface-container-low transition text-on-surface-variant hover:text-primary dark:hover:bg-slate-700"
+                   >
+                     <span className="material-symbols-outlined text-lg">edit</span>
+                   </button>
+                   <button
+                     onClick={() => handleEliminar(s.id)}
+                     className="p-2 rounded-full hover:bg-error-container transition text-on-surface-variant hover:text-error dark:hover:bg-red-900/30"
+                   >
+                     <span className="material-symbols-outlined text-lg">delete</span>
+                   </button>
+                 </div>
+               </div>
 
-              <h3 className="text-xl font-bold text-on-surface mb-1 font-headline dark:text-slate-100">
-                {s.nombre}
-              </h3>
+               {s.foto && (
+                 <div className="w-full h-36 rounded-lg overflow-hidden mb-4">
+                   <img
+                     src={s.foto}
+                     alt={`${s.nombre} foto`}
+                     className="w-full h-full object-cover"
+                     onError={(e) => {
+                       e.target.style.display = 'none';
+                     }}
+                   />
+                 </div>
+               )}
+
+               <h3 className="text-xl font-bold text-on-surface mb-1 font-headline dark:text-slate-100">
+                 {s.nombre}
+               </h3>
 
               {s.rubro && (
                 <span className="text-xs text-on-surface-variant uppercase tracking-wider font-label font-medium dark:text-slate-400">
@@ -220,100 +270,116 @@ export default function ServiciosPage() {
         onClose={() => setModalOpen(false)}
         title={editando ? 'Editar servicio' : 'Nuevo servicio'}
       >
-        <form onSubmit={handleGuardar} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Nombre</label>
-            <input
-              placeholder="Ej: Manicura francesa"
-              value={nombre}
-              onChange={e => setNombre(e.target.value)}
-              required
-              className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-            />
-          </div>
+         <form onSubmit={handleGuardar} className="space-y-4">
+           <div>
+             <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Nombre</label>
+             <input
+               placeholder="Ej: Manicura francesa"
+               value={nombre}
+               onChange={e => setNombre(e.target.value)}
+               required
+               className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+             />
+           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Rubro</label>
-            <select
-              value={rubro}
-              onChange={e => setRubro(e.target.value)}
-              className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-            >
-              <option value="">Seleccionar...</option>
-              <option value="uñas">Uñas</option>
-              <option value="pelo">Pelo</option>
-              <option value="pestañas">Pestañas</option>
-              <option value="masajes">Masajes</option>
-              <option value="otro">Otro</option>
-            </select>
-          </div>
+           <div>
+             <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Rubro</label>
+             <select
+               value={rubro}
+               onChange={e => setRubro(e.target.value)}
+               className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+             >
+               <option value="">Seleccionar...</option>
+               <option value="uñas">Uñas</option>
+               <option value="pelo">Pelo</option>
+               <option value="pestañas">Pestañas</option>
+               <option value="masajes">Masajes</option>
+               <option value="otro">Otro</option>
+             </select>
+           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Precio ($)</label>
-              <input
-                type="number"
-                placeholder="0"
-                value={precio}
-                onChange={e => setPrecio(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Duración (min)</label>
-              <input
-                type="number"
-                placeholder="60"
-                value={duracion}
-                onChange={e => setDuracion(e.target.value)}
-                required
-                className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-              />
-            </div>
-          </div>
+           <div className="grid grid-cols-2 gap-4">
+             <div>
+               <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Precio ($)</label>
+               <input
+                 type="number"
+                 placeholder="0"
+                 value={precio}
+                 onChange={e => setPrecio(e.target.value)}
+                 required
+                 className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+               />
+             </div>
+             <div>
+               <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Duración (min)</label>
+               <input
+                 type="number"
+                 placeholder="60"
+                 value={duracion}
+                 onChange={e => setDuracion(e.target.value)}
+                 required
+                 className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+               />
+             </div>
+           </div>
+           
+           <div className="grid grid-cols-2 gap-4">
+             <div>
+               <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Foto del servicio (URL)</label>
+               <input
+                 type="text"
+                 placeholder="https://i.imgur.com/tu-foto.jpg"
+                 value={foto}
+                 onChange={e => setFoto(e.target.value)}
+                 className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+               />
+               <p className="text-xs text-on-surface-variant dark:text-slate-500 font-label">
+                 Usá un link directo de imagen (termina en .png, .jpg, .jpeg, etc.)
+               </p>
+             </div>
+           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Seña ($)</label>
-              <input
-                type="number"
-                placeholder="0"
-                value={seña}
-                onChange={e => setSeña(e.target.value)}
-                className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">
-                <span className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                  Puntos
-                </span>
-              </label>
-              <input
-                type="number"
-                min="1"
-                placeholder="1"
-                value={puntos}
-                onChange={e => setPuntos(e.target.value)}
-                className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-              />
-            </div>
-          </div>
+           <div className="grid grid-cols-2 gap-4">
+             <div>
+               <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Seña ($)</label>
+               <input
+                 type="number"
+                 placeholder="0"
+                 value={seña}
+                 onChange={e => setSeña(e.target.value)}
+                 className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+               />
+             </div>
+             <div>
+               <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">
+                 <span className="flex items-center gap-1">
+                   <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                   Puntos
+                 </span>
+               </label>
+               <input
+                 type="number"
+                 min="1"
+                 placeholder="1"
+                 value={puntos}
+                 onChange={e => setPuntos(e.target.value)}
+                 className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
+               />
+             </div>
+           </div>
 
-          <p className="text-xs text-on-surface-variant dark:text-slate-500 font-label">
-            Los puntos se otorgan al cliente cuando se completa el servicio.
-          </p>
+           <p className="text-xs text-on-surface-variant dark:text-slate-500 font-label">
+             {t('services.pointsDescription')}
+           </p>
 
-          <button
-            type="submit"
-            disabled={guardando}
-            className="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-3.5 rounded-xl font-semibold shadow-lg shadow-primary/20 disabled:opacity-50 transition-all"
-          >
-            {guardando ? 'Guardando...' : 'Guardar servicio'}
-          </button>
-        </form>
+           <button
+             type="submit"
+             disabled={guardando}
+             className="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-3.5 rounded-xl font-semibold shadow-lg shadow-primary/20 disabled:opacity-50 transition-all"
+           >
+             {guardando ? 'Guardando...' : 'Guardar servicio'}
+           </button>
+         </form>
       </Modal>
 
       {/* Confirm Dialog */}

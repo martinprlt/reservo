@@ -7,7 +7,7 @@ export async function listar(tenantId) {
   });
 }
 
-export async function crear(tenantId, { nombre, rubro, duracionMinutos, precio, montoSenia, puntosOtorgados, variantes }) {
+export async function crear(tenantId, { nombre, rubro, duracionMinutos, precio, montoSenia, puntosOtorgados, variantes, foto }) {
   return prisma.servicio.create({
     data: {
       tenantId,
@@ -18,6 +18,7 @@ export async function crear(tenantId, { nombre, rubro, duracionMinutos, precio, 
       montoSenia: montoSenia || Math.round(precio * 0.3),
       puntosOtorgados: puntosOtorgados || 1,
       variantes: variantes || [],
+      foto: foto || null,
     },
   });
 }
@@ -31,7 +32,10 @@ export async function actualizar(tenantId, servicioId, data) {
 
   return prisma.servicio.update({
     where: { id: servicioId },
-    data,
+    data: {
+      ...data,
+      foto: data.foto ?? undefined, // Handle null/undefined correctly
+    },
   });
 }
 
