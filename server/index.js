@@ -1,4 +1,8 @@
 import 'dotenv/config';
+
+// Set timezone to Argentina for consistent date handling
+process.env.TZ = process.env.TZ || 'America/Argentina/Buenos_Aires';
+
 import './src/jobs/liberarReservas.job.js';
 import './src/jobs/recordatoriosWhatsApp.job.js';
 import app from './app.js';

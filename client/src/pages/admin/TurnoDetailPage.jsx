@@ -23,6 +23,7 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
   const [eliminando, setEliminando] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [guardandoNotas, setGuardandoNotas] = useState(false);
+  const [guardandoCliente, setGuardandoCliente] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -57,6 +58,21 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
       toast.error('Error al actualizar notas');
     } finally {
       setGuardandoNotas(false);
+    }
+  };
+
+  const handleClienteChange = async (campo, valor) => {
+    setGuardandoCliente(true);
+    try {
+      const { data } = await api.patch(`/admin/turnos/${turnoId}`, {
+        cliente: { [campo]: valor },
+      });
+      setTurno(data);
+      toast.success('Datos del cliente actualizados');
+    } catch {
+      toast.error('Error al actualizar datos del cliente');
+    } finally {
+      setGuardandoCliente(false);
     }
   };
 

@@ -140,7 +140,7 @@ export async function obtenerTurno(tenantId, turnoId) {
   return turno;
 }
 
-export async function actualizarTurno(tenantId, turnoId, { estado, notas }) {
+export async function actualizarTurno(tenantId, turnoId, { estado, notas, cliente }) {
   const turno = await prisma.turno.findUnique({
     where: { id: turnoId },
     include: { servicio: true, cliente: true },
@@ -153,6 +153,14 @@ export async function actualizarTurno(tenantId, turnoId, { estado, notas }) {
   const estadoAnterior = turno.estado;
 
   const result = await prisma.$transaction(async (tx) => {
+    // Update cliente data if provided
+    if (cliente && turno.clienteId) {
+      await tx.cliente.update({
+        where: { id: turno.clienteId },
+        data: cliente,
+      });
+    }
+
     // Update turn status
     const updated = await tx.turno.update({
       where: { id: turnoId },
