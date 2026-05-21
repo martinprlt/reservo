@@ -160,6 +160,25 @@ export async function actualizarTurno(tenantId, turnoId, { estado, notas }) {
       include: { servicio: true, cliente: true },
     });
 
+    // Create pago record when admin manually marks as SENIADO (cash/WhatsApp payment)
+    if (estado === 'SENIADO' && estadoAnterior !== 'SENIADO') {
+      const existingPago = await tx.pago.findFirst({
+        where: { turnoId },
+      });
+
+      if (!existingPago) {
+        await tx.pago.create({
+          data: {
+            turnoId,
+            monto: turno.montoSenia,
+            estado: 'APROBADO',
+            fechaPago: new Date(),
+            metodoPago: 'MANUAL',
+          },
+        });
+      }
+    }
+
     // Award points when turn is COMPLETED (if incentivos enabled and wasn't already completed)
     if (estado === 'COMPLETADO' && estadoAnterior !== 'COMPLETADO') {
       const tenant = await tx.tenant.findUnique({

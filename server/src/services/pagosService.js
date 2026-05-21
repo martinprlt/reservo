@@ -26,6 +26,7 @@ export async function procesarPagoAprobado(turnoId, mpPaymentId) {
           monto: turno.montoSenia,
           estado: 'APROBADO',
           fechaPago: new Date(),
+          metodoPago: 'MP',
         },
       });
 

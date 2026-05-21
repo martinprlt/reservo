@@ -133,6 +133,7 @@ model Pago {
   monto       Float
   estado      EstadoPago  @default(PENDIENTE)
   fechaPago   DateTime?
+  metodoPago  String?     // 'MP' for MercadoPago, 'MANUAL' for cash/WhatsApp
   creadoEn    DateTime    @default(now())
 
   turno Turno @relation(fields: [turnoId], references: [id])
