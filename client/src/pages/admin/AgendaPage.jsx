@@ -146,8 +146,6 @@ export default function AgendaPage() {
     });
   };
 
-  const getRubroColor = (rubro) => RUBRO_COLORS[rubro] || RUBRO_COLORS.general;
-
   if (selectedTurnoId) {
     return (
       <TurnoDetailPage
