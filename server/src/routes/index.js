@@ -7,6 +7,7 @@ import turnosRoutes from './turnos.routes.js';
 import adminRoutes from './admin.routes.js';
 import incentivosRoutes from './incentivos.routes.js';
 import webhooksRoutes from './webhooks.routes.js';
+import uploadRoutes from './upload.routes.js';
 import resolveTenant from '../middleware/tenant.js';
 import prisma from '../config/prisma.js';
 
@@ -43,5 +44,6 @@ router.use('/turnos', turnosRoutes);
 router.use('/admin', adminRoutes);
 router.use('/incentivos', incentivosRoutes);
 router.use('/webhooks', webhooksRoutes);
+router.use('/upload', uploadRoutes);
 
 export default router;

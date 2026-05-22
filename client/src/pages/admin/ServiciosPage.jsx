@@ -30,6 +30,9 @@ export default function ServiciosPage() {
   const [duracion, setDuracion] = useState('');
   const [seña, setSeña] = useState('');
   const [foto, setFoto] = useState('');
+  const [fotoFile, setFotoFile] = useState(null);
+  const [fotoPreview, setFotoPreview] = useState('');
+  const [subiendoFoto, setSubiendoFoto] = useState(false);
   const [puntos, setPuntos] = useState('1');
   const [guardando, setGuardando] = useState(false);
   const toast = useToast();
@@ -61,6 +64,8 @@ export default function ServiciosPage() {
     setSeña('');
     setPuntos('1');
     setFoto('');
+    setFotoFile(null);
+    setFotoPreview('');
     setModalOpen(true);
   };
 
@@ -101,13 +106,46 @@ export default function ServiciosPage() {
     setSeña(String(s.montoSenia));
     setPuntos(String(s.puntosOtorgados || 1));
     setFoto(s.foto || '');
+    setFotoFile(null);
+    setFotoPreview(s.foto || '');
     setModalOpen(true);
+  };
+
+  const handleFotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFotoFile(file);
+      setFotoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const uploadFoto = async () => {
+    if (!fotoFile) return foto;
+    setSubiendoFoto(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', fotoFile);
+      const { data } = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return data.url;
+    } catch {
+      toast.error('Error al subir imagen');
+      return foto;
+    } finally {
+      setSubiendoFoto(false);
+    }
   };
 
   const handleGuardar = async (e) => {
     e.preventDefault();
     setGuardando(true);
     try {
+      let fotoUrl = foto;
+      if (fotoFile) {
+        fotoUrl = await uploadFoto();
+      }
+
       const payload = {
         nombre,
         rubro: rubro || 'general',
@@ -115,6 +153,7 @@ export default function ServiciosPage() {
         duracionMinutos: parseInt(duracion),
         montoSenia: parseFloat(seña),
         puntosOtorgados: parseInt(puntos) || 1,
+        foto: fotoUrl || null,
       };
 
       if (editando) {
@@ -323,21 +362,29 @@ export default function ServiciosPage() {
              </div>
            </div>
            
-           <div className="grid grid-cols-2 gap-4">
-             <div>
-               <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Foto del servicio (URL)</label>
-               <input
-                 type="text"
-                 placeholder="https://i.imgur.com/tu-foto.jpg"
-                 value={foto}
-                 onChange={e => setFoto(e.target.value)}
-                 className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-               />
-               <p className="text-xs text-on-surface-variant dark:text-slate-500 font-label">
-                 Usá un link directo de imagen (termina en .png, .jpg, .jpeg, etc.)
-               </p>
-             </div>
-           </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Foto del servicio</label>
+                {fotoPreview ? (
+                  <div className="relative">
+                    <img src={fotoPreview} alt="Preview" className="w-full h-32 object-cover rounded-xl border border-outline-variant/20" />
+                    <button
+                      type="button"
+                      onClick={() => { setFoto(''); setFotoFile(null); setFotoPreview(''); }}
+                      className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center text-white hover:bg-black/80 transition"
+                    >
+                      <span className="material-symbols-outlined text-sm">close</span>
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-outline-variant/30 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition">
+                    <span className="material-symbols-outlined text-2xl text-on-surface-variant/50 mb-1">add_photo_alternate</span>
+                    <p className="text-xs text-on-surface-variant font-body">Subir imagen</p>
+                    <input type="file" accept="image/*" onChange={handleFotoChange} className="hidden" />
+                  </label>
+                )}
+              </div>
+            </div>
 
            <div className="grid grid-cols-2 gap-4">
              <div>

@@ -12,6 +12,9 @@ export default function ConfigPage() {
   const [billeteraVirtual, setBilleteraVirtual] = useState('');
   const [nombreNegocio, setNombreNegocio] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
+  const [logoFile, setLogoFile] = useState(null);
+  const [logoPreview, setLogoPreview] = useState('');
+  const [subiendoLogo, setSubiendoLogo] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const { theme, setTheme, customColors, setCustomColors } = useTheme();
   const { language, setLanguage, t } = useLanguage();
@@ -27,21 +30,53 @@ export default function ConfigPage() {
       setBilleteraVirtual(data.billeteraVirtual || '');
       setNombreNegocio(data.nombreNegocio || '');
       setLogoUrl(data.logoUrl || '');
+      setLogoPreview(data.logoUrl || '');
     }).catch(() => {});
   }, []);
 
   const toast = useToast();
 
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setLogoFile(file);
+      setLogoPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const uploadLogo = async () => {
+    if (!logoFile) return logoUrl;
+    setSubiendoLogo(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', logoFile);
+      const { data } = await api.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return data.url;
+    } catch {
+      toast.error('Error al subir logo');
+      return logoUrl;
+    } finally {
+      setSubiendoLogo(false);
+    }
+  };
+
   const handleGuardar = async () => {
     setGuardando(true);
     try {
+      let finalLogoUrl = logoUrl;
+      if (logoFile) {
+        finalLogoUrl = await uploadLogo();
+      }
+
       await api.patch('/admin/config', {
         horarios,
         telefonoAdmin,
         mpLink,
         billeteraVirtual,
         nombreNegocio,
-        logoUrl,
+        logoUrl: finalLogoUrl,
         colorPrimario: theme === 'custom' ? colorPrimario : undefined,
         colorSecundario: theme === 'custom' ? colorSecundario : undefined,
       });
@@ -113,29 +148,35 @@ export default function ConfigPage() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5 font-label" style={{ color: 'var(--on-surface)' }}>
-                URL del logo
+                Logo del emprendimiento
               </label>
-              <input
-                value={logoUrl}
-                onChange={(e) => {
-                  let url = e.target.value;
-                  // Auto-fix imgur gallery URLs
-                  if (url.includes('imgur.com/') && !url.includes('i.imgur.com')) {
-                    const match = url.match(/imgur\.com\/(?:gallery\/)?(\w+)/);
-                    if (match) {
-                      url = `https://i.imgur.com/${match[1]}.png`;
-                    }
-                  }
-                  setLogoUrl(url);
-                }}
-                className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
-                style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
-                placeholder="https://i.imgur.com/tu-logo.png"
-              />
-              <p className="text-xs mt-1 font-label" style={{ color: 'var(--on-surface-variant)' }}>
-                <strong>Imgur:</strong> Usá el link directo de imagen (termina en .png o .jpg), no el link de galería.<br />
-                Ejemplo correcto: <code className="bg-gray-100 px-1 rounded">https://i.imgur.com/ABC123.png</code>
-              </p>
+              <div className="flex items-center gap-4">
+                {logoPreview ? (
+                  <div className="relative">
+                    <img src={logoPreview} alt="Logo preview" className="w-16 h-16 rounded-xl object-cover border border-outline-variant/20" />
+                    <button
+                      type="button"
+                      onClick={() => { setLogoUrl(''); setLogoFile(null); setLogoPreview(''); }}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center text-white hover:bg-black/80 transition"
+                    >
+                      <span className="material-symbols-outlined text-sm">close</span>
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-16 h-16 border-2 border-dashed border-outline-variant/30 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition">
+                    <span className="material-symbols-outlined text-xl text-on-surface-variant/50">add_photo_alternate</span>
+                    <input type="file" accept="image/*" onChange={handleLogoChange} className="hidden" />
+                  </label>
+                )}
+                <div className="flex-1">
+                  <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>
+                    Subí una imagen desde tu dispositivo
+                  </p>
+                  <p className="text-xs font-label mt-1" style={{ color: 'var(--on-surface-variant)', opacity: 0.6 }}>
+                    PNG, JPG hasta 5MB
+                  </p>
+                </div>
+              </div>
             </div>
             {logoUrl && (
               <div className="flex items-center gap-3 p-3 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)' }}>
