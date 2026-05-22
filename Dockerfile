@@ -16,7 +16,7 @@ RUN npx prisma generate
 
 # Stage 3: Production con OpenSSL para Prisma
 FROM node:20-slim
-RUN apt-get update -y && apt-get install -y tzdata && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && apt-get install -y openssl libssl3 tzdata && rm -rf /var/lib/apt/lists/*
 ENV TZ=America/Argentina/Buenos_Aires
 
 WORKDIR /app
