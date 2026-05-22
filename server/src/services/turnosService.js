@@ -19,7 +19,7 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
   const fecha = new Date(fechaHora);
   const slots = await calcularSlotsLibres(tenantId, servicioId, fecha);
 
-  const slotLibre = slots.find(s => s.inicio.getTime() === fecha.getTime());
+  const slotLibre = slots.find(s => new Date(s.inicio).getTime() === fecha.getTime());
   if (!slotLibre) throw new Error('SLOT_NO_DISPONIBLE');
 
   const cliente = await prisma.cliente.upsert({
