@@ -1,16 +1,13 @@
 import axios from 'axios';
 
-// Determine if we're on a subdomain (e.g., tusnailslr.slotify.app)
+// Only detect subdomains on our custom domain, not on *.onrender.com or other hosts
 function getSubdomainTenant() {
   const host = window.location.hostname;
-  // Localhost = no subdomain
   if (host === 'localhost' || host === '127.0.0.1') return null;
-  // Production: extract first part before main domain
-  // e.g., tusnailslr.slotify.app → tusnailslr
-  // e.g., slotify.app → null (no subdomain)
+  // Only on slotify.app domain — e.g., tusnailslr.slotify.app
+  if (!host.endsWith('.slotify.app')) return null;
   const parts = host.split('.');
-  if (parts.length > 2) return parts[0];
-  // If on a custom domain like slotify.app, no subdomain tenant
+  if (parts.length >= 3) return parts[0];
   return null;
 }
 

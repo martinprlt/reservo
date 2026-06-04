@@ -14,11 +14,14 @@ export default async function resolveTenant(req, res, next) {
     // 1. Query param (highest priority)
     let slug = req.query.tenant;
 
-    // 2. Subdomain
+    // 2. Subdomain — only on custom domain (*.slotify.app)
     if (!slug) {
-      const hostParts = req.hostname.split('.');
-      if (hostParts.length > 2) {
-        slug = hostParts[0];
+      const host = req.hostname;
+      if (host.endsWith('.slotify.app')) {
+        const hostParts = host.split('.');
+        if (hostParts.length >= 3) {
+          slug = hostParts[0];
+        }
       }
     }
 
