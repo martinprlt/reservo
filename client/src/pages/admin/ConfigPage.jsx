@@ -7,6 +7,7 @@ import clsx from 'clsx';
 
 export default function ConfigPage() {
   const [horarios, setHorarios] = useState({});
+  const [incentivosActivos, setIncentivosActivos] = useState(true);
   const [telefonoAdmin, setTelefonoAdmin] = useState('');
   const [mpLink, setMpLink] = useState('');
   const [billeteraVirtual, setBilleteraVirtual] = useState('');
@@ -35,6 +36,7 @@ export default function ConfigPage() {
       setNombreNegocio(data.nombreNegocio || '');
       setLogoUrl(data.logoUrl || '');
       setLogoPreview(data.logoUrl || '');
+      setIncentivosActivos(data.incentivosActivos !== false);
     }).catch(() => {});
   }, []);
 
@@ -83,6 +85,7 @@ export default function ConfigPage() {
         logoUrl: finalLogoUrl,
         colorPrimario: theme === 'custom' ? colorPrimario : undefined,
         colorSecundario: theme === 'custom' ? colorSecundario : undefined,
+        incentivosActivos,
       });
       toast.success('Configuración guardada');
     } catch {
@@ -565,8 +568,7 @@ export default function ConfigPage() {
           </h2>
           <label className="flex items-center justify-between cursor-pointer" onClick={(e) => {
             e.preventDefault();
-            const current = horarios.incentivosActivos !== false;
-            setHorarios(prev => ({ ...prev, incentivosActivos: !current }));
+            setIncentivosActivos(prev => !prev);
           }}>
             <div>
               <p className="font-medium font-label" style={{ color: 'var(--on-surface)' }}>Puntos y descuentos activos</p>
@@ -576,15 +578,15 @@ export default function ConfigPage() {
             </div>
             <div
               className="relative w-12 h-7 rounded-full transition-colors duration-200 cursor-pointer"
-              style={{ backgroundColor: horarios.incentivosActivos !== false ? 'var(--tertiary)' : 'var(--surface-container-highest)' }}
+              style={{ backgroundColor: incentivosActivos ? 'var(--tertiary)' : 'var(--surface-container-highest)' }}
             >
               <div
                 className="absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow transition-transform duration-200"
-                style={{ transform: horarios.incentivosActivos !== false ? 'translateX(20px)' : 'translateX(0)' }}
+                style={{ transform: incentivosActivos ? 'translateX(20px)' : 'translateX(0)' }}
               />
             </div>
           </label>
-          {horarios.incentivosActivos === false && (
+          {!incentivosActivos && (
             <div className="mt-4 p-3 rounded-lg border" style={{ backgroundColor: '#fef9c3', borderColor: '#fde047' }}>
               <p className="text-xs font-label" style={{ color: '#854d0e' }}>
                 Los incentivos están desactivados. Los clientes no acumularán puntos ni verán descuentos.

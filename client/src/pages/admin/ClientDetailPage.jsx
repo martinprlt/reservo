@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import api from '../../api/client';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { useToast } from '../../store/toastContext';
 import clsx from 'clsx';
 
 const estadoVariant = (estado) => {
@@ -23,7 +24,7 @@ export default function ClientDetailPage({ clienteId, onBack }) {
   const [eliminando, setEliminando] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogConfig, setDialogConfig] = useState({});
-  const [turnoAEliminar, setTurnoAEliminar] = useState(null);
+  const toast = useToast();
 
   const fetchCliente = () => {
     api.get(`/admin/clientes/${clienteId}`)
@@ -47,10 +48,12 @@ export default function ClientDetailPage({ clienteId, onBack }) {
       onConfirm: async () => {
         setEliminando(true);
         try {
-          await api.delete(`/admin/clientes/${clienteId}/turnos`);
+          const { data } = await api.delete(`/admin/clientes/${clienteId}/turnos`);
+          toast?.success?.(`${data.eliminados || 0} turnos cancelados`);
           fetchCliente();
-        } catch {
-          alert('Error');
+        } catch (err) {
+          console.error('Error deleting history:', err);
+          toast?.error?.('Error al eliminar historial');
         } finally {
           setEliminando(false);
         }
@@ -60,7 +63,6 @@ export default function ClientDetailPage({ clienteId, onBack }) {
   };
 
   const handleDeleteTurno = (turnoId) => {
-    setTurnoAEliminar(turnoId);
     setDialogConfig({
       title: 'Cancelar turno',
       message: '¿Cancelar este turno? Se notificará al cliente.',
@@ -69,9 +71,10 @@ export default function ClientDetailPage({ clienteId, onBack }) {
       onConfirm: async () => {
         try {
           await api.delete(`/admin/turnos/${turnoId}`);
+          toast.success('Turno cancelado');
           fetchCliente();
         } catch {
-          alert('Error');
+          toast.error('Error al cancelar turno');
         }
       },
     });

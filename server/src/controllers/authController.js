@@ -7,7 +7,7 @@ export default {
       const result = await login(req.body.email, req.body.password, tenantId);
       res.cookie('token', result.token, {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 8 * 60 * 60 * 1000,
         path: '/',
@@ -19,7 +19,12 @@ export default {
   },
 
   async logout(req, res) {
-    res.clearCookie('token');
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
     res.json({ ok: true });
   },
 

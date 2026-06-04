@@ -15,7 +15,10 @@ async function verifySignature(req, mpWebhookSecret) {
   if (!ts || !v1) return false;
 
   const secret = mpWebhookSecret || process.env.MP_WEBHOOK_SECRET;
-  if (!secret) return true; // No secret configured, skip verification
+  if (!secret) {
+    console.warn('WARNING: MP_WEBHOOK_SECRET not configured — rejecting webhook');
+    return false;
+  }
 
   const manifest = `id:${dataId};request-id:${reqId};ts:${ts};`;
   const expected = crypto.createHmac('sha256', secret)

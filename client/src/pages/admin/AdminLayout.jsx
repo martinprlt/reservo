@@ -46,7 +46,7 @@ export default function AdminLayout() {
 
   const renderPage = () => {
     switch (activePage) {
-      case 'dashboard': return <DashboardPage />;
+      case 'dashboard': return <DashboardPage onNavigate={setActivePage} />;
       case 'agenda': return <AgendaPage />;
       case 'clientes': return <ClientesPage />;
       case 'servicios': return <ServiciosPage />;

@@ -27,13 +27,6 @@ export default function NuevoTurnoModal({ isOpen, onClose, onCreated, fechaInici
       const month = String(d.getMonth() + 1).padStart(2, '0');
       const day = String(d.getDate()).padStart(2, '0');
       setFecha(`${year}-${month}-${day}`);
-    }
-  }, [fechaInicial]);
-
-  useEffect(() => {
-    // If clicking on a specific hour slot
-    if (fechaInicial) {
-      const d = new Date(fechaInicial);
       const h = String(d.getHours()).padStart(2, '0');
       const m = String(d.getMinutes()).padStart(2, '0');
       setHora(`${h}:${m}`);

@@ -4,7 +4,7 @@ import { es } from 'date-fns/locale';
 import api from '../../api/client';
 import { useLanguage } from '../../store/languageContext';
 
-export default function DashboardPage() {
+export default function DashboardPage({ onNavigate }) {
   const [turnosHoy, setTurnosHoy] = useState([]);
   const [stats, setStats] = useState({ turnosHoy: 0, clientesNuevos: 0, clientesTotal: 0, ingresosMes: 0, turnosPorDia: [0,0,0,0,0,0,0] });
   const [loading, setLoading] = useState(true);
@@ -159,7 +159,7 @@ export default function DashboardPage() {
           <div className="px-8 py-6 border-b border-outline-variant/10 flex items-center justify-between">
             <h2 className="font-headline text-headline-lg text-on-background">Próximos Turnos</h2>
             <button
-              onClick={() => document.querySelector('[data-nav="agenda"]')?.click()}
+              onClick={() => onNavigate?.('agenda')}
               className="text-primary font-label text-label-caps flex items-center gap-1 hover:underline"
             >
               Ver Agenda <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -230,13 +230,13 @@ export default function DashboardPage() {
             <span className="font-label text-label-caps text-on-surface-variant uppercase tracking-widest block mb-4">Acciones Rápidas</span>
             <div className="flex flex-wrap gap-2">
               <button
-                onClick={() => document.querySelector('[data-nav="agenda"]')?.click()}
+                onClick={() => onNavigate?.('agenda')}
                 className="px-4 py-2 rounded-full bg-surface-container-high text-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all"
               >
                 Nuevo Turno
               </button>
               <button
-                onClick={() => document.querySelector('[data-nav="clientes"]')?.click()}
+                onClick={() => onNavigate?.('clientes')}
                 className="px-4 py-2 rounded-full bg-surface-container-high text-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all"
               >
                 Agregar Cliente

@@ -64,32 +64,34 @@ export default function BookingPage() {
 
       {/* Progress Steps */}
       {typeof paso === 'number' && (
-        <div className="fixed top-16 w-full px-4 py-2 bg-white/60 backdrop-blur-md z-40">
+        <div className="fixed top-16 w-full px-3 py-3 bg-white/60 backdrop-blur-md z-40">
           <div className="flex items-center justify-between max-w-lg mx-auto">
             {steps.map((step, i) => (
-              <div key={step.num} className="flex items-center">
-                <div
-                  className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-all duration-300 ${
-                    paso === step.num
-                      ? 'bg-primary text-white shadow-lg'
-                      : paso > step.num
-                      ? 'bg-green-500 text-white'
-                      : 'bg-gray-200 text-gray-500'
-                  }`}
-                >
-                  {paso > step.num ? (
-                    <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
-                  ) : (
-                    step.num
-                  )}
+              <div key={step.num} className="flex items-center flex-1 last:flex-none">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all duration-300 ${
+                      paso === step.num
+                        ? 'bg-primary text-white shadow-lg scale-110'
+                        : paso > step.num
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-200 text-gray-500'
+                    }`}
+                  >
+                    {paso > step.num ? (
+                      <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
+                    ) : (
+                      step.num
+                    )}
+                  </div>
+                  <span className={`mt-1 text-[9px] font-label text-center leading-tight ${
+                    paso === step.num ? 'text-primary font-semibold' : paso > step.num ? 'text-green-600' : 'text-gray-400'
+                  }`}>
+                    {step.label}
+                  </span>
                 </div>
-                <span className={`hidden sm:inline ml-1 text-[10px] font-label ${
-                  paso === step.num ? 'text-primary font-medium' : 'text-gray-400'
-                }`}>
-                  {step.label}
-                </span>
                 {i < steps.length - 1 && (
-                  <div className={`hidden sm:block w-6 md:w-8 h-0.5 mx-1 transition-colors ${
+                  <div className={`flex-1 h-0.5 mx-1.5 mt-[-12px] transition-colors ${
                     paso > step.num ? 'bg-green-500' : 'bg-gray-200'
                   }`} />
                 )}
@@ -100,7 +102,7 @@ export default function BookingPage() {
       )}
 
       {/* Main Content */}
-      <main className="pt-28 pb-8 px-4 max-w-2xl mx-auto">
+      <main className="pt-32 pb-8 px-4 max-w-2xl mx-auto">
         {paso === 1 && <Step1Servicio />}
         {paso === 2 && <Step2Horario />}
         {paso === 3 && <Step3Datos />}
@@ -110,7 +112,7 @@ export default function BookingPage() {
       </main>
 
       {/* WhatsApp Button */}
-      {tenantConfig?.telefonoAdmin && (
+      {tenantConfig?.telefonoAdmin && paso !== 'confirmacion' && (
         <a
           href={`https://wa.me/${tenantConfig.telefonoAdmin.replace(/\D/g, '')}?text=Hola!%20Quiero%20consultar%20sobre%20${servicioSeleccionado?.nombre || 'un turno'}`}
           target="_blank"
