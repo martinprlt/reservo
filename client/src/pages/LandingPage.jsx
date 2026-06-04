@@ -47,7 +47,6 @@ const plans = [
       "Turnos ilimitados",
       "Puntos y descuentos",
       "Reportes y estadísticas",
-      "Gestión de stock",
     ],
     notIncluded: [],
     featured: true,
@@ -94,7 +93,7 @@ const comparison = [
   { feature: "WhatsApp Automático", basico: true, pro: true, competidor: true },
   { feature: "MercadoPago (Señas)", basico: true, pro: true, competidor: true },
   { feature: "Puntos y Descuentos", basico: true, pro: true, competidor: false },
-  { feature: "Reportes / Stock", basico: false, pro: true, competidor: "Estadísticas sí /\nStock no se menciona" },
+  { feature: "Reportes", basico: false, pro: true, competidor: "Estadísticas básicas" },
 ];
 
 const faqs = [
