@@ -14,10 +14,8 @@ import prisma from '../config/prisma.js';
 
 const router = Router();
 
-// Platform routes (no tenant resolution needed)
+// Routes that DON'T need tenant resolution
 router.use('/platform', platformRoutes);
-
-// Super admin creation (no tenant needed)
 router.post('/auth/create-super-admin', async (req, res) => {
   try {
     const bcrypt = await import('bcryptjs');
@@ -33,7 +31,10 @@ router.post('/auth/create-super-admin', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+router.use('/auth', authRoutes);
+router.use('/admin', adminRoutes);
 
+// Tenant resolution for public/booking routes
 router.use(resolveTenant);
 
 // Public tenant config for booking
@@ -57,12 +58,10 @@ router.get('/config', async (req, res) => {
   }
 });
 
-router.use('/auth', authRoutes);
 router.use('/servicios', serviciosRoutes);
 router.use('/disponibilidad', disponibilidadRoutes);
 router.use('/clientes', clientesRoutes);
 router.use('/turnos', turnosRoutes);
-router.use('/admin', adminRoutes);
 router.use('/incentivos', incentivosRoutes);
 router.use('/webhooks', webhooksRoutes);
 router.use('/upload', uploadRoutes);
