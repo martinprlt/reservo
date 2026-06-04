@@ -7,6 +7,7 @@ export const crearTurnoSchema = z.object({
   nombre: z.string().min(2, 'Nombre muy corto'),
   apellido: z.string().min(2, 'Apellido muy corto'),
   telefono: z.string().min(8, 'Teléfono inválido'),
+  aceptaNotificaciones: z.boolean().optional(),
 });
 
 export const registerSchema = z.object({

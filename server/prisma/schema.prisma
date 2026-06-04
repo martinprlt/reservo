@@ -124,8 +124,9 @@ model Turno {
   notas         String?
   fotoUrl       String?     // Reference photo uploaded by client during booking
   mpPrefId      String?
-  fotoPublicId  String?     // Cloudinary public ID for cleanup
-  creadoEn      DateTime    @default(now())
+   fotoPublicId  String?     // Cloudinary public ID for cleanup
+   aceptaNotificaciones Boolean @default(false)
+   creadoEn      DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
   tenant   Tenant   @relation(fields: [tenantId], references: [id])

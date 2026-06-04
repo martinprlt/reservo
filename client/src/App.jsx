@@ -12,6 +12,8 @@ const LoginPage = lazy(() => import('./pages/admin/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/admin/RegisterPage'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const SuperAdminLayout = lazy(() => import('./pages/superadmin/SuperAdminLayout'));
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'));
+const TermsPage = lazy(() => import('./pages/TermsPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 function LoadingScreen() {
@@ -39,6 +41,8 @@ function App() {
                   <Route path="/booking/confirmacion" element={<BookingPage />} />
                   <Route path="/admin/login" element={<LoginPage />} />
                   <Route path="/registro" element={<RegisterPage />} />
+                  <Route path="/privacidad" element={<PrivacyPage />} />
+                  <Route path="/terminos" element={<TermsPage />} />
                   <Route
                     path="/admin/*"
                     element={

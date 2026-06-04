@@ -3,7 +3,7 @@ import adminController from '../controllers/adminController.js';
 import exportController from '../controllers/exportController.js';
 import reportesController from '../controllers/reportesController.js';
 import notificacionesController from '../controllers/notificacionesController.js';
-import verifyJWT from '../middleware/auth.js';
+import verifyJWT, { requireAdmin } from '../middleware/auth.js';
 import { enviarWhatsApp } from '../config/twilio.js';
 import prisma from '../config/prisma.js';
 import { getPlanLimits } from '../config/plans.js';
@@ -11,6 +11,7 @@ import { getPlanLimits } from '../config/plans.js';
 const router = Router();
 
 router.use(verifyJWT);
+router.use(requireAdmin);
 router.get('/stats', adminController.obtenerStats);
 router.get('/agenda', adminController.obtenerAgenda);
 router.get('/turnos', adminController.listarTurnos);

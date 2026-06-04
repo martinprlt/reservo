@@ -37,7 +37,10 @@ export async function enviarConfirmacionTurno(turno) {
 }
 
 export async function enviarRecordatorio(turno) {
-  const { cliente, servicio, fechaHora } = turno;
+  const { cliente, servicio, fechaHora, aceptaNotificaciones } = turno;
+
+  // Only send if client accepted notifications
+  if (aceptaNotificaciones === false) return;
 
   const fechaFormateada = formatFecha(fechaHora);
 
@@ -69,7 +72,9 @@ export async function enviarNuevoTurnoAdmin(tenant, turno) {
 }
 
 export async function enviarConfirmacionCliente(turno) {
-  const { cliente, servicio, fechaHora } = turno;
+  const { cliente, servicio, fechaHora, aceptaNotificaciones } = turno;
+  if (aceptaNotificaciones === false) return;
+
   const fechaFormateada = formatFecha(fechaHora);
 
   const mensaje = `✅ Tu turno fue confirmado\n\n` +
@@ -82,7 +87,9 @@ export async function enviarConfirmacionCliente(turno) {
 }
 
 export async function enviarCancelacionCliente(turno, motivo) {
-  const { cliente, servicio, fechaHora } = turno;
+  const { cliente, servicio, fechaHora, aceptaNotificaciones } = turno;
+  if (aceptaNotificaciones === false) return;
+
   const fechaFormateada = formatFecha(fechaHora);
 
   const mensaje = `❌ Tu turno fue cancelado\n\n` +

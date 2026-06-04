@@ -8,6 +8,7 @@ export const useBookingStore = create((set, get) => ({
   fechaSeleccionada: null,
   slotSeleccionado: null,
   datosCliente: null,
+  aceptaNotificaciones: false,
   notas: '',
   fotoFile: null,
   fotoPreview: null,
@@ -60,6 +61,8 @@ export const useBookingStore = create((set, get) => ({
       error: null,
     }),
 
+  setAceptaNotificaciones: (value) => set({ aceptaNotificaciones: value }),
+
   setNotas: (notas, fotoFile = null, fotoPreview = null) =>
     set({
       notas,
@@ -93,6 +96,7 @@ export const useBookingStore = create((set, get) => ({
       fechaSeleccionada: null,
       slotSeleccionado: null,
       datosCliente: null,
+      aceptaNotificaciones: false,
       notas: '',
       fotoFile: null,
       fotoPreview: null,

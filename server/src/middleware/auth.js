@@ -21,3 +21,13 @@ export function requireSuperAdmin(req, res, next) {
   }
   next();
 }
+
+export function requireAdmin(req, res, next) {
+  if (req.role === 'SUPER_ADMIN') {
+    return res.status(403).json({ error: 'Usá la ruta /platform para super admin' });
+  }
+  if (!req.tenantId) {
+    return res.status(400).json({ error: 'Tenant no especificado' });
+  }
+  next();
+}

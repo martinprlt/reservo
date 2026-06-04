@@ -6,7 +6,7 @@ import { enviarNuevoTurnoAdmin } from './whatsappService.js';
 import { enviarPushAdmin } from './pushService.js';
 import { getPlanLimits } from '../config/plans.js';
 
-export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas, fotoUrl, fotoPublicId }) {
+export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas, fotoUrl, fotoPublicId, aceptaNotificaciones }) {
   // Check plan limit for turns per month
   const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { plan: true, config: true } });
   const limits = getPlanLimits(tenant?.plan);
@@ -63,6 +63,7 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
       notas: notas || null,
       fotoUrl: fotoUrl || null,
       fotoPublicId: fotoPublicId || null,
+      aceptaNotificaciones: aceptaNotificaciones || false,
     },
   });
 
@@ -121,9 +122,9 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
   return { turnoId: turno.id, initPoint };
 }
 
-export async function obtenerEstado(turnoId) {
-  const turno = await prisma.turno.findUnique({
-    where: { id: turnoId },
+export async function obtenerEstado(turnoId, tenantId) {
+  const turno = await prisma.turno.findFirst({
+    where: { id: turnoId, tenantId },
     include: { servicio: true, cliente: true },
   });
 

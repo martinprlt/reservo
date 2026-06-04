@@ -12,7 +12,7 @@ export default {
 
   async obtenerEstado(req, res, next) {
     try {
-      const turno = await obtenerEstado(req.params.id);
+      const turno = await obtenerEstado(req.params.id, req.tenantId);
       res.json(turno);
     } catch (error) {
       next(error);

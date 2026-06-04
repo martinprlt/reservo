@@ -35,7 +35,14 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: (origin, cb) => cb(null, true),
+  origin: (origin, cb) => {
+    // Allow localhost for development, slotifyapp.site for production
+    if (!origin || origin.includes('localhost') || origin.endsWith('.slotifyapp.site') || origin === 'https://slotifyapp.site') {
+      cb(null, true);
+    } else {
+      cb(new Error('CORS not allowed'));
+    }
+  },
   credentials: true,
 }));
 

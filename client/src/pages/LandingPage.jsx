@@ -464,9 +464,9 @@ export default function LandingPage() {
             Sistema SaaS de turnos · Argentina · 2026
           </p>
           <div style={{ display: "flex", gap: 20 }}>
-            {["Términos", "Privacidad", "Contacto"].map((item, i) => (
-              <a key={i} href="#" style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>{item}</a>
-            ))}
+            <a href="/terminos" style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>Términos</a>
+            <a href="/privacidad" style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>Privacidad</a>
+            <a href="mailto:admin@slotifyapp.site" style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>Contacto</a>
           </div>
         </div>
       </footer>
