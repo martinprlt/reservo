@@ -1,5 +1,13 @@
 import prisma from '../config/prisma.js';
 
+function escapeCSV(value) {
+  const str = String(value ?? '');
+  if (str.includes('"') || str.includes(',') || str.includes('\n')) {
+    return `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
 export async function exportarClientesCSV(tenantId) {
   const clientes = await prisma.cliente.findMany({
     where: { tenantId },
@@ -8,7 +16,7 @@ export async function exportarClientesCSV(tenantId) {
 
   const header = 'Nombre,Apellido,Teléfono,Puntos,Fecha Alta\n';
   const rows = clientes.map(c =>
-    `"${c.nombre}","${c.apellido}","${c.telefono}",${c.puntos},"${c.creadoEn.toISOString()}"`
+    [escapeCSV(c.nombre), escapeCSV(c.apellido), escapeCSV(c.telefono), c.puntos, escapeCSV(c.creadoEn.toISOString())].join(',')
   ).join('\n');
 
   return header + rows;
@@ -32,7 +40,8 @@ export async function exportarTurnosCSV(tenantId, desde, hasta) {
     const fecha = new Date(t.fechaHora);
     const fechaStr = fecha.toISOString().split('T')[0];
     const horaStr = fecha.toISOString().split('T')[1].substring(0, 5);
-    return `"${fechaStr}","${horaStr}","${t.cliente.nombre} ${t.cliente.apellido}","${t.servicio.nombre}","${t.estado}",${t.precioTotal},${t.montoSenia}`;
+    const cliente = `${t.cliente.nombre} ${t.cliente.apellido}`;
+    return [escapeCSV(fechaStr), escapeCSV(horaStr), escapeCSV(cliente), escapeCSV(t.servicio.nombre), escapeCSV(t.estado), t.precioTotal, t.montoSenia].join(',');
   }).join('\n');
 
   return header + rows;

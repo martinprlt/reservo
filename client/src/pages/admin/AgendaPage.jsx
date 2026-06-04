@@ -189,6 +189,13 @@ export default function AgendaPage() {
             <span className="material-symbols-outlined group-hover:rotate-90 transition-transform">add</span>
             <span className="hidden sm:inline">Nuevo Turno</span>
           </button>
+          <a
+            href={`/api/admin/export/turnos?desde=${inicioSemana.toISOString()}&hasta=${addDays(inicioSemana, 6).toISOString()}`}
+            className="flex items-center justify-center gap-2 bg-surface-container-high text-primary px-4 py-3 rounded-xl font-label text-label-caps uppercase tracking-widest hover:bg-primary-container hover:text-on-primary-container transition-all ml-2"
+          >
+            <span className="material-symbols-outlined text-lg">download</span>
+            <span className="hidden sm:inline">CSV</span>
+          </a>
         </div>
       </div>
 

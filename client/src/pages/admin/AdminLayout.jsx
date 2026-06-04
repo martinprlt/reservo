@@ -1,16 +1,17 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { useAdminStore } from '../../store/adminStore';
 import { useLanguage } from '../../store/languageContext';
 import { cachedApi } from '../../api/client';
-import DashboardPage from './DashboardPage';
-import AgendaPage from './AgendaPage';
-import ClientesPage from './ClientesPage';
-import ServiciosPage from './ServiciosPage';
-import IncentivosPage from './IncentivosPage';
-import ConfigPage from './ConfigPage';
-import ReportesPage from './ReportesPage';
 import NotificationBell from '../../components/admin/NotificationBell';
 import clsx from 'clsx';
+
+const DashboardPage = lazy(() => import('./DashboardPage'));
+const AgendaPage = lazy(() => import('./AgendaPage'));
+const ClientesPage = lazy(() => import('./ClientesPage'));
+const ServiciosPage = lazy(() => import('./ServiciosPage'));
+const IncentivosPage = lazy(() => import('./IncentivosPage'));
+const ConfigPage = lazy(() => import('./ConfigPage'));
+const ReportesPage = lazy(() => import('./ReportesPage'));
 
 const navItems = [
   { id: 'dashboard', label: 'Home', icon: 'home' },
@@ -20,6 +21,14 @@ const navItems = [
   { id: 'reportes', label: 'Reportes', icon: 'bar_chart' },
   { id: 'incentivos', labelKey: 'nav.rewards', icon: 'star', conditional: true },
 ];
+
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+    </div>
+  );
+}
 
 export default function AdminLayout() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -138,7 +147,9 @@ export default function AdminLayout() {
 
       {/* Main Content */}
       <main className="pt-20 pb-24 md:pb-8 md:pl-20 px-4 md:px-8 max-w-content mx-auto transition-all duration-300">
-        {renderPage()}
+        <Suspense fallback={<PageLoader />}>
+          {renderPage()}
+        </Suspense>
       </main>
 
       {/* Bottom Navigation (Mobile only) */}

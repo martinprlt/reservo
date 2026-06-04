@@ -257,7 +257,13 @@ export default function DashboardPage({ onNavigate }) {
                 href="/api/admin/export/clientes"
                 className="px-4 py-2 rounded-full bg-surface-container-high text-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all"
               >
-                Exportar
+                Exportar Clientes
+              </a>
+              <a
+                href="/api/admin/export/turnos"
+                className="px-4 py-2 rounded-full bg-surface-container-high text-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all"
+              >
+                Exportar Turnos
               </a>
             </div>
           </div>

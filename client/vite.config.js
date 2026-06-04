@@ -20,6 +20,17 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          dates: ['date-fns'],
+          state: ['zustand'],
+        }
+      }
+    }
+  },
   server: {
     port: 3000,
     proxy: {

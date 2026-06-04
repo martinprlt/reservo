@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useBookingStore } from '../../store/bookingStore';
 import { useLanguage } from '../../store/languageContext';
 import { cachedApi } from '../../api/client';
-import Step1Servicio from './Step1Servicio';
-import Step2Horario from './Step2Horario';
-import Step3Datos from './Step3Datos';
-import Step4Notas from './Step4Notas';
-import Step5Pago from './Step5Pago';
-import Confirmacion from './Confirmacion';
+
+const Step1Servicio = lazy(() => import('./Step1Servicio'));
+const Step2Horario = lazy(() => import('./Step2Horario'));
+const Step3Datos = lazy(() => import('./Step3Datos'));
+const Step4Notas = lazy(() => import('./Step4Notas'));
+const Step5Pago = lazy(() => import('./Step5Pago'));
+const Confirmacion = lazy(() => import('./Confirmacion'));
 
 export default function BookingPage() {
   const { paso, reset, servicioSeleccionado } = useBookingStore();
@@ -103,12 +104,18 @@ export default function BookingPage() {
 
       {/* Main Content */}
       <main className="pt-32 pb-8 px-4 max-w-2xl mx-auto">
-        {paso === 1 && <Step1Servicio />}
-        {paso === 2 && <Step2Horario />}
-        {paso === 3 && <Step3Datos />}
-        {paso === 4 && <Step4Notas />}
-        {paso === 5 && <Step5Pago />}
-        {paso === 'confirmacion' && <Confirmacion />}
+        <Suspense fallback={
+          <div className="flex items-center justify-center py-20">
+            <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+          </div>
+        }>
+          {paso === 1 && <Step1Servicio />}
+          {paso === 2 && <Step2Horario />}
+          {paso === 3 && <Step3Datos />}
+          {paso === 4 && <Step4Notas />}
+          {paso === 5 && <Step5Pago />}
+          {paso === 'confirmacion' && <Confirmacion />}
+        </Suspense>
       </main>
 
       {/* WhatsApp Button */}
