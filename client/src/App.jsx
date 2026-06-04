@@ -7,6 +7,7 @@ import LandingPage from './pages/LandingPage';
 import BookingPage from './pages/booking/BookingPage';
 import LoginPage from './pages/admin/LoginPage';
 import AdminLayout from './pages/admin/AdminLayout';
+import SuperAdminLayout from './pages/superadmin/SuperAdminLayout';
 import NotFound from './pages/NotFound';
 import PrivateRoute from './components/admin/PrivateRoute';
 
@@ -27,6 +28,14 @@ function App() {
                   element={
                     <PrivateRoute>
                       <AdminLayout />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/superadmin/*"
+                  element={
+                    <PrivateRoute requiredRole="SUPER_ADMIN">
+                      <SuperAdminLayout />
                     </PrivateRoute>
                   }
                 />

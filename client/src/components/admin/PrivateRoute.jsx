@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import api from '../../api/client';
 
-export default function PrivateRoute({ children }) {
+export default function PrivateRoute({ children, requiredRole }) {
   const [checking, setChecking] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
+  const [admin, setAdmin] = useState(null);
 
   useEffect(() => {
     api.get('/auth/me')
-      .then(() => {
+      .then(({ data }) => {
+        setAdmin(data);
         setIsAuth(true);
         setChecking(false);
       })
@@ -28,6 +30,10 @@ export default function PrivateRoute({ children }) {
 
   if (!isAuth) {
     return <Navigate to="/admin/login" replace />;
+  }
+
+  if (requiredRole && admin?.role !== requiredRole) {
+    return <Navigate to="/admin" replace />;
   }
 
   return children;

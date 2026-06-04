@@ -18,8 +18,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await api.post('/auth/login', { email, password });
-      window.location.href = '/admin';
+      const { data } = await api.post('/auth/login', { email, password });
+      if (data.admin?.role === 'SUPER_ADMIN') {
+        window.location.href = '/superadmin';
+      } else {
+        window.location.href = '/admin';
+      }
     } catch (err) {
       const code = err.response?.data?.error;
       setError(code === 'CREDENCIALES_INVALIDAS' ? t('login.error') : (err.response?.data?.error || t('general.error')));
@@ -44,7 +48,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary-container rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/20">
-            <span className="text-on-primary text-2xl font-extrabold font-headline">R</span>
+            <span className="text-on-primary text-2xl font-extrabold font-headline">S</span>
           </div>
           <h1 className="text-2xl font-extrabold text-on-surface font-headline dark:text-slate-100">
             {t('login.title')}

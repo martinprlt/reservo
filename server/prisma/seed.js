@@ -39,31 +39,53 @@ async function main() {
 
   console.log(`Tenant creado: ${tenant.nombre} (${tenant.slug})`);
 
-  console.log('Creando admin...');
+  console.log('Creando super admin...');
+  const superAdminHash = await bcrypt.hash('slotify2026', 12);
+  await prisma.admin.upsert({
+    where: { email: 'admin@slotify.app' },
+    update: {},
+    create: {
+      email: 'admin@slotify.app',
+      passwordHash: superAdminHash,
+      nombre: 'Super Admin',
+      role: 'SUPER_ADMIN',
+    },
+  });
+  console.log('Super admin: admin@slotify.app / slotify2026');
+
+  console.log('Creando admin del tenant...');
   const passwordHash = await bcrypt.hash('admin123', 12);
 
-  await prisma.admin.upsert({
-    where: { tenantId_email: { tenantId: tenant.id, email: 'admin@tusnailslr.com' } },
-    update: {},
-    create: {
-      tenantId: tenant.id,
-      email: 'admin@tusnailslr.com',
-      passwordHash,
-      nombre: 'Administrador',
-    },
+  const existingAdmin = await prisma.admin.findFirst({
+    where: { email: 'admin@tusnailslr.com' },
   });
+  if (!existingAdmin) {
+    await prisma.admin.create({
+      data: {
+        tenantId: tenant.id,
+        email: 'admin@tusnailslr.com',
+        passwordHash,
+        nombre: 'Administrador',
+        role: 'ADMIN',
+      },
+    });
+  }
 
   const passwordHash2 = await bcrypt.hash('asd123', 12);
-  await prisma.admin.upsert({
-    where: { tenantId_email: { tenantId: tenant.id, email: 'martinprlt02@gmail.com' } },
-    update: {},
-    create: {
-      tenantId: tenant.id,
-      email: 'martinprlt02@gmail.com',
-      passwordHash: passwordHash2,
-      nombre: 'Martín',
-    },
+  const existingMartin = await prisma.admin.findFirst({
+    where: { email: 'martinprlt02@gmail.com' },
   });
+  if (!existingMartin) {
+    await prisma.admin.create({
+      data: {
+        tenantId: tenant.id,
+        email: 'martinprlt02@gmail.com',
+        passwordHash: passwordHash2,
+        nombre: 'Martín',
+        role: 'ADMIN',
+      },
+    });
+  }
 
   console.log('Admins creados: admin@tusnailslr.com / admin123 y martinprlt02@gmail.com / asd123');
 

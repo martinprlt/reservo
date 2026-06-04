@@ -3,6 +3,25 @@ import prisma from '../config/prisma.js';
 import { signToken } from '../utils/jwt.js';
 
 export async function login(email, password, tenantSlugOrId) {
+  const admin = await prisma.admin.findUnique({
+    where: { email },
+  });
+
+  if (!admin) throw new Error('CREDENCIALES_INVALIDAS');
+
+  const ok = await bcrypt.compare(password, admin.passwordHash);
+  if (!ok) throw new Error('CREDENCIALES_INVALIDAS');
+
+  // Super admin doesn't need a tenant
+  if (admin.role === 'SUPER_ADMIN') {
+    const token = signToken({ adminId: admin.id, role: 'SUPER_ADMIN' });
+    return {
+      token,
+      admin: { id: admin.id, email: admin.email, nombre: admin.nombre, role: admin.role },
+    };
+  }
+
+  // Regular admin needs a tenant
   if (!tenantSlugOrId) throw new Error('VALIDATION_ERROR');
 
   let tenant;
@@ -13,28 +32,20 @@ export async function login(email, password, tenantSlugOrId) {
   }
 
   if (!tenant) throw new Error('VALIDATION_ERROR');
+  if (admin.tenantId !== tenant.id) throw new Error('CREDENCIALES_INVALIDAS');
 
-  const admin = await prisma.admin.findUnique({
-    where: { tenantId_email: { tenantId: tenant.id, email } },
-  });
-
-  if (!admin) throw new Error('CREDENCIALES_INVALIDAS');
-
-  const ok = await bcrypt.compare(password, admin.passwordHash);
-  if (!ok) throw new Error('CREDENCIALES_INVALIDAS');
-
-  const token = signToken({ adminId: admin.id, tenantId: admin.tenantId });
+  const token = signToken({ adminId: admin.id, tenantId: admin.tenantId, role: 'ADMIN' });
 
   return {
     token,
-    admin: { id: admin.id, email: admin.email, nombre: admin.nombre },
+    admin: { id: admin.id, email: admin.email, nombre: admin.nombre, role: admin.role },
   };
 }
 
 export async function obtenerAdmin(adminId) {
   const admin = await prisma.admin.findUnique({
     where: { id: adminId },
-    select: { id: true, email: true, nombre: true, tenantId: true },
+    select: { id: true, email: true, nombre: true, tenantId: true, role: true },
   });
 
   if (!admin) throw new Error('RECURSO_NO_ENCONTRADO');

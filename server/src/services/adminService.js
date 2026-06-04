@@ -341,22 +341,3 @@ export async function cleanupDuplicateServicios(tenantId) {
 
   return { deleted: toDelete.length, kept: seen.size };
 }
-
-export async function addAdmin(tenantId, { email, password, nombre }) {
-  const bcrypt = await import('bcryptjs');
-  const passwordHash = await bcrypt.default.hash(password, 12);
-
-  const existing = await prisma.admin.findFirst({
-    where: { tenantId, email },
-  });
-
-  if (existing) {
-    return { ok: true, message: 'Admin ya existe' };
-  }
-
-  await prisma.admin.create({
-    data: { tenantId, email, passwordHash, nombre: nombre || email.split('@')[0] },
-  });
-
-  return { ok: true, message: 'Admin creado' };
-}
