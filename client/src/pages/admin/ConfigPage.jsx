@@ -21,6 +21,10 @@ export default function ConfigPage() {
 
   const [colorPrimario, setColorPrimario] = useState(customColors?.primary || '#00464b');
   const [colorSecundario, setColorSecundario] = useState(customColors?.secondary || '#4a6363');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminNombre, setAdminNombre] = useState('');
+  const [creandoAdmin, setCreandoAdmin] = useState(false);
 
   useEffect(() => {
     api.get('/admin/config').then(({ data }) => {
@@ -102,6 +106,29 @@ export default function ConfigPage() {
     } else {
       setColorSecundario(value);
       setCustomColors({ ...customColors, secondary: value });
+    }
+  };
+
+  const handleCrearAdmin = async () => {
+    if (!adminEmail || !adminPassword) {
+      toast.error('Email y contraseña son obligatorios');
+      return;
+    }
+    setCreandoAdmin(true);
+    try {
+      await api.post('/admin/add-admin', {
+        email: adminEmail,
+        password: adminPassword,
+        nombre: adminNombre || adminEmail.split('@')[0],
+      });
+      toast.success('Usuario creado');
+      setAdminEmail('');
+      setAdminPassword('');
+      setAdminNombre('');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Error al crear usuario');
+    } finally {
+      setCreandoAdmin(false);
     }
   };
 
@@ -483,6 +510,50 @@ export default function ConfigPage() {
             <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>
               Estos datos se mostrarán a tus clientes en la página de reservas para que puedan pagarte por transferencia o MercadoPago.
             </p>
+          </div>
+        </div>
+
+        {/* Usuarios Admin */}
+        <div className="p-6 rounded-xl shadow-card border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+          <h2 className="text-lg font-bold mb-4 font-headline flex items-center gap-2" style={{ color: 'var(--on-surface)' }}>
+            <span className="material-symbols-outlined" style={{ color: 'var(--primary)' }}>group_add</span>
+            Usuarios Admin
+          </h2>
+          <p className="text-xs mb-4 font-label" style={{ color: 'var(--on-surface-variant)' }}>
+            Creá usuarios para que puedan acceder al panel de administración.
+          </p>
+          <div className="space-y-3">
+            <input
+              value={adminNombre}
+              onChange={(e) => setAdminNombre(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
+              style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+              placeholder="Nombre (opcional)"
+            />
+            <input
+              value={adminEmail}
+              onChange={(e) => setAdminEmail(e.target.value)}
+              type="email"
+              className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
+              style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+              placeholder="Email"
+            />
+            <input
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              type="password"
+              className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
+              style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+              placeholder="Contraseña"
+            />
+            <button
+              onClick={handleCrearAdmin}
+              disabled={creandoAdmin || !adminEmail || !adminPassword}
+              className="w-full py-3 rounded-xl font-semibold text-sm border transition active:scale-[0.98] disabled:opacity-40"
+              style={{ borderColor: 'var(--primary)', color: 'var(--primary)', backgroundColor: 'var(--surface-container-lowest)' }}
+            >
+              {creandoAdmin ? 'Creando...' : 'Crear usuario'}
+            </button>
           </div>
         </div>
 
