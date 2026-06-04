@@ -3,6 +3,7 @@ import { calcularSlotsLibres } from './disponibilidadService.js';
 import { procesarPagoAprobado } from './pagosService.js';
 import { notificarNuevoTurno } from './notificacionesService.js';
 import { enviarNuevoTurnoAdmin } from './whatsappService.js';
+import { enviarPushAdmin } from './pushService.js';
 
 export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas, fotoUrl, fotoPublicId }) {
   const servicio = await prisma.servicio.findFirst({
@@ -88,12 +89,22 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
     initPoint = pref.init_point;
   }
 
-  // Create notification for admin + WhatsApp
+  // Create notification for admin + WhatsApp + Push
   try {
     await notificarNuevoTurno(tenantId, { cliente, servicio });
   } catch {}
   try {
     await enviarNuevoTurnoAdmin(tenant, { cliente, servicio, fechaHora });
+  } catch {}
+  try {
+    const fechaFormateada = new Date(fechaHora).toLocaleDateString('es-AR', {
+      weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
+    });
+    await enviarPushAdmin(tenantId, {
+      title: '📅 Nuevo turno reservado',
+      body: `${cliente.nombre} ${cliente.apellido} — ${servicio.nombre}\n${fechaFormateada}`,
+      tag: 'nuevo-turno',
+    });
   } catch {}
 
   return { turnoId: turno.id, initPoint };

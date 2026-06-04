@@ -43,6 +43,11 @@ export default function AdminLayout() {
         setIncentivosActivos(data.incentivosActivos !== false);
       })
       .catch(() => {});
+
+    // Register push notification service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/push-sw.js').catch(() => {});
+    }
   }, []);
 
   const handleLogout = async () => {

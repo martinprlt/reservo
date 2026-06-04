@@ -9,6 +9,7 @@ import incentivosRoutes from './incentivos.routes.js';
 import webhooksRoutes from './webhooks.routes.js';
 import uploadRoutes from './upload.routes.js';
 import platformRoutes from './platform.routes.js';
+import pushRoutes from './push.routes.js';
 import resolveTenant from '../middleware/tenant.js';
 import { apiLimiter, platformLimiter } from '../middleware/rateLimiter.js';
 import prisma from '../config/prisma.js';
@@ -54,5 +55,6 @@ router.use('/turnos', turnosRoutes);
 router.use('/incentivos', incentivosRoutes);
 router.use('/webhooks', webhooksRoutes);
 router.use('/upload', uploadRoutes);
+router.use('/push', pushRoutes);
 
 export default router;

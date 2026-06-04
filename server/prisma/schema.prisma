@@ -45,6 +45,7 @@ model Tenant {
   turnos     Turno[]
   incentivos Incentivo[]
   notificaciones Notificacion[]
+  pushSubscriptions PushSubscription[]
 }
 
 enum Role {
@@ -177,4 +178,19 @@ model Notificacion {
 
   @@index([tenantId])
   @@index([tenantId, leida])
+}
+
+model PushSubscription {
+  id           String   @id @default(cuid())
+  tenantId     String
+  endpoint     String
+  p256dh       String
+  auth         String
+  activa       Boolean  @default(true)
+  creadoEn     DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id])
+
+  @@unique([tenantId, endpoint])
+  @@index([tenantId])
 }

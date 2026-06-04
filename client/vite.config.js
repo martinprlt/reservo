@@ -7,17 +7,36 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: { cacheName: 'google-fonts-cache', expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 } }
+          },
+          {
+            urlPattern: /\/api\/.*/i,
+            handler: 'NetworkFirst',
+            options: { cacheName: 'api-cache', networkTimeoutSeconds: 5 }
+          }
+        ]
+      },
       manifest: {
-        name: 'Slotify',
+        name: 'Slotify - Panel de Admin',
         short_name: 'Slotify',
+        description: 'Sistema de turnos para tu negocio',
         theme_color: '#4648d4',
         background_color: '#fcf8ff',
         display: 'standalone',
+        scope: '/',
+        start_url: '/admin',
         icons: [
           { src: '/icon.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icon.png', sizes: '512x512', type: 'image/png' }
+          { src: '/icon.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
         ]
-      }
+      },
+      devOptions: { enabled: false }
     })
   ],
   build: {

@@ -17,7 +17,11 @@ const env = cleanEnv(process.env, {
   TWILIO_ACCOUNT_SID: str({ default: '' }),
   TWILIO_AUTH_TOKEN: str({ default: '' }),
   TWILIO_WHATSAPP_FROM: str({ default: '' }),
-  
+
+  // Push notifications (VAPID keys)
+  VAPID_PUBLIC_KEY: str({ default: '' }),
+  VAPID_PRIVATE_KEY: str({ default: '' }),
+
   // App
   FRONTEND_URL: str({ default: 'http://localhost:3000' }),
 });

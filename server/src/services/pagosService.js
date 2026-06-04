@@ -2,6 +2,7 @@ import prisma from '../config/prisma.js';
 import logger from '../utils/logger.js';
 import { enviarConfirmacionTurno } from './whatsappService.js';
 import { notificarPagoRecibido } from './notificacionesService.js';
+import { enviarPushAdmin } from './pushService.js';
 
 export async function procesarPagoAprobado(turnoId, mpPaymentId) {
   try {
@@ -36,9 +37,16 @@ export async function procesarPagoAprobado(turnoId, mpPaymentId) {
 
     await enviarConfirmacionTurno(resultado);
 
-    // Create notification for admin
+    // Create notification for admin + push
     try {
       await notificarPagoRecibido(resultado.tenantId, resultado);
+    } catch {}
+    try {
+      await enviarPushAdmin(resultado.tenantId, {
+        title: '💰 Seña recibida',
+        body: `${resultado.cliente.nombre} $${resultado.montoSenia?.toLocaleString('es-AR')} — ${resultado.servicio.nombre}`,
+        tag: 'pago-recibido',
+      });
     } catch {}
 
     return resultado;

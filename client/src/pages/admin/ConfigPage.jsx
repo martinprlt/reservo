@@ -3,11 +3,13 @@ import api, { cachedApi } from '../../api/client';
 import { useTheme } from '../../store/themeContext';
 import { useLanguage } from '../../store/languageContext';
 import { useToast } from '../../store/toastContext';
+import { usePushNotifications } from '../../hooks/usePushNotifications';
 import clsx from 'clsx';
 
 export default function ConfigPage() {
   const [horarios, setHorarios] = useState({});
   const [incentivosActivos, setIncentivosActivos] = useState(true);
+  const { supported: pushSupported, subscribed: pushSubscribed, subscribe: subscribePush, unsubscribe: unsubscribePush } = usePushNotifications();
   const [telefonoAdmin, setTelefonoAdmin] = useState('');
   const [mpLink, setMpLink] = useState('');
   const [billeteraVirtual, setBilleteraVirtual] = useState('');
@@ -437,6 +439,30 @@ export default function ConfigPage() {
             />
           </div>
         </div>
+
+        {/* Push Notifications */}
+        {pushSupported && (
+          <div className="p-6 rounded-xl shadow-card border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+            <h2 className="text-lg font-bold mb-4 font-headline flex items-center gap-2" style={{ color: 'var(--on-surface)' }}>
+              <span className="material-symbols-outlined" style={{ color: '#4648d4' }}>notifications</span>
+              Notificaciones Push
+            </h2>
+            <p className="text-xs mb-4 font-label" style={{ color: 'var(--on-surface-variant)' }}>
+              Recibí alertas en tu celular cuando se reserve un turno, aun cuando la app no esté abierta.
+            </p>
+            <button
+              onClick={pushSubscribed ? unsubscribePush : subscribePush}
+              className={clsx(
+                'px-5 py-2.5 rounded-xl font-semibold text-sm transition-all',
+                pushSubscribed
+                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                  : 'bg-primary text-on-primary hover:opacity-90'
+              )}
+            >
+              {pushSubscribed ? '✓ Notificaciones activadas' : 'Activar notificaciones'}
+            </button>
+          </div>
+        )}
 
         {/* MercadoPago */}
         <div className="p-6 rounded-xl shadow-card border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
