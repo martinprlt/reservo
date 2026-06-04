@@ -7,11 +7,12 @@ export async function listar(tenantId) {
   });
 }
 
-export async function crear(tenantId, { nombre, rubro, duracionMinutos, precio, montoSenia, puntosOtorgados, variantes, foto }) {
+export async function crear(tenantId, { nombre, descripcion, rubro, duracionMinutos, precio, montoSenia, puntosOtorgados, variantes, foto }) {
   return prisma.servicio.create({
     data: {
       tenantId,
       nombre,
+      descripcion: descripcion || null,
       rubro: rubro || 'general',
       duracionMinutos,
       precio,

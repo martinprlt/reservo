@@ -22,6 +22,7 @@ export default function ServiciosPage() {
   const [servicioToDelete, setServicioToDelete] = useState(null);
   const [editando, setEditando] = useState(null);
   const [nombre, setNombre] = useState('');
+  const [descripcion, setDescripcion] = useState('');
   const [rubro, setRubro] = useState('');
   const [precio, setPrecio] = useState('');
   const [duracion, setDuracion] = useState('');
@@ -58,6 +59,7 @@ export default function ServiciosPage() {
   const handleNuevo = () => {
     setEditando(null);
     setNombre('');
+    setDescripcion('');
     setRubro('');
     setPrecio('');
     setDuracion('');
@@ -92,6 +94,7 @@ export default function ServiciosPage() {
   const handleEditar = (s) => {
     setEditando(s);
     setNombre(s.nombre);
+    setDescripcion(s.descripcion || '');
     setRubro(s.rubro || '');
     setPrecio(String(s.precio));
     setDuracion(String(s.duracionMinutos));
@@ -143,6 +146,7 @@ export default function ServiciosPage() {
 
       const payload = {
         nombre,
+        descripcion: descripcion || null,
         rubro: rubro === 'otro' ? (customRubro || 'general') : (rubro || 'general'),
         precio: parseFloat(precio),
         duracionMinutos: parseInt(duracion),
@@ -376,6 +380,18 @@ export default function ServiciosPage() {
               required
               className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-on-surface mb-1.5 font-label">Descripción (opcional)</label>
+            <textarea
+              placeholder="Ej: Incluye limado, esmaltado y cutícula. Durante el servicio podés elegir entre más de 50 colores..."
+              value={descripcion}
+              onChange={e => setDescripcion(e.target.value)}
+              rows={3}
+              className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm resize-none"
+            />
+            <p className="text-xs text-on-surface-variant mt-1">Se muestra en el booking cuando el cliente elige el servicio</p>
           </div>
 
           <div>

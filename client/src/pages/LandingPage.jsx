@@ -108,6 +108,11 @@ const faqs = [
 export default function LandingPage() {
   const [openFaq, setOpenFaq] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [demoModalOpen, setDemoModalOpen] = useState(false);
+  const [demoNombre, setDemoNombre] = useState('');
+  const [demoNegocio, setDemoNegocio] = useState('');
+  const [demoTelefono, setDemoTelefono] = useState('');
+  const [demoEnviado, setDemoEnviado] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -154,7 +159,7 @@ export default function LandingPage() {
           </div>
           <div style={{ display: "flex", gap: 10 }}>
             <a href="/admin/login" style={{ fontSize: 13, fontWeight: 500, color: "#464554", textDecoration: "none", padding: "10px 18px" }}>Iniciar sesión</a>
-            <a href="#contacto" className="btn-primary" style={{ padding: "10px 18px", fontSize: 13 }}>Solicitá tu demo</a>
+            <a href="#contacto" className="btn-primary" style={{ padding: "10px 18px", fontSize: 13 }} onClick={(e) => { e.preventDefault(); setDemoModalOpen(true); }}>Solicitá tu demo</a>
           </div>
         </div>
       </nav>
@@ -413,9 +418,8 @@ export default function LandingPage() {
               ))}
             </div>
             <a
-              href="https://wa.me/5493804100986?text=Hola!%20Quiero%20una%20demo%20de%20Slotify"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#"
+              onClick={(e) => { e.preventDefault(); setDemoModalOpen(true); }}
               style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 32px", borderRadius: 14, background: "#fff", color: "#4648d4", textDecoration: "none", fontWeight: 700, fontSize: 16, transition: "all 0.2s", boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}
             >
               Solicitá tu demo
@@ -462,6 +466,86 @@ export default function LandingPage() {
           </div>
         </div>
       </footer>
+
+      {/* Demo Modal */}
+      {demoModalOpen && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)" }} onClick={() => { setDemoModalOpen(false); setDemoEnviado(false); }} />
+          <div style={{ position: "relative", background: "#fff", borderRadius: 20, padding: 32, maxWidth: 420, width: "100%", boxShadow: "0 24px 48px rgba(0,0,0,0.2)" }}>
+            <button
+              onClick={() => { setDemoModalOpen(false); setDemoEnviado(false); }}
+              style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", cursor: "pointer", padding: 4 }}
+            >
+              <span className="msym" style={{ fontSize: 20, color: "#666" }}>close</span>
+            </button>
+
+            {demoEnviado ? (
+              <div style={{ textAlign: "center", padding: "20px 0" }}>
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(70,72,212,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+                  <span className="msym" style={{ fontSize: 28, color: "#4648d4" }}>check_circle</span>
+                </div>
+                <h3 className="hl" style={{ fontSize: 20, fontWeight: 700, color: "#181445", marginBottom: 8 }}>¡Solicitud enviada!</h3>
+                <p style={{ fontSize: 14, color: "#666", lineHeight: 1.6, marginBottom: 20 }}>
+                  Te vamos a contactar por WhatsApp para coordinar tu demo personalizada.
+                </p>
+                <button
+                  onClick={() => { setDemoModalOpen(false); setDemoEnviado(false); }}
+                  style={{ padding: "12px 24px", borderRadius: 12, background: "#4648d4", color: "#fff", border: "none", fontWeight: 600, fontSize: 14, cursor: "pointer" }}
+                >
+                  Cerrar
+                </button>
+              </div>
+            ) : (
+              <div>
+                <div style={{ textAlign: "center", marginBottom: 24 }}>
+                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(70,72,212,0.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+                    <span className="msym" style={{ fontSize: 28, color: "#4648d4" }}>play_circle</span>
+                  </div>
+                  <h3 className="hl" style={{ fontSize: 20, fontWeight: 700, color: "#181445", marginBottom: 4 }}>Solicitá tu demo</h3>
+                  <p style={{ fontSize: 13, color: "#666" }}>Te mostramos Slotify en acción con tu negocio</p>
+                </div>
+
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const msg = `Hola! Quiero una demo de Slotify.\n\nNombre: ${demoNombre}\nNegocio: ${demoNegocio}\nTeléfono: ${demoTelefono}`;
+                  window.open(`https://wa.me/5493804100986?text=${encodeURIComponent(msg)}`, '_blank');
+                  setDemoEnviado(true);
+                }} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  <input
+                    placeholder="Tu nombre"
+                    value={demoNombre}
+                    onChange={e => setDemoNombre(e.target.value)}
+                    required
+                    style={{ padding: "12px 16px", borderRadius: 12, border: "1px solid #e0e0e0", fontSize: 14, outline: "none", fontFamily: "'Inter', sans-serif" }}
+                  />
+                  <input
+                    placeholder="Nombre de tu negocio"
+                    value={demoNegocio}
+                    onChange={e => setDemoNegocio(e.target.value)}
+                    required
+                    style={{ padding: "12px 16px", borderRadius: 12, border: "1px solid #e0e0e0", fontSize: 14, outline: "none", fontFamily: "'Inter', sans-serif" }}
+                  />
+                  <input
+                    placeholder="Tu WhatsApp"
+                    value={demoTelefono}
+                    onChange={e => setDemoTelefono(e.target.value)}
+                    required
+                    style={{ padding: "12px 16px", borderRadius: 12, border: "1px solid #e0e0e0", fontSize: 14, outline: "none", fontFamily: "'Inter', sans-serif" }}
+                  />
+                  <button
+                    type="submit"
+                    style={{ padding: "14px", borderRadius: 12, background: "#4648d4", color: "#fff", border: "none", fontWeight: 700, fontSize: 15, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}
+                  >
+                    <span className="msym" style={{ fontSize: 18 }}>chat</span>
+                    Enviar por WhatsApp
+                  </button>
+                  <p style={{ fontSize: 11, color: "#999", textAlign: "center" }}>Te respondemos al instante por WhatsApp</p>
+                </form>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

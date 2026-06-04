@@ -89,6 +89,7 @@ model Servicio {
   id              String   @id @default(cuid())
   tenantId        String
   nombre          String
+  descripcion     String?  // Optional description shown in booking
   rubro           String   @default("general")
   duracionMinutos Int
   precio          Float

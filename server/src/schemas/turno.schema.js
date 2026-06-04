@@ -16,6 +16,7 @@ export const loginSchema = z.object({
 
 export const crearServicioSchema = z.object({
   nombre: z.string().min(2),
+  descripcion: z.string().optional(),
   rubro: z.string().optional(),
   duracionMinutos: z.number().min(15),
   precio: z.number().min(0),
