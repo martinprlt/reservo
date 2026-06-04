@@ -36,12 +36,14 @@ export default function ServiciosPage() {
   const [tiempoDesplazamiento, setTiempoDesplazamiento] = useState('');
   const [customRubro, setCustomRubro] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const [planLimits, setPlanLimits] = useState(null);
   const toast = useToast();
   const { t } = useLanguage();
 
   useEffect(() => {
     fetchServicios();
     fetchConfig();
+    api.get('/admin/limits').then(({ data }) => setPlanLimits(data)).catch(() => {});
   }, []);
 
   const fetchServicios = async () => {
@@ -201,10 +203,17 @@ export default function ServiciosPage() {
           <p className="text-on-surface-variant max-w-xl">
             Personaliza tu catálogo de servicios, durations, y precios para optimizar tu agenda.
           </p>
+          {planLimits && planLimits.limits.maxServicios && (
+            <p className="text-xs" style={{ color: servicios.length >= planLimits.limits.maxServicios ? '#dc2626' : 'var(--on-surface-variant)' }}>
+              {servicios.length}/{planLimits.limits.maxServicios} servicios
+              {servicios.length >= planLimits.limits.maxServicios && ' — Límite alcanzado'}
+            </p>
+          )}
         </div>
         <button
           onClick={handleNuevo}
-          className="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+          disabled={planLimits?.limits?.maxServicios && servicios.length >= planLimits.limits.maxServicios}
+          className="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span className="material-symbols-outlined">add</span>
           <span className="font-label text-label-caps">AGREGAR SERVICIO</span>

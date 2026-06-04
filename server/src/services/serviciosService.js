@@ -1,4 +1,5 @@
 import prisma from '../config/prisma.js';
+import { getPlanLimits } from '../config/plans.js';
 
 export async function listar(tenantId) {
   return prisma.servicio.findMany({
@@ -8,6 +9,17 @@ export async function listar(tenantId) {
 }
 
 export async function crear(tenantId, { nombre, descripcion, rubro, duracionMinutos, precio, montoSenia, puntosOtorgados, variantes, foto }) {
+  // Check plan limit
+  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { plan: true } });
+  const limits = getPlanLimits(tenant?.plan);
+
+  if (limits.maxServicios !== Infinity) {
+    const count = await prisma.servicio.count({ where: { tenantId, activo: true } });
+    if (count >= limits.maxServicios) {
+      throw new Error('LIMITE_SERVICIOS_ALCANZADO');
+    }
+  }
+
   return prisma.servicio.create({
     data: {
       tenantId,

@@ -6,6 +6,7 @@ import notificacionesController from '../controllers/notificacionesController.js
 import verifyJWT from '../middleware/auth.js';
 import { enviarWhatsApp } from '../config/twilio.js';
 import prisma from '../config/prisma.js';
+import { getPlanLimits } from '../config/plans.js';
 
 const router = Router();
 
@@ -40,6 +41,38 @@ router.get('/export/turnos', exportController.turnosCSV);
 router.get('/reportes/turnos', reportesController.reporteTurnos);
 router.get('/reportes/ganancias', reportesController.reporteGanancias);
 router.get('/reportes/trabajos', reportesController.reporteTrabajos);
+
+// Plan limits — GET /admin/limits
+router.get('/limits', async (req, res) => {
+  try {
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: req.tenantId },
+      select: { plan: true },
+    });
+    const limits = getPlanLimits(tenant?.plan);
+    const inicioMes = new Date();
+    inicioMes.setDate(1);
+    inicioMes.setHours(0, 0, 0, 0);
+
+    const [servicios, turnosMes, admins] = await Promise.all([
+      prisma.servicio.count({ where: { tenantId: req.tenantId, activo: true } }),
+      prisma.turno.count({ where: { tenantId: req.tenantId, creadoEn: { gte: inicioMes }, estado: { not: 'CANCELADO' } } }),
+      prisma.admin.count({ where: { tenantId: req.tenantId } }),
+    ]);
+
+    res.json({
+      plan: tenant?.plan || 'FREE',
+      limits: {
+        maxServicios: limits.maxServicios === Infinity ? null : limits.maxServicios,
+        maxTurnosMes: limits.maxTurnosMes === Infinity ? null : limits.maxTurnosMes,
+        maxUsuarios: limits.maxUsuarios === Infinity ? null : limits.maxUsuarios,
+      },
+      usage: { servicios, turnosMes, admins },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Test WhatsApp — POST /admin/test-whatsapp
 router.post('/test-whatsapp', async (req, res) => {

@@ -4,8 +4,25 @@ import { procesarPagoAprobado } from './pagosService.js';
 import { notificarNuevoTurno } from './notificacionesService.js';
 import { enviarNuevoTurnoAdmin } from './whatsappService.js';
 import { enviarPushAdmin } from './pushService.js';
+import { getPlanLimits } from '../config/plans.js';
 
 export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas, fotoUrl, fotoPublicId }) {
+  // Check plan limit for turns per month
+  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { plan: true } });
+  const limits = getPlanLimits(tenant?.plan);
+
+  if (limits.maxTurnosMes !== Infinity) {
+    const inicioMes = new Date();
+    inicioMes.setDate(1);
+    inicioMes.setHours(0, 0, 0, 0);
+    const turnosMes = await prisma.turno.count({
+      where: { tenantId, creadoEn: { gte: inicioMes }, estado: { not: 'CANCELADO' } },
+    });
+    if (turnosMes >= limits.maxTurnosMes) {
+      throw new Error('LIMITE_TURNOS_MES_ALCANZADO');
+    }
+  }
+
   const servicio = await prisma.servicio.findFirst({
     where: { id: servicioId, tenantId, activo: true },
   });

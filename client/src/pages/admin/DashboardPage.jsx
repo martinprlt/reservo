@@ -11,6 +11,7 @@ export default function DashboardPage({ onNavigate }) {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [testingWhatsApp, setTestingWhatsApp] = useState(false);
+  const [planLimits, setPlanLimits] = useState(null);
   const { t } = useLanguage();
   const { admin } = useAdminStore();
 
@@ -42,6 +43,12 @@ export default function DashboardPage({ onNavigate }) {
 
       const statsRes = await api.get('/admin/stats');
       setStats(statsRes.data);
+
+      // Fetch plan limits
+      try {
+        const limitsRes = await api.get('/admin/limits');
+        setPlanLimits(limitsRes.data);
+      } catch {}
     } catch (err) {
       console.error('Dashboard error:', err);
     } finally {
@@ -99,6 +106,36 @@ export default function DashboardPage({ onNavigate }) {
           {stats.turnosHoy} turnos hoy.
         </p>
       </section>
+
+      {/* Plan Limits Banner */}
+      {planLimits && planLimits.limits.maxTurnosMes && (
+        <div className="mb-6 p-4 rounded-xl border flex items-center justify-between" style={{
+          backgroundColor: planLimits.usage.turnosMes >= planLimits.limits.maxTurnosMes * 0.8 ? 'rgba(255,193,7,0.1)' : 'var(--surface-container-lowest)',
+          borderColor: planLimits.usage.turnosMes >= planLimits.limits.maxTurnosMes * 0.8 ? 'rgba(255,193,7,0.3)' : 'var(--outline-variant)',
+        }}>
+          <div className="flex items-center gap-3">
+            <span className="material-symbols-outlined" style={{ color: planLimits.usage.turnosMes >= planLimits.limits.maxTurnosMes * 0.8 ? '#f59e0b' : 'var(--primary)' }}>
+              {planLimits.usage.turnosMes >= planLimits.limits.maxTurnosMes ? 'warning' : 'info'}
+            </span>
+            <div>
+              <p className="text-sm font-semibold" style={{ color: 'var(--on-surface)' }}>
+                Plan {planLimits.plan} — {planLimits.usage.turnosMes}/{planLimits.limits.maxTurnosMes} turnos este mes
+              </p>
+              {planLimits.usage.turnosMes >= planLimits.limits.maxTurnosMes * 0.8 && planLimits.usage.turnosMes < planLimits.limits.maxTurnosMes && (
+                <p className="text-xs" style={{ color: '#f59e0b' }}>Te quedan pocos turnos este mes. Considerá upgrade a PRO.</p>
+              )}
+              {planLimits.usage.turnosMes >= planLimits.limits.maxTurnosMes && (
+                <p className="text-xs font-semibold" style={{ color: '#dc2626' }}>Límite alcanzado. Upgrade a PRO para turnos ilimitados.</p>
+              )}
+            </div>
+          </div>
+          {planLimits.plan === 'FREE' && (
+            <a href="#planes" className="text-xs font-semibold px-3 py-1.5 rounded-lg" style={{ backgroundColor: 'var(--primary)', color: 'var(--on-primary)' }}>
+              Upgrade
+            </a>
+          )}
+        </div>
+      )}
 
       {/* Bento Grid Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter">
