@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Slotify - Calendar</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Geist:wght@400;600&amp;family=Inter:wght@400;500&amp;family=Manrope:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e3dfff",
+                    "tertiary": "#5148d7",
+                    "secondary-fixed": "#e3e1ed",
+                    "secondary-container": "#e3e1ed",
+                    "inverse-on-surface": "#f3eeff",
+                    "primary-container": "#6063ee",
+                    "tertiary-fixed": "#e3dfff",
+                    "surface": "#fcf8ff",
+                    "on-surface-variant": "#464554",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-tertiary-fixed": "#100069",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#efebff",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f6f2ff",
+                    "tertiary-container": "#6a63f2",
+                    "surface-tint": "#494bd6",
+                    "on-background": "#181445",
+                    "secondary-fixed-dim": "#c7c5d1",
+                    "surface-container-highest": "#e3dfff",
+                    "inverse-primary": "#c0c1ff",
+                    "on-secondary-container": "#64636d",
+                    "on-tertiary-fixed-variant": "#372abf",
+                    "outline-variant": "#c7c4d7",
+                    "surface-dim": "#dad6ff",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "surface-bright": "#fcf8ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e9e5ff",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "background": "#fcf8ff",
+                    "outline": "#767586",
+                    "on-surface": "#181445",
+                    "primary": "#4648d4",
+                    "primary-fixed": "#e1e0ff",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#1a1b23",
+                    "secondary": "#5d5d67",
+                    "on-primary-container": "#fffbff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#2d2a5b",
+                    "on-tertiary-container": "#020026",
+                    "on-secondary-fixed-variant": "#46464f",
+                    "on-primary-fixed": "#07006c",
+                    "tertiary-fixed-dim": "#c3c0ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-desktop": "64px",
+                    "margin-mobile": "16px",
+                    "unit": "8px",
+                    "max-width": "1280px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Hanken Grotesk"],
+                    "label-caps": ["Geist"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "code-sm": ["Geist"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "manrope": ["Manrope"]
+            },
+            "fontSize": {
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "code-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .slot-mesh {
+            background-image: radial-gradient(circle at 2px 2px, rgba(99, 102, 241, 0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(224, 231, 255, 0.5);
+        }
+        body {
+            background-color: #F5F3FF;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top App Bar -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md sticky top-0 full-width docked z-50 border-b border-outline-variant/20 shadow-sm shadow-tertiary/5 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16">
+<div class="flex items-center gap-3">
+<img alt="Slotify" class="w-8 h-8 rounded-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHIHvJRJU9il6_TWEysb264T-42oyMkEgLsRszsPj-ehvPEMZaDDo9oteJgyyfZ9ns7KxFeqf5HNYNFoHCxL9Jm6LAPbO5N-LD_BjUjCzy_TMVoFZX9pBQbovbV88PsXgCYNeYD1UCj3zDA70sd_K_fSN1ld6a_rbJRzMuca5VtBskQoc6EeDJQpr3g1Nvy99TA_PCllyFO77VxLUgQBL8731yM13lY60XFnvDHo3ZHeNxyV0ZZwfqqo-qFJ_7b2RHoL6xNyifKC35"/>
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg tracking-tight font-bold text-primary dark:text-primary-fixed-dim">Slotify</h1>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<nav class="flex gap-6">
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200 px-3 py-1 rounded-lg" href="#">Home</a>
+<a class="text-primary font-semibold transition-colors duration-200 px-3 py-1 rounded-lg bg-surface-container-high" href="#">Calendar</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200 px-3 py-1 rounded-lg" href="#">Clients</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200 px-3 py-1 rounded-lg" href="#">Settings</a>
+</nav>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a professional male user with a friendly expression. He is photographed in a high-end studio with soft, cinematic side-lighting that highlights his features. The aesthetic is clean and modern, following the purple-toned professional theme of the Slotify app. The background is a minimalist, out-of-focus lavender office space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2LPHdCYCp32cH8j1crVpbXtw0OkKBfnEYdysEhgrnhe2IwGkQsxhquRwn1NyeIVkNPAwqWGGmiZV2ZMEThkxn9eIAAgkliRr1EHjnbolaM0bowJ648stAn_O1t5edyFEOB5PKebW5KK43EqzaZslLhcnMlzA7JEm1Eo4fwKgipLr0sVHu63HcLn8riCguLD9eJ4rg8QQY_xfYvyU4H6KGAT8e4lmo5AsLZu8T1RlxR8cXhZwRa0vamVreWjpHLBCVvpq5oSGBgrLs"/>
+</div>
+</div>
+<div class="md:hidden">
+<span class="material-symbols-outlined text-on-surface-variant">menu</span>
+</div>
+</header>
+<main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 min-h-[calc(100vh-144px)]">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-on-surface mb-2">Wednesday, Oct 24</h2>
+<div class="flex items-center gap-4 text-on-surface-variant">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">event</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">Today's Schedule</span>
+</div>
+<div class="w-1 h-1 rounded-full bg-outline-variant"></div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">schedule</span>
+<span class="font-label-caps text-label-caps uppercase tracking-wider">8 Slots Booked</span>
+</div>
+</div>
+</div>
+<button class="flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-label-caps text-label-caps uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95 group">
+<span class="material-symbols-outlined group-hover:rotate-90 transition-transform">add</span>
+                New Booking
+            </button>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Calendar Mini & Filters -->
+<div class="lg:col-span-3 flex flex-col gap-6">
+<div class="glass-card p-6 rounded-2xl">
+<div class="flex justify-between items-center mb-6">
+<span class="font-bold text-on-surface">October 2024</span>
+<div class="flex gap-2">
+<button class="p-1 hover:bg-surface-container rounded-md"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+<button class="p-1 hover:bg-surface-container rounded-md"><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-y-3 text-center">
+<span class="text-[10px] font-label-caps text-outline">S</span>
+<span class="text-[10px] font-label-caps text-outline">M</span>
+<span class="text-[10px] font-label-caps text-outline">T</span>
+<span class="text-[10px] font-label-caps text-outline">W</span>
+<span class="text-[10px] font-label-caps text-outline">T</span>
+<span class="text-[10px] font-label-caps text-outline">F</span>
+<span class="text-[10px] font-label-caps text-outline">S</span>
+<!-- Mini dates simplified -->
+<div class="text-sm py-1">21</div>
+<div class="text-sm py-1">22</div>
+<div class="text-sm py-1">23</div>
+<div class="text-sm py-1 bg-primary text-white rounded-full font-bold">24</div>
+<div class="text-sm py-1">25</div>
+<div class="text-sm py-1">26</div>
+<div class="text-sm py-1">27</div>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl">
+<h3 class="font-label-caps text-label-caps uppercase tracking-widest text-outline mb-4">View Modes</h3>
+<div class="flex flex-col gap-2">
+<button class="flex items-center gap-3 w-full text-left p-2 rounded-lg bg-surface-container-high text-primary font-semibold">
+<span class="material-symbols-outlined text-[20px]">calendar_view_day</span>
+                            Day
+                        </button>
+<button class="flex items-center gap-3 w-full text-left p-2 rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">calendar_view_week</span>
+                            Week
+                        </button>
+<button class="flex items-center gap-3 w-full text-left p-2 rounded-lg hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">calendar_view_month</span>
+                            Month
+                        </button>
+</div>
+</div>
+</div>
+<!-- Main Column: Day Schedule -->
+<div class="lg:col-span-9">
+<div class="glass-card rounded-3xl overflow-hidden relative slot-mesh">
+<!-- Timeline Header -->
+<div class="flex border-b border-outline-variant/10 bg-white/50 p-6">
+<div class="w-20 text-outline font-label-caps text-label-caps">TIME</div>
+<div class="flex-1 text-on-surface font-semibold px-4 border-l border-outline-variant/10">Wednesday Schedule</div>
+</div>
+<!-- Scrollable Schedule Area -->
+<div class="max-h-[800px] overflow-y-auto">
+<!-- 08:00 Slot -->
+<div class="flex min-h-[100px] group border-b border-outline-variant/5">
+<div class="w-20 p-6 flex flex-col items-end">
+<span class="text-sm font-bold text-on-surface">08:00</span>
+<span class="text-[10px] text-outline">AM</span>
+</div>
+<div class="flex-1 p-3 border-l border-outline-variant/10 relative">
+<!-- Empty Slot Placeholder -->
+<div class="absolute inset-2 border-2 border-dashed border-outline-variant/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">add_circle</span>
+</div>
+</div>
+</div>
+<!-- 09:00 Slot - Hydrafacial -->
+<div class="flex min-h-[120px] group border-b border-outline-variant/5">
+<div class="w-20 p-6 flex flex-col items-end">
+<span class="text-sm font-bold text-on-surface">09:00</span>
+<span class="text-[10px] text-outline">AM</span>
+</div>
+<div class="flex-1 p-3 border-l border-outline-variant/10">
+<div class="bg-primary-container/10 border-l-4 border-primary h-full rounded-xl p-4 flex justify-between items-start">
+<div>
+<h4 class="font-semibold text-primary mb-1">HydraFacial Pro</h4>
+<p class="text-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">person</span>
+                                            Elena Vance
+                                        </p>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-3 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded-full uppercase tracking-tighter">Confirmed</span>
+<button class="p-1 hover:bg-primary/10 rounded-full text-primary"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- 10:00 Slot -->
+<div class="flex min-h-[100px] group border-b border-outline-variant/5">
+<div class="w-20 p-6 flex flex-col items-end">
+<span class="text-sm font-bold text-on-surface">10:00</span>
+<span class="text-[10px] text-outline">AM</span>
+</div>
+<div class="flex-1 p-3 border-l border-outline-variant/10 relative">
+<div class="absolute inset-2 border-2 border-dashed border-outline-variant/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">add_circle</span>
+</div>
+</div>
+</div>
+<!-- 11:30 Slot - Business Strategy (Overlapping style) -->
+<div class="flex min-h-[140px] group border-b border-outline-variant/5">
+<div class="w-20 p-6 flex flex-col items-end">
+<span class="text-sm font-bold text-on-surface">11:30</span>
+<span class="text-[10px] text-outline">AM</span>
+</div>
+<div class="flex-1 p-3 border-l border-outline-variant/10">
+<div class="bg-tertiary-container/10 border-l-4 border-tertiary h-full rounded-xl p-4 flex justify-between items-start shadow-sm">
+<div>
+<h4 class="font-semibold text-tertiary mb-1">Business Strategy</h4>
+<p class="text-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">meeting_room</span>
+                                            Conference Room B
+                                        </p>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="Close-up avatar of a professional male team member for a strategy meeting. He has a thoughtful expression, styled in a minimalist and clean aesthetic with soft violet ambient lighting consistent with the Slotify premium interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ0Ra0NM80yOcoQ3o7bPw6FOHYFtmQZXC3TaHlZ8hHTTr9_sOrcgTByBimRRqKLeKrXkhSVl_0VuGjLem0jq1HyJZ5arWd3cIH0dZyhKlZqqlYJRacw14k8BOgftAk9qnotBsiQITOE1kq7mgozaC9qpHQ9f959heInYS4m7a7SBprzrEJUXxUHTHHgWrx8hUatY22BUMYUncmRssS7jFD41A6VNC-Y88T19iYBTx_jVi4ySxSyT_o3rW_PIyP__RawtmjfvsyuxZ4"/>
+<img class="w-8 h-8 rounded-full border-2 border-white object-cover" data-alt="Close-up avatar of a professional female team member with a bright, engaged expression. The visual style is high-end corporate minimalism with soft studio lighting and a subtle lavender color grade to match the Slotify branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3ZVIRoMJqA3CE4eMlRA1Yh1IINo4nm5g1RS09-GmNKoFc9bKdwf82U4na3ASYbujNpTP3Y1uzjpI6Pq37tOWyzF9gBlJXJu0mOMEPYyKzudX4NEmRADQ_jFhDOeCQ8Hra35kFytXZlBZE7e96S6dAv1zQDF5mkCd0xTWVbn_fVp2sp1cUKkIvJgtkYPPHIvFUL9w3Qkc3XHKrRSyOrH9ZNkdqmWUAU_oH47_RpZV729fcqjFEF5iAHh4dqykNaK99uZI_XREG7rxh"/>
+</div>
+<button class="p-1 hover:bg-tertiary/10 rounded-full text-tertiary"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- 01:00 Slot - Lunch -->
+<div class="flex min-h-[80px] group border-b border-outline-variant/5">
+<div class="w-20 p-6 flex flex-col items-end">
+<span class="text-sm font-bold text-on-surface">01:00</span>
+<span class="text-[10px] text-outline">PM</span>
+</div>
+<div class="flex-1 p-3 border-l border-outline-variant/10">
+<div class="h-full rounded-xl flex items-center px-4 bg-surface-container/30 border border-outline-variant/10 text-on-surface-variant italic text-sm">
+<span class="material-symbols-outlined text-[18px] mr-2">restaurant</span>
+                                    Blocked: Lunch Break
+                                </div>
+</div>
+</div>
+<!-- 02:00 Slot -->
+<div class="flex min-h-[100px] group border-b border-outline-variant/5">
+<div class="w-20 p-6 flex flex-col items-end">
+<span class="text-sm font-bold text-on-surface">02:00</span>
+<span class="text-[10px] text-outline">PM</span>
+</div>
+<div class="flex-1 p-3 border-l border-outline-variant/10 relative">
+<div class="absolute inset-2 border-2 border-dashed border-outline-variant/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<span class="material-symbols-outlined text-outline">add_circle</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Atmospheric Effect: Abstract Glow -->
+<div class="fixed top-0 right-0 -z-10 opacity-20 pointer-events-none">
+<div class="w-[600px] h-[600px] bg-primary rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3"></div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 pb-safe px-4 bg-surface/90 dark:bg-surface-dim/90 backdrop-blur-lg border-t border-outline-variant/10 shadow-[0_-4px_12px_rgba(30,27,75,0.05)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-5 py-1.5 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-5 py-1.5 scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Calendar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-5 py-1.5 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Clients</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-5 py-1.5 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps uppercase mt-1">Settings</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for slots
+        document.querySelectorAll('.flex-1.relative').forEach(slot => {
+            slot.addEventListener('mouseenter', () => {
+                slot.style.backgroundColor = 'rgba(99, 102, 241, 0.02)';
+            });
+            slot.addEventListener('mouseleave', () => {
+                slot.style.backgroundColor = 'transparent';
+            });
+        });
+    </script>
+</body></html>

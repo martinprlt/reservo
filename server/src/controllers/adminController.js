@@ -166,4 +166,13 @@ export default {
       next(error);
     }
   },
+
+  async addAdmin(req, res, next) {
+    try {
+      const result = await adminService.addAdmin(req.tenantId, req.body);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  },
 };

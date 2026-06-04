@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500&amp;family=Geist:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e3dfff",
+                    "tertiary": "#5148d7",
+                    "secondary-fixed": "#e3e1ed",
+                    "secondary-container": "#e3e1ed",
+                    "inverse-on-surface": "#f3eeff",
+                    "primary-container": "#6063ee",
+                    "tertiary-fixed": "#e3dfff",
+                    "surface": "#fcf8ff",
+                    "on-surface-variant": "#464554",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-tertiary-fixed": "#100069",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#efebff",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f6f2ff",
+                    "tertiary-container": "#6a63f2",
+                    "surface-tint": "#494bd6",
+                    "on-background": "#181445",
+                    "secondary-fixed-dim": "#c7c5d1",
+                    "surface-container-highest": "#e3dfff",
+                    "inverse-primary": "#c0c1ff",
+                    "on-secondary-container": "#64636d",
+                    "on-tertiary-fixed-variant": "#372abf",
+                    "outline-variant": "#c7c4d7",
+                    "surface-dim": "#dad6ff",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "surface-bright": "#fcf8ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e9e5ff",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "background": "#fcf8ff",
+                    "outline": "#767586",
+                    "on-surface": "#181445",
+                    "primary": "#4648d4",
+                    "primary-fixed": "#e1e0ff",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#1a1b23",
+                    "secondary": "#5d5d67",
+                    "on-primary-container": "#fffbff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#2d2a5b",
+                    "on-tertiary-container": "#020026",
+                    "on-secondary-fixed-variant": "#46464f",
+                    "on-primary-fixed": "#07006c",
+                    "tertiary-fixed-dim": "#c3c0ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-desktop": "64px",
+                    "margin-mobile": "16px",
+                    "unit": "8px",
+                    "max-width": "1280px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Hanken Grotesk"],
+                    "label-caps": ["Geist"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "code-sm": ["Geist"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "code-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #fcf8ff;
+            color: #181445;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(224, 231, 255, 0.5);
+        }
+        .chart-glow {
+            filter: drop-shadow(0 4px 6px rgba(99, 102, 241, 0.2));
+        }
+        .slot-indicator {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.02));
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Top Navigation Shell -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md docked full-width top-0 sticky border-b border-outline-variant/20 shadow-sm shadow-tertiary/5 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 z-50">
+<div class="flex items-center gap-3">
+<img alt="Slotify" class="w-8 h-8 rounded-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHIHvJRJU9il6_TWEysb264T-42oyMkEgLsRszsPj-ehvPEMZaDDo9oteJgyyfZ9ns7KxFeqf5HNYNFoHCxL9Jm6LAPbO5N-LD_BjUjCzy_TMVoFZX9pBQbovbV88PsXgCYNeYD1UCj3zDA70sd_K_fSN1ld6a_rbJRzMuca5VtBskQoc6EeDJQpr3g1Nvy99TA_PCllyFO77VxLUgQBL8731yM13lY60XFnvDHo3ZHeNxyV0ZZwfqqo-qFJ_7b2RHoL6xNyifKC35"/>
+<span class="font-headline-lg text-headline-lg tracking-tight font-bold text-primary dark:text-primary-fixed-dim">Slotify</span>
+</div>
+<nav class="hidden md:flex gap-8">
+<a class="text-primary font-semibold font-label-caps text-label-caps hover:bg-surface-container-high transition-colors duration-200 px-3 py-1 rounded-full" href="#">Home</a>
+<a class="text-on-surface-variant font-medium font-label-caps text-label-caps hover:bg-surface-container-high transition-colors duration-200 px-3 py-1 rounded-full" href="#">Calendar</a>
+<a class="text-on-surface-variant font-medium font-label-caps text-label-caps hover:bg-surface-container-high transition-colors duration-200 px-3 py-1 rounded-full" href="#">Clients</a>
+<a class="text-on-surface-variant font-medium font-label-caps text-label-caps hover:bg-surface-container-high transition-colors duration-200 px-3 py-1 rounded-full" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-outline hover:text-primary transition-colors">notifications</button>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container overflow-hidden">
+<img alt="Profile" data-alt="A professional headshot of a modern executive in a bright, high-key studio setting. The lighting is soft and flattering, emphasizing a clean-cut and trustworthy appearance. The background is a minimalist, neutral violet-grey that complements the Slotify dashboard's sophisticated color palette. The individual is smiling warmly, conveying confidence and accessibility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdydFzgvMmOKAMROLChogptbz8WLuZ8zeJ6a6nj-yvNK812J9Sl6jm0NFual1V46z3SskXk0cunnw2qmWfwNhkmhW7z0t2Z3-hTicwUW5yMuTagKqCUtE-h3mq4hst30mBd-HjUA_E0he-aZyUZHOkrMtFhjTbGvazn0ly_8O7leh6nkdMpnC4RQi0y0XBdihTYx5l-qerwCMaLSf4y6yPKMwhAL3I3J420Hzx9oC-hW_VWFS6I2se6q84hYbuAh3Ag0y4FSj5BDRU"/>
+</div>
+</div>
+</header>
+<main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12">
+<!-- Welcome Header -->
+<section class="mb-12">
+<h1 class="font-headline-xl text-headline-xl text-on-background mb-2">Good morning, Julian.</h1>
+<p class="text-on-surface-variant font-body-md max-w-2xl">Your schedule looks productive today. You have 6 appointments and 2 new client inquiries.</p>
+</section>
+<!-- Bento Grid Dashboard -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Metric: Daily Revenue -->
+<div class="md:col-span-4 glass-card p-6 rounded-xl shadow-[0_4px_12px_rgba(30,27,75,0.05)] flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Daily Revenue</span>
+<div class="bg-primary/10 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-xl">payments</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-on-background">$1,240</span>
+<span class="text-sm font-medium text-emerald-600 flex items-center"><span class="material-symbols-outlined text-xs">trending_up</span> +12%</span>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/10">
+<p class="text-xs text-on-surface-variant">Yesterday: <span class="font-semibold">$1,105</span></p>
+</div>
+</div>
+<!-- Metric: New Clients -->
+<div class="md:col-span-4 glass-card p-6 rounded-xl shadow-[0_4px_12px_rgba(30,27,75,0.05)] flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-4">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">New Clients</span>
+<div class="bg-tertiary/10 p-2 rounded-lg">
+<span class="material-symbols-outlined text-tertiary text-xl">person_add</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-on-background">14</span>
+<span class="text-sm font-medium text-emerald-600 flex items-center"><span class="material-symbols-outlined text-xs">trending_up</span> +3</span>
+</div>
+</div>
+<div class="mt-6 pt-4 border-t border-outline-variant/10">
+<p class="text-xs text-on-surface-variant">Total this month: <span class="font-semibold">48</span></p>
+</div>
+</div>
+<!-- Growth Chart (placeholder visual) -->
+<div class="md:col-span-4 glass-card p-6 rounded-xl shadow-[0_4px_12px_rgba(30,27,75,0.05)] relative overflow-hidden group">
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest block mb-4">Growth Index</span>
+<div class="h-24 w-full flex items-end gap-1 px-2">
+<div class="flex-1 bg-primary/20 rounded-t-sm h-1/2 transition-all duration-500 group-hover:h-3/4"></div>
+<div class="flex-1 bg-primary/30 rounded-t-sm h-2/3 transition-all duration-500 group-hover:h-5/6"></div>
+<div class="flex-1 bg-primary/40 rounded-t-sm h-1/3 transition-all duration-500 group-hover:h-1/2"></div>
+<div class="flex-1 bg-primary/60 rounded-t-sm h-3/4 transition-all duration-500 group-hover:h-full"></div>
+<div class="flex-1 bg-primary rounded-t-sm h-5/6 transition-all duration-500 group-hover:h-4/5"></div>
+<div class="flex-1 bg-primary/80 rounded-t-sm h-full"></div>
+</div>
+<div class="mt-4 flex justify-between text-[10px] text-outline font-label-caps">
+<span>MON</span>
+<span>TUE</span>
+<span>WED</span>
+<span>THU</span>
+<span>FRI</span>
+<span>SAT</span>
+</div>
+</div>
+<!-- Main Content: Appointments List -->
+<div class="md:col-span-8 glass-card rounded-xl shadow-[0_4px_12px_rgba(30,27,75,0.05)] overflow-hidden">
+<div class="px-8 py-6 border-b border-outline-variant/10 flex items-center justify-between">
+<h2 class="font-headline-lg text-headline-lg text-on-background">Next Appointments</h2>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-1 hover:underline">
+                        View Calendar <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="divide-y divide-outline-variant/5">
+<!-- Appointment Item -->
+<div class="p-6 hover:bg-surface-container-low transition-colors group flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img alt="Elena Rodriguez" data-alt="A portrait of Elena Rodriguez, a young woman with a creative and professional look, wearing modern eyewear and a minimal white top. The lighting is crisp and clean, casting soft shadows against a neutral, high-key background. The overall aesthetic is minimalist and bright, aligned with the Slotify dashboard's premium purple and white design language." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhPA-_Y6GqayIw8N_T_nvm5kJuXYMkGORi1VVcLlnDauTyk4yV7yflanjtyYYAzb_QzIiSxEhYWMG6jPn_CUz8hiexxWYhnO-X4koKNnTLTmlqHFVlUMCHs3C82tAxxBvstCgN43P0DASRmqm1kzFBW_JeFAJkIFEP6X1qMmRXe_sYLl3Eo-ZUoxgeeJZivhyjFTCPsQfX1PIVX48KrJ2LIN-E9jsrgCD7FYsEvds3uVxzLJQQGBFJztPrp-8EXEATD8S9HlYVRj68"/>
+</div>
+<div>
+<h3 class="font-semibold text-on-background">Elena Rodriguez</h3>
+<p class="text-sm text-on-surface-variant">Creative Strategy Session</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-on-background font-medium">10:30 AM</div>
+<div class="text-xs text-outline">60 mins</div>
+</div>
+</div>
+<!-- Appointment Item -->
+<div class="p-6 hover:bg-surface-container-low transition-colors group flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-surface-container">
+<img alt="Julian Pena" data-alt="A professional portrait of Julian Pena, a middle-aged man with a friendly yet business-oriented expression. He is dressed in a smart-casual navy blazer over a light lavender shirt, perfectly matching the Slotify dashboard's color palette. The setting is a minimalist office with soft, diffused daylight and subtle purple accents in the decor." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmKoO9H3bzWqHmwFWJYb8jWKHto3BOaVuKBYg5JFHfbKcmMbIFIP9XhGFJlTeDP_6DW-_-kDvKBzY88I26f7e9aK1WQZUgHFHgrAkyNl5UMyqju3r13wTVDp5MPFCfCgVDPE8CAr8Sk64ljLWBa2vcDK3B_gbamqUUfQYjNc5TIYee98DXR4bcVfZkPGwnrYHaqupqb8sMfYkP-TBqO8sot5VLXS-iHdAET_ncO-LoylDh9fVIMQPVeX5SfsdxKHKwd2UX1YwlTPDt"/>
+</div>
+<div>
+<h3 class="font-semibold text-on-background">Julian Pena</h3>
+<p class="text-sm text-on-surface-variant">Account Review &amp; Renewal</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-on-background font-medium">01:15 PM</div>
+<div class="text-xs text-outline">45 mins</div>
+</div>
+</div>
+<!-- Appointment Item -->
+<div class="p-6 hover:bg-surface-container-low transition-colors group flex items-center justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">person</span>
+</div>
+<div>
+<h3 class="font-semibold text-on-background">Sarah Chen</h3>
+<p class="text-sm text-on-surface-variant">Onboarding Call</p>
+</div>
+</div>
+<div class="text-right">
+<div class="text-on-background font-medium">03:45 PM</div>
+<div class="text-xs text-outline">30 mins</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Content: Slot Availability Visualization -->
+<div class="md:col-span-4 space-y-gutter">
+<div class="glass-card p-6 rounded-xl shadow-[0_4px_12px_rgba(30,27,75,0.05)]">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-6">Today's Slots</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-16 text-xs text-outline font-label-caps">09:00</div>
+<div class="flex-1 h-8 rounded-md bg-primary/20 border border-primary/10 flex items-center px-3">
+<span class="text-[10px] font-bold text-primary uppercase">Reserved</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-16 text-xs text-outline font-label-caps">10:00</div>
+<div class="flex-1 h-8 rounded-md border border-outline-variant/30 border-dashed"></div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-16 text-xs text-outline font-label-caps">11:00</div>
+<div class="flex-1 h-8 rounded-md bg-primary border border-primary flex items-center px-3">
+<span class="text-[10px] font-bold text-white uppercase">Ongoing</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-16 text-xs text-outline font-label-caps">12:00</div>
+<div class="flex-1 h-8 rounded-md slot-indicator border border-outline-variant/20"></div>
+</div>
+</div>
+</div>
+<!-- Recent Activity Chip Cloud -->
+<div class="glass-card p-6 rounded-xl shadow-[0_4px_12px_rgba(30,27,75,0.05)]">
+<h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-4">Quick Actions</h3>
+<div class="flex flex-wrap gap-2">
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all">New Booking</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all">Add Client</button>
+<button class="px-4 py-2 rounded-full bg-surface-container-high text-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all">Export Revenue</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation for Mobile -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 pb-safe px-4 bg-surface/90 dark:bg-surface-dim/90 backdrop-blur-lg border-t border-outline-variant/10 shadow-[0_-4px_12px_rgba(30,27,75,0.05)] md:hidden">
+<div class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-5 py-1.5 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-[10px]">Home</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-5 py-1.5 hover:text-primary transition-all">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-[10px]">Calendar</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-5 py-1.5 hover:text-primary transition-all">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-[10px]">Clients</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-5 py-1.5 hover:text-primary transition-all">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-[10px]">Settings</span>
+</div>
+</nav>
+<!-- Script for subtle micro-interactions -->
+<script>
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-2px)';
+                card.style.transition = 'transform 0.3s ease';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

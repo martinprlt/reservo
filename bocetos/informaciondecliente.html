@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Slotify - Elena Richardson Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Geist:wght@400;600&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e3dfff",
+                    "tertiary": "#5148d7",
+                    "secondary-fixed": "#e3e1ed",
+                    "secondary-container": "#e3e1ed",
+                    "inverse-on-surface": "#f3eeff",
+                    "primary-container": "#6063ee",
+                    "tertiary-fixed": "#e3dfff",
+                    "surface": "#fcf8ff",
+                    "on-surface-variant": "#464554",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-tertiary-fixed": "#100069",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#efebff",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f6f2ff",
+                    "tertiary-container": "#6a63f2",
+                    "surface-tint": "#494bd6",
+                    "on-background": "#181445",
+                    "secondary-fixed-dim": "#c7c5d1",
+                    "surface-container-highest": "#e3dfff",
+                    "inverse-primary": "#c0c1ff",
+                    "on-secondary-container": "#64636d",
+                    "on-tertiary-fixed-variant": "#372abf",
+                    "outline-variant": "#c7c4d7",
+                    "surface-dim": "#dad6ff",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "surface-bright": "#fcf8ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e9e5ff",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "background": "#fcf8ff",
+                    "outline": "#767586",
+                    "on-surface": "#181445",
+                    "primary": "#4648d4",
+                    "primary-fixed": "#e1e0ff",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#1a1b23",
+                    "secondary": "#5d5d67",
+                    "on-primary-container": "#fffbff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#2d2a5b",
+                    "on-tertiary-container": "#020026",
+                    "on-secondary-fixed-variant": "#46464f",
+                    "on-primary-fixed": "#07006c",
+                    "tertiary-fixed-dim": "#c3c0ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-desktop": "64px",
+                    "margin-mobile": "16px",
+                    "unit": "8px",
+                    "max-width": "1280px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Hanken Grotesk"],
+                    "label-caps": ["Geist"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "code-sm": ["Geist"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "code-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #fcf8ff;
+            color: #181445;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #E0E7FF;
+        }
+        .slot-pill {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+        }
+        .custom-shadow {
+            box-shadow: 0 4px 20px -2px rgba(30, 27, 75, 0.08);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md border-b border-outline-variant/20 shadow-sm shadow-tertiary/5 docked full-width top-0 sticky flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 z-50">
+<div class="flex items-center gap-3">
+<img alt="Slotify Logo" class="w-8 h-8 rounded-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHIHvJRJU9il6_TWEysb264T-42oyMkEgLsRszsPj-ehvPEMZaDDo9oteJgyyfZ9ns7KxFeqf5HNYNFoHCxL9Jm6LAPbO5N-LD_BjUjCzy_TMVoFZX9pBQbovbV88PsXgCYNeYD1UCj3zDA70sd_K_fSN1ld6a_rbJRzMuca5VtBskQoc6EeDJQpr3g1Nvy99TA_PCllyFO77VxLUgQBL8731yM13lY60XFnvDHo3ZHeNxyV0ZZwfqqo-qFJ_7b2RHoL6xNyifKC35"/>
+<h1 class="font-headline-lg text-headline-lg tracking-tight font-bold text-primary dark:text-primary-fixed-dim">Slotify</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-high transition-colors duration-200 rounded-full active:opacity-80 active:scale-95">
+<span class="material-symbols-outlined text-primary">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center border-2 border-white custom-shadow">
+<span class="font-bold text-on-primary-fixed text-body-sm">ER</span>
+</div>
+</div>
+</header>
+<main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-8 md:py-12 pb-32">
+<!-- Profile Header Section -->
+<section class="mb-10">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="flex items-start gap-6">
+<div class="relative">
+<img class="w-24 h-24 md:w-32 md:h-32 rounded-3xl object-cover custom-shadow border-4 border-white" data-alt="Close up portrait of Elena Richardson, a professional woman with a warm and friendly expression. She has styled hair and is positioned against a soft, out-of-focus lavender background that aligns with the premium purple minimalist design system. The lighting is bright and airy, emphasizing clean skin and a modern, high-end corporate aesthetic with subtle violet undertones in the shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIRW_jA9xCX3dGfwXt3VvGMEIu1IejA43tNnF9h7JYthNmM857f1ucml1PGKPY8MG39QqdSQ5VdPXxBhCa2TzRVXIWZrlu2H3kwYaDaBX747-xBJvogU5K5axr_L58GHqGfMBWQxdRFNdtJxzZxSDkI_e65_nOy0qa_8vFXzUifc0_Xsqfyh2gqpaeK1mhRbJxtjeqBur9lc8PWkziD1FulxLBagKwBytqpq9NKjGe3VqynKJp8aiP_CNKoi-Xh2EPvoEBIt-SPz93"/>
+<div class="absolute -bottom-2 -right-2 bg-primary text-white p-1.5 rounded-xl border-4 border-white">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<div class="pt-2">
+<div class="flex items-center gap-3 mb-1">
+<h2 class="font-headline-xl text-headline-lg md:text-headline-xl text-on-surface">Elena Richardson</h2>
+<span class="hidden md:inline-block px-3 py-1 bg-primary-container/10 text-primary rounded-full font-label-caps text-label-caps border border-primary/20">Client since 2022</span>
+</div>
+<p class="text-on-surface-variant flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">location_on</span> San Francisco, CA
+                        </p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 md:flex-none px-6 py-2.5 bg-primary text-white rounded-xl font-label-caps text-label-caps hover:opacity-90 transition-all custom-shadow active:scale-95">
+                        Book Service
+                    </button>
+<button class="flex-1 md:flex-none px-4 py-2.5 bg-secondary-container text-on-secondary-fixed-variant rounded-xl hover:bg-surface-container-highest transition-all active:scale-95">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Loyalty Card (Left Side) -->
+<div class="md:col-span-4 flex flex-col gap-gutter">
+<div class="glass-card p-6 rounded-3xl custom-shadow">
+<div class="flex justify-between items-start mb-6">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">LOYALTY PROGRAM</p>
+<h3 class="font-headline-lg text-headline-lg-mobile text-on-surface">Gold Member</h3>
+</div>
+<div class="p-3 bg-tertiary-fixed rounded-2xl">
+<span class="material-symbols-outlined text-tertiary" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+</div>
+</div>
+<div class="mb-2 flex justify-between items-end">
+<span class="font-headline-lg text-headline-lg-mobile text-primary">150<span class="text-body-sm text-on-surface-variant ml-1">/ 200 pts</span></span>
+<span class="text-body-sm text-on-surface-variant">75% to Platinum</span>
+</div>
+<div class="w-full bg-surface-container-highest h-3 rounded-full overflow-hidden mb-8">
+<div class="h-full bg-primary rounded-full w-[75%] transition-all duration-1000"></div>
+</div>
+<div class="slot-pill p-4 rounded-2xl flex items-center gap-4">
+<div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary border border-primary/10 shadow-sm">
+<span class="material-symbols-outlined">redeem</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-primary">NEXT REWARD</p>
+<p class="text-body-sm font-medium">Free Deep Conditioning</p>
+</div>
+</div>
+</div>
+<!-- Contact Info Card -->
+<div class="glass-card p-6 rounded-3xl custom-shadow">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-4">CONTACT INFORMATION</p>
+<div class="space-y-4">
+<div class="flex items-center gap-4 group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">mail</span>
+</div>
+<div>
+<p class="text-body-sm text-on-surface-variant">Email</p>
+<p class="font-medium">e.richardson@design.co</p>
+</div>
+</div>
+<div class="flex items-center gap-4 group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant group-hover:bg-primary-container group-hover:text-white transition-colors">
+<span class="material-symbols-outlined">phone</span>
+</div>
+<div>
+<p class="text-body-sm text-on-surface-variant">Phone</p>
+<p class="font-medium">+1 (415) 555-0198</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Service History (Right Side) -->
+<div class="md:col-span-8 flex flex-col gap-gutter">
+<div class="glass-card p-8 rounded-3xl custom-shadow h-full">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="font-headline-lg text-headline-lg-mobile text-on-surface">Service History</h3>
+<p class="text-on-surface-variant text-body-sm">Recent and upcoming appointments</p>
+</div>
+<button class="text-primary font-label-caps text-label-caps flex items-center gap-1 hover:underline">
+                            View All <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<div class="space-y-6">
+<!-- History Item 1 -->
+<div class="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl hover:bg-surface-container transition-all group border border-transparent hover:border-outline-variant/30">
+<div class="flex items-center gap-5 mb-4 md:mb-0">
+<div class="w-14 h-14 bg-tertiary-fixed rounded-2xl flex flex-col items-center justify-center text-tertiary font-bold">
+<span class="text-[10px] leading-none uppercase">Oct</span>
+<span class="text-xl leading-tight">24</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface text-lg">Balayage &amp; Toning</h4>
+<p class="text-body-sm text-on-surface-variant">with Sarah Jenkins • 2h 30m</p>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-6">
+<div class="text-right hidden md:block">
+<p class="font-bold text-on-surface">$240.00</p>
+<p class="text-[10px] text-primary bg-primary/10 px-2 py-0.5 rounded-full inline-block">COMPLETED</p>
+</div>
+<div class="md:hidden">
+<p class="font-bold text-on-surface">$240.00</p>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-white group-hover:text-primary transition-all">
+<span class="material-symbols-outlined">receipt_long</span>
+</button>
+</div>
+</div>
+<!-- History Item 2 -->
+<div class="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl hover:bg-surface-container transition-all group border border-transparent hover:border-outline-variant/30">
+<div class="flex items-center gap-5 mb-4 md:mb-0">
+<div class="w-14 h-14 bg-surface-container-highest rounded-2xl flex flex-col items-center justify-center text-on-surface-variant font-bold">
+<span class="text-[10px] leading-none uppercase">Sep</span>
+<span class="text-xl leading-tight">12</span>
+</div>
+<div>
+<h4 class="font-bold text-on-surface text-lg">Signature Manicure</h4>
+<p class="text-body-sm text-on-surface-variant">with Elena V. • 45m</p>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-6">
+<div class="text-right hidden md:block">
+<p class="font-bold text-on-surface">$65.00</p>
+<p class="text-[10px] text-on-surface-variant bg-surface-container-highest px-2 py-0.5 rounded-full inline-block">COMPLETED</p>
+</div>
+<div class="md:hidden">
+<p class="font-bold text-on-surface">$65.00</p>
+</div>
+<button class="w-10 h-10 rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-white group-hover:text-primary transition-all">
+<span class="material-symbols-outlined">receipt_long</span>
+</button>
+</div>
+</div>
+<!-- History Item 3 (Upcoming) -->
+<div class="flex flex-col md:flex-row md:items-center justify-between p-5 rounded-2xl bg-primary/5 border border-primary/20 group relative overflow-hidden">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
+<div class="flex items-center gap-5 mb-4 md:mb-0">
+<div class="w-14 h-14 bg-primary rounded-2xl flex flex-col items-center justify-center text-white font-bold">
+<span class="text-[10px] leading-none uppercase">Nov</span>
+<span class="text-xl leading-tight">08</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="font-bold text-on-surface text-lg">Deep Conditioning Treatment</h4>
+<span class="text-[10px] text-primary font-bold tracking-widest uppercase">Upcoming</span>
+</div>
+<p class="text-body-sm text-on-surface-variant">with Sarah Jenkins • 11:30 AM</p>
+</div>
+</div>
+<div class="flex items-center justify-between md:justify-end gap-6">
+<div class="text-right hidden md:block">
+<p class="font-bold text-on-surface">$0.00</p>
+<p class="text-[10px] text-tertiary font-bold">REDEEMED</p>
+</div>
+<button class="px-4 py-2 bg-white text-primary border border-primary/20 rounded-xl font-label-caps text-label-caps hover:bg-primary hover:text-white transition-all">
+                                    Edit Appointment
+                                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 pb-safe px-4 bg-surface/90 backdrop-blur-lg border-t border-outline-variant/10 shadow-[0_-4px_12px_rgba(30,27,75,0.05)] rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1.5 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-[10px] mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1.5 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-[10px] mt-1">Calendar</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-1.5 scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-caps text-[10px] mt-1">Clients</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1.5 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-[10px] mt-1">Settings</span>
+</a>
+</nav>
+<!-- Desktop Sidebar/Nav Placeholder for consistency -->
+<div class="hidden md:block fixed left-margin-desktop top-24 space-y-8 z-10">
+<div class="flex flex-col gap-6">
+<a class="p-3 text-on-surface-variant hover:text-primary hover:bg-white rounded-2xl transition-all" href="#">
+<span class="material-symbols-outlined text-2xl">dashboard</span>
+</a>
+<a class="p-3 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20 transition-all" href="#">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">group</span>
+</a>
+<a class="p-3 text-on-surface-variant hover:text-primary hover:bg-white rounded-2xl transition-all" href="#">
+<span class="material-symbols-outlined text-2xl">calendar_month</span>
+</a>
+<a class="p-3 text-on-surface-variant hover:text-primary hover:bg-white rounded-2xl transition-all" href="#">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+</a>
+</div>
+</div>
+<script>
+        // Simple micro-interaction for cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+                card.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

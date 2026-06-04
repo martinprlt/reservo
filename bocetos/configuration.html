@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500&amp;family=Geist:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#e3dfff",
+                    "tertiary": "#5148d7",
+                    "secondary-fixed": "#e3e1ed",
+                    "secondary-container": "#e3e1ed",
+                    "inverse-on-surface": "#f3eeff",
+                    "primary-container": "#6063ee",
+                    "tertiary-fixed": "#e3dfff",
+                    "surface": "#fcf8ff",
+                    "on-surface-variant": "#464554",
+                    "error-container": "#ffdad6",
+                    "primary-fixed-dim": "#c0c1ff",
+                    "on-tertiary-fixed": "#100069",
+                    "on-tertiary": "#ffffff",
+                    "surface-container": "#efebff",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f6f2ff",
+                    "tertiary-container": "#6a63f2",
+                    "surface-tint": "#494bd6",
+                    "on-background": "#181445",
+                    "secondary-fixed-dim": "#c7c5d1",
+                    "surface-container-highest": "#e3dfff",
+                    "inverse-primary": "#c0c1ff",
+                    "on-secondary-container": "#64636d",
+                    "on-tertiary-fixed-variant": "#372abf",
+                    "outline-variant": "#c7c4d7",
+                    "surface-dim": "#dad6ff",
+                    "on-primary-fixed-variant": "#2f2ebe",
+                    "surface-bright": "#fcf8ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-high": "#e9e5ff",
+                    "on-error": "#ffffff",
+                    "error": "#ba1a1a",
+                    "background": "#fcf8ff",
+                    "outline": "#767586",
+                    "on-surface": "#181445",
+                    "primary": "#4648d4",
+                    "primary-fixed": "#e1e0ff",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed": "#1a1b23",
+                    "secondary": "#5d5d67",
+                    "on-primary-container": "#fffbff",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-surface": "#2d2a5b",
+                    "on-tertiary-container": "#020026",
+                    "on-secondary-fixed-variant": "#46464f",
+                    "on-primary-fixed": "#07006c",
+                    "tertiary-fixed-dim": "#c3c0ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "margin-desktop": "64px",
+                    "margin-mobile": "16px",
+                    "unit": "8px",
+                    "max-width": "1280px"
+            },
+            "fontFamily": {
+                    "headline-xl": ["Hanken Grotesk"],
+                    "label-caps": ["Geist"],
+                    "body-md": ["Inter"],
+                    "headline-lg-mobile": ["Hanken Grotesk"],
+                    "code-sm": ["Geist"],
+                    "body-sm": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"]
+            },
+            "fontSize": {
+                    "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "code-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(224, 231, 255, 0.5);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #fcf8ff;
+            color: #181445;
+        }
+        .slot-pill {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Top Navigation -->
+<header class="bg-surface/80 dark:bg-surface-dim/80 backdrop-blur-md border-b border-outline-variant/20 shadow-sm shadow-tertiary/5 docked full-width top-0 sticky flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop h-16 z-50">
+<div class="flex items-center gap-3">
+<img alt="Slotify Logo" class="w-8 h-8 rounded-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHIHvJRJU9il6_TWEysb264T-42oyMkEgLsRszsPj-ehvPEMZaDDo9oteJgyyfZ9ns7KxFeqf5HNYNFoHCxL9Jm6LAPbO5N-LD_BjUjCzy_TMVoFZX9pBQbovbV88PsXgCYNeYD1UCj3zDA70sd_K_fSN1ld6a_rbJRzMuca5VtBskQoc6EeDJQpr3g1Nvy99TA_PCllyFO77VxLUgQBL8731yM13lY60XFnvDHo3ZHeNxyV0ZZwfqqo-qFJ_7b2RHoL6xNyifKC35"/>
+<span class="font-headline-lg text-headline-lg tracking-tight font-bold text-primary dark:text-primary-fixed-dim">Slotify</span>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<nav class="flex gap-6">
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200 px-3 py-1 rounded-lg" href="#">Home</a>
+<a class="text-on-surface-variant font-medium hover:bg-surface-container-high transition-colors duration-200 px-3 py-1 rounded-lg" href="#">Calendar</a>
+<a class="text-primary font-semibold px-3 py-1 rounded-lg" href="#">Settings</a>
+</nav>
+<div class="h-8 w-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-xs">
+                JD
+            </div>
+</div>
+<div class="md:hidden">
+<span class="material-symbols-outlined text-primary">menu</span>
+</div>
+</header>
+<main class="max-w-max-width mx-auto px-margin-mobile md:px-margin-desktop py-12 pb-32">
+<!-- Hero Section / Context -->
+<div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="space-y-2">
+<p class="font-label-caps text-label-caps text-primary tracking-widest">ADMINISTRATION</p>
+<h1 class="font-headline-xl text-headline-xl text-on-background">Service Configuration</h1>
+<p class="text-on-surface-variant max-w-xl">Customize your business offerings, set durations, and adjust pricing to optimize your professional schedule.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+<span class="material-symbols-outlined">add</span>
+<span class="font-label-caps text-label-caps">ADD NEW SERVICE</span>
+</button>
+</div>
+<!-- Bento Grid for Services -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Service: Limpieza Facial -->
+<div class="md:col-span-8 glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-xl hover:shadow-tertiary/5 transition-all duration-300">
+<div class="flex justify-between items-start mb-8">
+<div class="space-y-4">
+<div class="w-12 h-12 rounded-2xl bg-primary-container/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">spa</span>
+</div>
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Limpieza Facial</h3>
+<p class="text-on-surface-variant">Tratamiento profundo para revitalizar y purificar la piel del rostro.</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-headline-lg font-bold text-primary">$45.00</span>
+<span class="text-on-surface-variant text-sm">per session</span>
+</div>
+</div>
+<div class="flex items-center justify-between border-t border-outline-variant/30 pt-6">
+<div class="flex gap-4">
+<div class="slot-pill px-4 py-2 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="font-label-caps text-label-caps">60 MIN</span>
+</div>
+<div class="slot-pill px-4 py-2 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">category</span>
+<span class="font-label-caps text-label-caps">SKINCARE</span>
+</div>
+</div>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-outline">edit</span>
+</button>
+</div>
+</div>
+<!-- Stats/Context Card -->
+<div class="md:col-span-4 bg-primary text-on-primary rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+<div>
+<h4 class="font-label-caps text-label-caps mb-4 opacity-80">ACTIVE SERVICES</h4>
+<p class="text-headline-xl font-bold">12</p>
+</div>
+<div class="space-y-4">
+<p class="text-body-sm opacity-90">Your catalog is 85% optimized. Consider adding a 'Quick' service to fill small gaps.</p>
+<div class="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+<div class="bg-white w-[85%] h-full"></div>
+</div>
+</div>
+</div>
+<!-- Service: Manicura -->
+<div class="md:col-span-4 glass-card rounded-2xl p-6 flex flex-col group hover:shadow-xl hover:shadow-tertiary/5 transition-all">
+<div class="w-10 h-10 rounded-xl bg-tertiary-container/20 flex items-center justify-center text-tertiary mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">back_hand</span>
+</div>
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile font-semibold mb-1">Manicura</h3>
+<p class="text-body-sm text-on-surface-variant mb-6">Cuidado estético de las manos y uñas con acabado premium.</p>
+<div class="mt-auto space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-outline">DURATION</span>
+<span class="font-semibold text-on-surface">45 min</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-outline">PRICE</span>
+<span class="font-semibold text-primary">$25.00</span>
+</div>
+</div>
+</div>
+<!-- Service: Masaje Relajante -->
+<div class="md:col-span-4 glass-card rounded-2xl p-6 flex flex-col group hover:shadow-xl hover:shadow-tertiary/5 transition-all">
+<div class="w-10 h-10 rounded-xl bg-tertiary-container/20 flex items-center justify-center text-tertiary mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">self_care</span>
+</div>
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile font-semibold mb-1">Masaje Relajante</h3>
+<p class="text-body-sm text-on-surface-variant mb-6">Técnica manual para aliviar el estrés y la tensión muscular acumulada.</p>
+<div class="mt-auto space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-outline">DURATION</span>
+<span class="font-semibold text-on-surface">90 min</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-outline">PRICE</span>
+<span class="font-semibold text-primary">$65.00</span>
+</div>
+</div>
+</div>
+<!-- Service: Corte de Cabello -->
+<div class="md:col-span-4 glass-card rounded-2xl p-6 flex flex-col group hover:shadow-xl hover:shadow-tertiary/5 transition-all">
+<div class="w-10 h-10 rounded-xl bg-tertiary-container/20 flex items-center justify-center text-tertiary mb-4">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">content_cut</span>
+</div>
+<h3 class="font-headline-lg-mobile text-headline-lg-mobile font-semibold mb-1">Corte de Cabello</h3>
+<p class="text-body-sm text-on-surface-variant mb-6">Estilo personalizado y asesoría de imagen profesional.</p>
+<div class="mt-auto space-y-4">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-outline">DURATION</span>
+<span class="font-semibold text-on-surface">30 min</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-label-caps text-outline">PRICE</span>
+<span class="font-semibold text-primary">$30.00</span>
+</div>
+</div>
+</div>
+<!-- Empty Placeholder Slot -->
+<div class="md:col-span-12 border-2 border-dashed border-outline-variant/50 rounded-2xl p-8 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-primary/50 transition-colors">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-outline group-hover:text-primary transition-colors mb-3">
+<span class="material-symbols-outlined">add</span>
+</div>
+<p class="font-semibold text-on-surface-variant group-hover:text-primary transition-colors">Añadir otro servicio</p>
+<p class="text-sm text-outline">Define el precio, duración y descripción</p>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 pb-safe px-4 bg-surface/90 dark:bg-surface-dim/90 backdrop-blur-lg border-t border-outline-variant/10 shadow-[0_-4px_12px_rgba(30,27,75,0.05)] rounded-t-xl">
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-5 py-1.5">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-5 py-1.5">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-caps text-label-caps mt-1">Calendar</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-secondary-fixed-variant px-5 py-1.5">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-caps text-label-caps mt-1">Clients</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-primary-container dark:bg-primary text-on-primary-container dark:text-on-primary rounded-full px-5 py-1.5 scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-caps text-label-caps mt-1">Settings</span>
+</button>
+</nav>
+<script>
+        // Micro-interactions for service cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-4px)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body></html>

@@ -6,7 +6,7 @@ import axios from 'axios';
 const api = axios.create({
   baseURL: window.location.hostname === 'localhost' 
     ? 'http://localhost:3000/api' 
-    : 'https://slotify-backend.onrender.com/api',
+    : 'https://reservo-7jdl.onrender.com/api',
   withCredentials: true,
   params: {
     tenant: 'tusnailslr',

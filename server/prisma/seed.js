@@ -53,7 +53,19 @@ async function main() {
     },
   });
 
-  console.log('Admin creado: admin@tusnailslr.com / admin123');
+  const passwordHash2 = await bcrypt.hash('asd123', 12);
+  await prisma.admin.upsert({
+    where: { tenantId_email: { tenantId: tenant.id, email: 'martinprlt02@gmail.com' } },
+    update: {},
+    create: {
+      tenantId: tenant.id,
+      email: 'martinprlt02@gmail.com',
+      passwordHash: passwordHash2,
+      nombre: 'Martín',
+    },
+  });
+
+  console.log('Admins creados: admin@tusnailslr.com / admin123 y martinprlt02@gmail.com / asd123');
 
   console.log('Creando servicios...');
   const servicios = [
