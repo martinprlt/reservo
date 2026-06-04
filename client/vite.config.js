@@ -10,12 +10,12 @@ export default defineConfig({
       manifest: {
         name: 'Slotify',
         short_name: 'Slotify',
-        theme_color: '#1E3A5F',
-        background_color: '#ffffff',
+        theme_color: '#4648d4',
+        background_color: '#fcf8ff',
         display: 'standalone',
         icons: [
-          { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/icon-512.png', sizes: '512x512', type: 'image/png' }
+          { src: '/logo.png', sizes: '192x192', type: 'image/png' },
+          { src: '/logo.png', sizes: '512x512', type: 'image/png' }
         ]
       }
     })

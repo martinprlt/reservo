@@ -1,5 +1,21 @@
 import axios from 'axios';
 
+// Determine if we're on a subdomain (e.g., tusnailslr.slotify.app)
+function getSubdomainTenant() {
+  const host = window.location.hostname;
+  // Localhost = no subdomain
+  if (host === 'localhost' || host === '127.0.0.1') return null;
+  // Production: extract first part before main domain
+  // e.g., tusnailslr.slotify.app → tusnailslr
+  // e.g., slotify.app → null (no subdomain)
+  const parts = host.split('.');
+  if (parts.length > 2) return parts[0];
+  // If on a custom domain like slotify.app, no subdomain tenant
+  return null;
+}
+
+const subdomainTenant = getSubdomainTenant();
+
 const api = axios.create({
   baseURL: window.location.hostname === 'localhost'
     ? 'http://localhost:3000/api'
@@ -29,13 +45,24 @@ const cachedApi = {
   }
 };
 
-// Tenant resolution: URL param > localStorage > skip
+// Tenant resolution: subdomain > URL param > localStorage > skip
 api.interceptors.request.use((config) => {
   const isPublicRoute = !config.url?.startsWith('/auth') && !config.url?.startsWith('/admin') && !config.url?.startsWith('/platform');
 
   if (isPublicRoute && !config.params?.tenant) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tenantSlug = urlParams.get('tenant') || localStorage.getItem('slotify_tenant');
+    // 1. Subdomain (e.g., tusnailslr.slotify.app)
+    let tenantSlug = subdomainTenant;
+
+    // 2. URL query param (?tenant=tusnailslr)
+    if (!tenantSlug) {
+      tenantSlug = new URLSearchParams(window.location.search).get('tenant');
+    }
+
+    // 3. localStorage (persisted from admin dashboard)
+    if (!tenantSlug) {
+      tenantSlug = localStorage.getItem('slotify_tenant');
+    }
+
     if (tenantSlug) {
       config.params = { ...config.params, tenant: tenantSlug };
     }
@@ -59,7 +86,7 @@ export function setTenantSlug(slug) {
 }
 
 export function getTenantSlug() {
-  return localStorage.getItem('slotify_tenant');
+  return subdomainTenant || localStorage.getItem('slotify_tenant');
 }
 
 export { cachedApi };
