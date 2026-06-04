@@ -120,7 +120,9 @@ model Turno {
   montoSenia    Float
   expiraEn      DateTime?
   notas         String?
+  fotoUrl       String?     // Reference photo uploaded by client during booking
   mpPrefId      String?
+  fotoPublicId  String?     // Cloudinary public ID for cleanup
   creadoEn      DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 

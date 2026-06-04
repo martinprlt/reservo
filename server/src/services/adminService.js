@@ -2,6 +2,7 @@ import prisma from '../config/prisma.js';
 import { listar as listarClientes, obtenerPorId } from './clientesService.js';
 import { listar as listarServicios } from './serviciosService.js';
 import { calcularSlotsLibres } from './disponibilidadService.js';
+import cloudinaryService from './cloudinaryService.js';
 
 export async function obtenerStats(tenantId) {
   const hoy = new Date();
@@ -198,6 +199,17 @@ export async function actualizarTurno(tenantId, turnoId, { estado, notas, client
         await tx.cliente.update({
           where: { id: turno.clienteId },
           data: { puntos: { increment: turno.servicio.puntosOtorgados || 1 } },
+        });
+      }
+
+      // Delete reference photo from Cloudinary (privacy + storage cleanup)
+      if (turno.fotoPublicId) {
+        try {
+          await cloudinaryService.cloudinary.uploader.destroy(turno.fotoPublicId);
+        } catch {}
+        await tx.turno.update({
+          where: { id: turnoId },
+          data: { fotoUrl: null, fotoPublicId: null },
         });
       }
     }

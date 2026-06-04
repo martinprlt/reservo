@@ -3,7 +3,7 @@ import { calcularSlotsLibres } from './disponibilidadService.js';
 import { procesarPagoAprobado } from './pagosService.js';
 import { notificarNuevoTurno } from './notificacionesService.js';
 
-export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas }) {
+export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas, fotoUrl, fotoPublicId }) {
   const servicio = await prisma.servicio.findFirst({
     where: { id: servicioId, tenantId, activo: true },
   });
@@ -42,6 +42,8 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
       montoSenia,
       expiraEn: new Date(Date.now() + 15 * 60 * 1000),
       notas: notas || null,
+      fotoUrl: fotoUrl || null,
+      fotoPublicId: fotoPublicId || null,
     },
   });
 

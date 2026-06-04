@@ -9,7 +9,8 @@ export const useBookingStore = create((set, get) => ({
   slotSeleccionado: null,
   datosCliente: null,
   notas: '',
-  fotoUrl: null,
+  fotoFile: null,
+  fotoPreview: null,
   aDomicilio: false,
   turnoId: null,
   initPoint: null,
@@ -59,10 +60,11 @@ export const useBookingStore = create((set, get) => ({
       error: null,
     }),
 
-  setNotas: (notas, fotoUrl = null) =>
+  setNotas: (notas, fotoFile = null, fotoPreview = null) =>
     set({
       notas,
-      fotoUrl,
+      fotoFile,
+      fotoPreview,
       paso: 5,
       error: null,
     }),
@@ -92,7 +94,8 @@ export const useBookingStore = create((set, get) => ({
       slotSeleccionado: null,
       datosCliente: null,
       notas: '',
-      fotoUrl: null,
+      fotoFile: null,
+      fotoPreview: null,
       aDomicilio: false,
       turnoId: null,
       initPoint: null,

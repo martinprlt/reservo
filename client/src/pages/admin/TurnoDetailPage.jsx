@@ -220,6 +220,23 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
           )}
         </div>
 
+        {/* Foto de referencia del cliente */}
+        {turno.fotoUrl && (
+          <div className="mt-4">
+            <label className="block text-sm font-medium mb-2 font-label" style={{ color: 'var(--on-surface)' }}>
+              Foto de referencia
+            </label>
+            <img
+              src={turno.fotoUrl}
+              alt="Referencia del cliente"
+              className="w-full max-h-64 object-cover rounded-xl border border-outline-variant/20"
+            />
+            <p className="text-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>
+              Subida por el cliente · Se elimina al completar el turno
+            </p>
+          </div>
+        )}
+
         {turno.expiraEn && turno.estado === 'RESERVADO' && (
           <div className="mt-4 p-4 rounded-lg bg-yellow-50 border border-yellow-200">
             <p className="text-xs text-yellow-800 font-label">

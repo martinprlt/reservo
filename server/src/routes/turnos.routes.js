@@ -12,6 +12,8 @@ const crearTurnoSchema = z.object({
   apellido: z.string().min(2),
   telefono: z.string().min(8),
   notas: z.string().optional(),
+  fotoUrl: z.string().url().optional(),
+  fotoPublicId: z.string().optional(),
 });
 
 const router = Router();

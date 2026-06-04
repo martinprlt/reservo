@@ -5,11 +5,13 @@ import clsx from 'clsx';
 export default function Step4Notas() {
   const { notas: currentNotas, setNotas, goBack } = useBookingStore();
   const [notas, setNotasLocal] = useState(currentNotas || '');
+  const [fotoFile, setFotoFile] = useState(null);
   const [fotoPreview, setFotoPreview] = useState(null);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      setFotoFile(file);
       const reader = new FileReader();
       reader.onloadend = () => setFotoPreview(reader.result);
       reader.readAsDataURL(file);
@@ -17,7 +19,7 @@ export default function Step4Notas() {
   };
 
   const handleContinue = () => {
-    setNotas(notas, fotoPreview);
+    setNotas(notas, fotoFile, fotoPreview);
   };
 
   return (
@@ -75,7 +77,7 @@ export default function Step4Notas() {
                 className="w-full h-48 object-cover rounded-xl border border-outline-variant/20"
               />
               <button
-                onClick={() => setFotoPreview(null)}
+                onClick={() => { setFotoFile(null); setFotoPreview(null); }}
                 className="absolute top-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:bg-black/70 transition"
               >
                 <span className="material-symbols-outlined text-lg">close</span>

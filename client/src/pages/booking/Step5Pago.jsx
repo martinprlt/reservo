@@ -7,7 +7,7 @@ import { useToast } from '../../store/toastContext';
 import api from '../../api/client';
 
 export default function Step5Pago() {
-  const { servicioSeleccionado, varianteSeleccionada, slotSeleccionado, datosCliente, notas, aDomicilio, setTurno, setError, error, goBack, incentivosActivos } = useBookingStore();
+  const { servicioSeleccionado, varianteSeleccionada, slotSeleccionado, datosCliente, notas, fotoFile, aDomicilio, setTurno, setError, error, goBack, incentivosActivos } = useBookingStore();
   const [loading, setLoading] = useState(false);
   const { t } = useLanguage();
   const toast = useToast();
@@ -19,6 +19,20 @@ export default function Step5Pago() {
     setLoading(true);
     setError(null);
     try {
+      let fotoUrl = null;
+      let fotoPublicId = null;
+
+      // Upload reference photo to Cloudinary if provided
+      if (fotoFile) {
+        const formData = new FormData();
+        formData.append('file', fotoFile);
+        const { data: uploadData } = await api.post('/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        fotoUrl = uploadData.url;
+        fotoPublicId = uploadData.publicId;
+      }
+
       const notasFinales = [notas, aDomicilio ? '(A domicilio)' : ''].filter(Boolean).join(' ');
       const { data } = await api.post('/turnos', {
         servicioId: servicioSeleccionado.id,
@@ -28,6 +42,7 @@ export default function Step5Pago() {
         apellido: datosCliente.apellido,
         telefono: datosCliente.telefono,
         notas: notasFinales,
+        ...(fotoUrl && { fotoUrl, fotoPublicId }),
       });
       
       if (data.initPoint) {
