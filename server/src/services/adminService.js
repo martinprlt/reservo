@@ -327,17 +327,38 @@ export async function cleanupDuplicateServicios(tenantId) {
 
   for (const s of servicios) {
     if (seen.has(s.nombre)) {
-      toDelete.push(s.id);
+      toDelete.push({ id: s.id, keepId: seen.get(s.nombre) });
     } else {
       seen.set(s.nombre, s.id);
     }
   }
 
-  if (toDelete.length > 0) {
-    await prisma.servicio.deleteMany({
-      where: { id: { in: toDelete } },
+  let deleted = 0;
+  for (const { id, keepId } of toDelete) {
+    // Reassign turnos to the kept servicio before deleting
+    await prisma.turno.updateMany({
+      where: { servicioId: id },
+      data: { servicioId: keepId },
     });
+    await prisma.servicio.delete({ where: { id } });
+    deleted++;
   }
 
-  return { deleted: toDelete.length, kept: seen.size };
+  // Also cleanup duplicate incentives
+  const incentivos = await prisma.incentivo.findMany({
+    where: { tenantId },
+    orderBy: { id: 'asc' },
+  });
+  const seenInc = new Map();
+  let incDeleted = 0;
+  for (const inc of incentivos) {
+    if (seenInc.has(inc.nombre)) {
+      await prisma.incentivo.delete({ where: { id: inc.id } });
+      incDeleted++;
+    } else {
+      seenInc.set(inc.nombre, inc.id);
+    }
+  }
+
+  return { deleted, incDeleted, kept: seen.size, incKept: seenInc.size };
 }
