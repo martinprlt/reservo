@@ -82,7 +82,7 @@ export default function Step4Notas() {
               </button>
             </div>
           ) : (
-            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-outline-variant/30 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition dark:border-slate-600 dark:hover:border-teal-500 dark:hover:bg-teal-900/10">
+            <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-outline-variant/30 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition dark:border-slate-600 dark:hover:border-primary dark:hover:bg-primary/10">
               <div className="flex flex-col items-center justify-center py-6">
                 <span className="material-symbols-outlined text-3xl text-on-surface-variant/50 mb-2">add_photo_alternate</span>
                 <p className="text-sm text-on-surface-variant font-body">

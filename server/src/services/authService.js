@@ -22,7 +22,17 @@ export async function login(email, password, tenantSlugOrId) {
   }
 
   // Regular admin needs a tenant
-  if (!tenantSlugOrId) throw new Error('VALIDATION_ERROR');
+  if (!tenantSlugOrId) {
+    // If admin already has a tenantId, use it directly
+    if (admin.tenantId) {
+      const token = signToken({ adminId: admin.id, tenantId: admin.tenantId, role: 'ADMIN' });
+      return {
+        token,
+        admin: { id: admin.id, email: admin.email, nombre: admin.nombre, role: admin.role },
+      };
+    }
+    throw new Error('VALIDATION_ERROR');
+  }
 
   let tenant;
   if (tenantSlugOrId.includes('-')) {

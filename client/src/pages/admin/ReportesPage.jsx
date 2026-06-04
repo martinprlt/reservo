@@ -135,15 +135,15 @@ export default function ReportesPage() {
               </div>
               <div className="p-4 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
                 <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>Señados</p>
-                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>{data.stats.porEstado.SENIADO || 0}</p>
+                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>{data.stats.porEstado?.SENIADO || 0}</p>
               </div>
               <div className="p-4 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
                 <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>Completados</p>
-                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>{data.stats.porEstado.COMPLETADO || 0}</p>
+                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>{data.stats.porEstado?.COMPLETADO || 0}</p>
               </div>
               <div className="p-4 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
                 <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>Cancelados</p>
-                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>{data.stats.porEstado.CANCELADO || 0}</p>
+                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>{data.stats.porEstado?.CANCELADO || 0}</p>
               </div>
             </div>
           )}
@@ -156,11 +156,11 @@ export default function ReportesPage() {
               </div>
               <div className="p-4 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
                 <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>Por MercadoPago</p>
-                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>${data.stats.porMetodoPago.MP.toLocaleString('es-AR')}</p>
+                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>${(data.stats.porMetodoPago?.MP || 0).toLocaleString('es-AR')}</p>
               </div>
               <div className="p-4 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
                 <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>Manual/Efectivo</p>
-                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>${data.stats.porMetodoPago.MANUAL.toLocaleString('es-AR')}</p>
+                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>${(data.stats.porMetodoPago?.MANUAL || 0).toLocaleString('es-AR')}</p>
               </div>
             </div>
           )}
@@ -233,7 +233,7 @@ export default function ReportesPage() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold" style={{ color: 'var(--primary)' }}>${turno.montoSenia.toLocaleString('es-AR')}</p>
+                    <p className="font-bold" style={{ color: 'var(--primary)' }}>${(turno.montoSenia || 0).toLocaleString('es-AR')}</p>
                     <p className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>
                       {turno.pagos?.[0]?.metodoPago === 'MP' ? 'MercadoPago' : 'Manual'}
                     </p>

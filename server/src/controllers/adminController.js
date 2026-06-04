@@ -158,6 +158,16 @@ export default {
     }
   },
 
+  async addAdmin(req, res, next) {
+    try {
+      const { crearAdmin } = await import('../services/authService.js');
+      const admin = await crearAdmin(req.tenantId, req.body.email, req.body.password, req.body.nombre);
+      res.status(201).json(admin);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async cleanupDuplicates(req, res, next) {
     try {
       const result = await adminService.cleanupDuplicateServicios(req.tenantId);

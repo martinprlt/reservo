@@ -26,6 +26,7 @@ router.delete('/servicios/:id', adminController.eliminarServicio);
 router.post('/servicios/cleanup-duplicates', adminController.cleanupDuplicates);
 router.get('/config', adminController.obtenerConfig);
 router.patch('/config', adminController.actualizarConfig);
+router.post('/add-admin', adminController.addAdmin);
 router.get('/notificaciones', notificacionesController.listar);
 router.get('/notificaciones/contar', notificacionesController.contar);
 router.patch('/notificaciones/:id/leer', notificacionesController.marcarLeida);
