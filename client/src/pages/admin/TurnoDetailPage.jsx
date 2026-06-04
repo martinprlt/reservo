@@ -251,7 +251,7 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
             Llamar
           </a>
           <a
-            href={`https://wa.me/${telefonoLimpio}?text=Hola!%20Te%20escribo%20de%20Reservo%20para%20confirmar%20tu%20turno`}
+            href={`https://wa.me/${telefonoLimpio}?text=Hola!%20Te%20escribo%20de%20Slotify%20para%20confirmar%20tu%20turno`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm border transition active:scale-95"

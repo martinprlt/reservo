@@ -1,4 +1,4 @@
-# AGENTS.md — Reservo
+# AGENTS.md — Slotify
 
 ## Instrucción obligatoria
 

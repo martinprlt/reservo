@@ -102,16 +102,19 @@ async function main() {
   ];
 
   for (const servicio of servicios) {
-    await prisma.servicio.upsert({
-      where: {
-        id: `${tenant.id}-${servicio.nombre.toLowerCase().replace(/\s+/g, '-')}`,
-      },
-      update: {},
-      create: {
-        tenantId: tenant.id,
-        ...servicio,
-      },
+    const existing = await prisma.servicio.findFirst({
+      where: { tenantId: tenant.id, nombre: servicio.nombre },
     });
+    if (existing) {
+      await prisma.servicio.update({
+        where: { id: existing.id },
+        data: servicio,
+      });
+    } else {
+      await prisma.servicio.create({
+        data: { tenantId: tenant.id, ...servicio },
+      });
+    }
   }
 
   console.log(`${servicios.length} servicios creados`);
@@ -138,29 +141,21 @@ async function main() {
   console.log(`${clientes.length} clientes creados`);
 
   console.log('Creando incentivos...');
-  await prisma.incentivo.upsert({
-    where: { id: `${tenant.id}-descuento-5` },
-    update: {},
-    create: {
-      tenantId: tenant.id,
-      nombre: 'Descuento 5pts',
-      puntosRequeridos: 5,
-      tipoDescuento: 'PORCENTAJE',
-      valor: 10,
-    },
-  });
+  const incentivos = [
+    { nombre: 'Descuento 5pts', puntosRequeridos: 5, tipoDescuento: 'PORCENTAJE', valor: 10 },
+    { nombre: 'Descuento 10pts', puntosRequeridos: 10, tipoDescuento: 'PORCENTAJE', valor: 20 },
+  ];
 
-  await prisma.incentivo.upsert({
-    where: { id: `${tenant.id}-descuento-10` },
-    update: {},
-    create: {
-      tenantId: tenant.id,
-      nombre: 'Descuento 10pts',
-      puntosRequeridos: 10,
-      tipoDescuento: 'PORCENTAJE',
-      valor: 20,
-    },
-  });
+  for (const inc of incentivos) {
+    const existing = await prisma.incentivo.findFirst({
+      where: { tenantId: tenant.id, nombre: inc.nombre },
+    });
+    if (!existing) {
+      await prisma.incentivo.create({
+        data: { tenantId: tenant.id, ...inc },
+      });
+    }
+  }
 
   console.log('Seed completado!');
   console.log('\nDatos de acceso:');

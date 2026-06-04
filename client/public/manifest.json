@@ -1,6 +1,6 @@
 {
-  "name": "Reservo",
-  "short_name": "Reservo",
+  "name": "Slotify",
+  "short_name": "Slotify",
   "description": "Sistema de turnos para emprendimientos",
   "start_url": "/",
   "display": "standalone",

@@ -20,7 +20,7 @@ export default {
       const dataURI = `data:${req.file.mimetype};base64,${b64}`;
 
       const result = await cloudinary.uploader.upload(dataURI, {
-        folder: 'reservo',
+        folder: 'slotify',
         resource_type: 'auto',
       });
 

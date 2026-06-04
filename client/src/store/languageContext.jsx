@@ -125,14 +125,14 @@ const translations = {
      'booking.next_reward': 'puntos para',
 
     // Login
-    'login.title': 'Reservo',
+    'login.title': 'Slotify',
     'login.subtitle': 'Panel de Administración',
     'login.email': 'Email',
     'login.password': 'Contraseña',
     'login.submit': 'Ingresar',
     'login.loading': 'Ingresando...',
     'login.error': 'Email o contraseña incorrectos',
-    'login.footer': 'Reservo — Sistema de gestión de turnos',
+    'login.footer': 'Slotify — Sistema de gestión de turnos',
 
     // General
     'general.loading': 'Cargando...',
@@ -275,14 +275,14 @@ const translations = {
      'booking.next_reward': 'points for',
 
     // Login
-    'login.title': 'Reservo',
+    'login.title': 'Slotify',
     'login.subtitle': 'Admin Panel',
     'login.email': 'Email',
     'login.password': 'Password',
     'login.submit': 'Sign in',
     'login.loading': 'Signing in...',
     'login.error': 'Invalid email or password',
-    'login.footer': 'Reservo — Appointment Management System',
+    'login.footer': 'Slotify — Appointment Management System',
 
     // General
     'general.loading': 'Loading...',
@@ -307,7 +307,7 @@ const LanguageContext = createContext();
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('reservo-lang');
+      const saved = localStorage.getItem('slotify-lang');
       if (saved) return saved;
       return navigator.language.startsWith('es') ? 'es' : 'en';
     }
@@ -315,7 +315,7 @@ export function LanguageProvider({ children }) {
   });
 
   useEffect(() => {
-    localStorage.setItem('reservo-lang', language);
+    localStorage.setItem('slotify-lang', language);
     document.documentElement.lang = language;
   }, [language]);
 

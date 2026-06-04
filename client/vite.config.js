@@ -8,8 +8,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Reservo',
-        short_name: 'Reservo',
+        name: 'Slotify',
+        short_name: 'Slotify',
         theme_color: '#1E3A5F',
         background_color: '#ffffff',
         display: 'standalone',

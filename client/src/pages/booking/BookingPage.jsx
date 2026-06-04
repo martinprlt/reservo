@@ -20,7 +20,7 @@ export default function BookingPage() {
       .catch(() => {});
   }, []);
 
-  const nombreNegocio = tenantConfig?.nombre || 'Reservo';
+  const nombreNegocio = tenantConfig?.nombre || 'Slotify';
 
   const steps = [
     { num: 1, label: 'Servicio' },
@@ -125,7 +125,7 @@ export default function BookingPage() {
 
       {/* Footer */}
       <footer className="text-center text-xs text-gray-400 py-6">
-        {nombreNegocio} · Powered by Reservo
+        {nombreNegocio} · Powered by Slotify
       </footer>
     </div>
   );

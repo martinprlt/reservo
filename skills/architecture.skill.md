@@ -1,8 +1,8 @@
-# Skill: Reservo — Arquitectura general
+# Skill: Slotify — Arquitectura general
 
 ## Contexto
 
-Reservo es un SaaS multi-tenant de gestión de turnos para emprendimientos de
+Slotify es un SaaS multi-tenant de gestión de turnos para emprendimientos de
 servicios (belleza, salud, bienestar). Múltiples negocios (tenants) comparten
 la misma base de datos, aislados por `tenantId`.
 

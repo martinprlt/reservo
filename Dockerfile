@@ -32,4 +32,4 @@ RUN npx prisma generate
 
 EXPOSE 4000
 
-CMD ["sh", "-c", "npx prisma db push --skip-generate && npx prisma db seed && node index.js"]
+CMD ["sh", "-c", "npx prisma db push --skip-generate && node index.js"]

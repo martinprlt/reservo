@@ -63,7 +63,7 @@ export default function AdminLayout() {
       {/* TopAppBar */}
       <header className="fixed top-0 w-full flex justify-between items-center px-6 py-4 bg-slate-50/60 backdrop-blur-md z-50">
         <a href="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
-          <img src="/logo.png" alt="Reservo" style={{ height: 44, width: 'auto', borderRadius: 10 }} />
+          <img src="/logo.png" alt="Slotify" style={{ height: 44, width: 'auto', borderRadius: 10 }} />
         </a>
         <div className="flex items-center gap-2">
           <NotificationBell />

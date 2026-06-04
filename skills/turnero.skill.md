@@ -1,4 +1,4 @@
-# Skill: Reservo — Turnero dinámico
+# Skill: Slotify — Turnero dinámico
 
 ## Función central
 

@@ -16,7 +16,7 @@ const defaultColors = {
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('reservo-theme');
+      const saved = localStorage.getItem('slotify-theme');
       if (saved && ['light', 'dark', 'custom'].includes(saved)) return saved;
       return 'light';
     }
@@ -25,7 +25,7 @@ export function ThemeProvider({ children }) {
 
   const [customColors, setCustomColorsState] = useState(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('reservo-custom-colors');
+      const saved = localStorage.getItem('slotify-custom-colors');
       if (saved) return JSON.parse(saved);
     }
     return { primary: '#00464b', secondary: '#4a6363' };
@@ -33,7 +33,7 @@ export function ThemeProvider({ children }) {
 
   useEffect(() => {
     const root = document.documentElement;
-    localStorage.setItem('reservo-theme', theme);
+    localStorage.setItem('slotify-theme', theme);
 
     if (theme === 'light') {
       root.classList.remove('dark', 'custom');
@@ -57,7 +57,7 @@ export function ThemeProvider({ children }) {
 
   const setCustomColors = (colors) => {
     setCustomColorsState(colors);
-    localStorage.setItem('reservo-custom-colors', JSON.stringify(colors));
+    localStorage.setItem('slotify-custom-colors', JSON.stringify(colors));
   };
 
   const toggle = () => setThemeState(t => t === 'dark' ? 'light' : 'dark');

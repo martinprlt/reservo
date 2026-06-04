@@ -98,6 +98,7 @@ model Servicio {
   tenant Tenant  @relation(fields: [tenantId], references: [id])
   turnos Turno[]
 
+  @@unique([tenantId, nombre])
   @@index([tenantId])
 }
 

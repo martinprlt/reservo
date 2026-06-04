@@ -1,4 +1,4 @@
-# Skill: Reservo — Seguridad
+# Skill: Slotify — Seguridad
 
 ## Vulnerabilidades conocidas y mitigaciones
 
@@ -61,7 +61,7 @@ No modificar la configuración por defecto de helmet sin revisar este skill.
 Solo permitir el dominio propio del tenant:
 ```js
 cors({ origin: (origin, cb) => {
-  // validar que el origin termina en .reservo.app
+  // validar que el origin termina en .slotify.app
   cb(null, true);
 }, credentials: true })
 ```

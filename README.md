@@ -1,4 +1,4 @@
-# Reservo
+# Slotify
 
 Sistema SaaS multi-tenant de turnos para emprendimientos.
 

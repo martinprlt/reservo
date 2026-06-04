@@ -23,6 +23,7 @@ router.get('/servicios', adminController.listarServiciosAdmin);
 router.post('/servicios', adminController.crearServicio);
 router.patch('/servicios/:id', adminController.actualizarServicio);
 router.delete('/servicios/:id', adminController.eliminarServicio);
+router.post('/servicios/cleanup-duplicates', adminController.cleanupDuplicates);
 router.get('/config', adminController.obtenerConfig);
 router.patch('/config', adminController.actualizarConfig);
 router.get('/notificaciones', notificacionesController.listar);

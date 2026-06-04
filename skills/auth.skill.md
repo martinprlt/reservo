@@ -1,4 +1,4 @@
-# Skill: Reservo — Autenticación y autorización
+# Skill: Slotify — Autenticación y autorización
 
 ## Token de sesión
 

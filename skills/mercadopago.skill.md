@@ -1,4 +1,4 @@
-# Skill: Reservo — Integración MercadoPago
+# Skill: Slotify — Integración MercadoPago
 
 ## Modelo: Checkout Pro
 
@@ -81,5 +81,5 @@ function verifyMPSignature(req) {
 ```
 MP_ACCESS_TOKEN=        # token de producción de MercadoPago
 MP_WEBHOOK_SECRET=      # secret configurado en el panel de MP → webhooks
-MP_BACK_URL=            # https://tusnailslr.reservo.app/confirmacion
+MP_BACK_URL=            # https://tusnailslr.slotify.app/confirmacion
 ```

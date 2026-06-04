@@ -5,7 +5,7 @@ const features = [
   { icon: "payments", title: "Seña automática", desc: "Cada reserva cobra la seña a tu cuenta de MercadoPago. Adiós a los turnos fantasma." },
   { icon: "chat", title: "WhatsApp automático", desc: "Confirmación al reservar y recordatorio 24hs antes. Todo sin que toques nada." },
   { icon: "star", title: "Fidelización con puntos", desc: "Tus clientes acumulan puntos por cada servicio y los canjean por descuentos." },
-  { icon: "palette", title: "Tu marca, tu link", desc: "Colores y logo propios. Tu link: tupeluqueria.reservo.app — lo compartís en Instagram y listo." },
+  { icon: "palette", title: "Tu marca, tu link", desc: "Colores y logo propios. Tu link: tupeluqueria.slotify.app — lo compartís en Instagram y listo." },
   { icon: "home", title: "A domicilio o en local", desc: "Tus clientes eligen si van al local o si vos vas. Configurás zonas de cobertura." },
   { icon: "description", title: "Fotos de referencia", desc: "El cliente puede subir fotos al reservar. Llegás al turno sabiendo exactamente qué quiere." },
   { icon: "bar_chart", title: "Reportes y estadísticas", desc: "Ingresos, servicios más pedidos, clientes recurrentes. Tomá decisiones con datos reales." },
@@ -31,7 +31,7 @@ const testimonials = [
   {
     name: "Camila D.",
     role: "Pestañista · Buenos Aires",
-    text: "Mis clientas me preguntan cómo hice para tener una app propia. Les digo que es Reservo y no lo pueden creer por el precio que pago.",
+    text: "Mis clientas me preguntan cómo hice para tener una app propia. Les digo que es Slotify y no lo pueden creer por el precio que pago.",
     avatar: "C",
     color: "#f0e8d5",
     textColor: "#8a5a2a",
@@ -135,7 +135,7 @@ export default function LandingPage() {
       <nav style={{ position: "fixed", top: 0, width: "100%", zIndex: 100, padding: "0 24px", background: scrolled ? "rgba(250,250,248,0.92)" : "transparent", backdropFilter: scrolled ? "blur(12px)" : "none", borderBottom: scrolled ? "1px solid rgba(0,0,0,0.07)" : "none", transition: "all 0.3s", height: 72, display: "flex", alignItems: "center" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <a href="/" style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}>
-            <img src="/logo.png" alt="Reservo" style={{ height: 52, width: "auto", borderRadius: 10 }} />
+            <img src="/logo.png" alt="Slotify" style={{ height: 52, width: "auto", borderRadius: 10 }} />
           </a>
           <div className="hide-mobile" style={{ display: "flex", alignItems: "center", gap: 32 }}>
             {["Cómo funciona", "Planes", "Preguntas"].map((item, i) => (
@@ -154,7 +154,7 @@ export default function LandingPage() {
         <div style={{ position: "absolute", top: -100, right: -200, width: 600, height: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(0,70,75,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
         <div style={{ maxWidth: 860, margin: "0 auto", textAlign: "center", position: "relative" }}>
           <div style={{ marginBottom: 32 }}>
-            <img src="/logo.png" alt="Reservo" style={{ height: 80, width: "auto", borderRadius: 16, marginBottom: 24, boxShadow: "0 8px 32px rgba(0,70,75,0.15)" }} />
+            <img src="/logo.png" alt="Slotify" style={{ height: 80, width: "auto", borderRadius: 16, marginBottom: 24, boxShadow: "0 8px 32px rgba(0,70,75,0.15)" }} />
           </div>
           <div style={{ marginBottom: 24 }}>
             <span className="pill" style={{ background: "rgba(0,70,75,0.08)", color: "#00464b" }}>
@@ -171,7 +171,7 @@ export default function LandingPage() {
           </p>
           <div className="hero-btns" style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: 56 }}>
             <a href="#contacto" className="btn-primary" style={{ fontSize: 16, padding: "16px 32px" }}>
-              Quiero mi Reservo gratis
+              Quiero mi Slotify gratis
               <span className="msym" style={{ fontSize: 18 }}>arrow_forward</span>
             </a>
             <a href="#como-funciona" className="btn-ghost" style={{ fontSize: 16, padding: "16px 32px" }}>Ver cómo funciona</a>
@@ -186,7 +186,7 @@ export default function LandingPage() {
                 </div>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#1a1a18" }}>TusNailsLR</div>
-                  <div style={{ fontSize: 11, color: "#6f7979" }}>tusnailslr.reservo.app</div>
+                  <div style={{ fontSize: 11, color: "#6f7979" }}>tusnailslr.slotify.app</div>
                 </div>
               </div>
               <div style={{ fontSize: 12, fontWeight: 600, color: "#1a1a18", marginBottom: 10 }}>Elegí un servicio</div>
@@ -228,7 +228,7 @@ export default function LandingPage() {
         <div style={{ position: "absolute", inset: 0, opacity: 0.03, backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
         <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24, position: "relative" }}>
           {[
-            { num: "15 min", label: "Para configurar tu Reservo desde cero" },
+            { num: "15 min", label: "Para configurar tu Slotify desde cero" },
             { num: "0%", label: "Comisión sobre tus ventas. Lo que facturás es tuyo." },
             { num: "24/7", label: "Tus clientes reservan cuando quieren, incluso de madrugada" },
           ].map((s, i) => (
@@ -250,7 +250,7 @@ export default function LandingPage() {
           <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
             {[
               { step: "01", icon: "settings", title: "Configurás tu perfil", desc: "Cargás tus servicios con precios, duración y monto de seña. Configurás tus horarios de atención. 15 minutos y listo.", color: "#e8f4f0" },
-              { step: "02", icon: "share", title: "Compartís tu link", desc: "Ponés tupeluqueria.reservo.app en tu bio de Instagram. Tus clientas entran, eligen servicio, fecha y pagan la seña.", color: "#f0e8f4" },
+              { step: "02", icon: "share", title: "Compartís tu link", desc: "Ponés tupeluqueria.slotify.app en tu bio de Instagram. Tus clientas entran, eligen servicio, fecha y pagan la seña.", color: "#f0e8f4" },
               { step: "03", icon: "notifications", title: "Te llega el turno", desc: "Recibís un WhatsApp automático. El turno aparece en tu agenda. La seña está acreditada. No tenés que hacer nada.", color: "#f4f0e8" },
             ].map((s, i) => (
               <div key={i} className="card" style={{ position: "relative", overflow: "hidden" }}>
@@ -393,11 +393,11 @@ export default function LandingPage() {
             Empezá hoy.<br />Es gratis.
           </h2>
           <p style={{ fontSize: 16, color: "rgba(255,255,255,0.7)", marginBottom: 40, lineHeight: 1.7, fontWeight: 300 }}>
-            Escribinos por WhatsApp y en menos de 2 horas tenés tu Reservo configurado y listo para compartir con tus clientas.
+            Escribinos por WhatsApp y en menos de 2 horas tenés tu Slotify configurado y listo para compartir con tus clientas.
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <a
-              href="https://wa.me/5493804100986?text=Hola!%20Quiero%20empezar%20con%20Reservo"
+              href="https://wa.me/5493804100986?text=Hola!%20Quiero%20empezar%20con%20Slotify"
               target="_blank"
               rel="noopener noreferrer"
               style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 32px", borderRadius: 14, background: "#25D366", color: "#fff", textDecoration: "none", fontWeight: 700, fontSize: 16, transition: "all 0.2s", boxShadow: "0 8px 24px rgba(37,211,102,0.3)" }}
@@ -416,7 +416,7 @@ export default function LandingPage() {
       <footer style={{ padding: "40px 24px", background: "#0d2b2e", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
         <div style={{ maxWidth: 1000, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 20 }}>
           <a href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
-            <img src="/logo.png" alt="Reservo" style={{ height: 44, width: "auto", borderRadius: 8 }} />
+            <img src="/logo.png" alt="Slotify" style={{ height: 44, width: "auto", borderRadius: 8 }} />
           </a>
           <p style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", fontWeight: 300 }}>
             Sistema SaaS de turnos · Argentina · 2026

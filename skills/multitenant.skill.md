@@ -1,4 +1,4 @@
-# Skill: Reservo — Multi-tenancy
+# Skill: Slotify — Multi-tenancy
 
 ## Regla de oro — NUNCA ignorar
 
@@ -12,7 +12,7 @@ El tenant se resuelve en `middleware/tenant.js` a partir del subdominio:
 
 ```js
 // middleware/tenant.js
-const slug = req.hostname.split('.')[0]; // 'tusnailslr' de tusnailslr.reservo.app
+const slug = req.hostname.split('.')[0]; // 'tusnailslr' de tusnailslr.slotify.app
 const tenant = await prisma.tenant.findUnique({
   where: { slug },
   select: { id: true, activo: true, config: true }

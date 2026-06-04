@@ -315,3 +315,29 @@ export async function obtenerAgenda(tenantId, { desde, hasta }) {
 
   return turnos;
 }
+
+export async function cleanupDuplicateServicios(tenantId) {
+  const servicios = await prisma.servicio.findMany({
+    where: { tenantId },
+    orderBy: { creadoEn: 'asc' },
+  });
+
+  const seen = new Map();
+  const toDelete = [];
+
+  for (const s of servicios) {
+    if (seen.has(s.nombre)) {
+      toDelete.push(s.id);
+    } else {
+      seen.set(s.nombre, s.id);
+    }
+  }
+
+  if (toDelete.length > 0) {
+    await prisma.servicio.deleteMany({
+      where: { id: { in: toDelete } },
+    });
+  }
+
+  return { deleted: toDelete.length, kept: seen.size };
+}

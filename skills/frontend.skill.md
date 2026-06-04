@@ -1,4 +1,4 @@
-# Skill: Reservo — Frontend (React + Vite PWA)
+# Skill: Slotify — Frontend (React + Vite PWA)
 
 ## Arquitectura de estado
 

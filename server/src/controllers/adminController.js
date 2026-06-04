@@ -157,4 +157,13 @@ export default {
       next(error);
     }
   },
+
+  async cleanupDuplicates(req, res, next) {
+    try {
+      const result = await adminService.cleanupDuplicateServicios(req.tenantId);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  },
 };
