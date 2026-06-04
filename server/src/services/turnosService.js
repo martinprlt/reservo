@@ -8,7 +8,7 @@ import { getPlanLimits } from '../config/plans.js';
 
 export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas, fotoUrl, fotoPublicId, aceptaNotificaciones }) {
   // Check plan limit for turns per month
-  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { plan: true, config: true } });
+  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { plan: true, config: true, slug: true } });
   const limits = getPlanLimits(tenant?.plan);
 
   if (limits.maxTurnosMes !== Infinity) {
@@ -84,9 +84,9 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
         }],
         payer: { name: nombre, surname: apellido },
         back_urls: {
-          success: `${process.env.MP_BACK_URL}?turnoId=${turno.id}&status=success`,
-          failure: `${process.env.MP_BACK_URL}?turnoId=${turno.id}&status=failure`,
-          pending: `${process.env.MP_BACK_URL}?turnoId=${turno.id}&status=pending`,
+          success: `${process.env.MP_BACK_URL}/booking/confirmacion?turnoId=${turno.id}&status=success&tenant=${tenant.slug}`,
+          failure: `${process.env.MP_BACK_URL}/booking/confirmacion?turnoId=${turno.id}&status=failure&tenant=${tenant.slug}`,
+          pending: `${process.env.MP_BACK_URL}/booking/confirmacion?turnoId=${turno.id}&status=pending&tenant=${tenant.slug}`,
         },
         auto_return: 'approved',
         external_reference: turno.id,
