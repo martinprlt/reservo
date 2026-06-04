@@ -8,7 +8,7 @@ import { getPlanLimits } from '../config/plans.js';
 
 export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas, fotoUrl, fotoPublicId }) {
   // Check plan limit for turns per month
-  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { plan: true } });
+  const tenant = await prisma.tenant.findUnique({ where: { id: tenantId }, select: { plan: true, config: true } });
   const limits = getPlanLimits(tenant?.plan);
 
   if (limits.maxTurnosMes !== Infinity) {
@@ -67,12 +67,6 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
   });
 
   let initPoint = null;
-
-  // Get tenant's MP credentials
-  const tenant = await prisma.tenant.findUnique({
-    where: { id: tenantId },
-    select: { config: true },
-  });
 
   const mpAccessToken = tenant?.config?.mpAccessToken || process.env.MP_ACCESS_TOKEN;
 

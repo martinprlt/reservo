@@ -5,6 +5,7 @@ dist/
 .cache/
 *.log
 .DS_Store
+bocetos/
 
 server/node_modules/
 client/node_modules/
