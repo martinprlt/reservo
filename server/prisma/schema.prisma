@@ -97,6 +97,8 @@ model Servicio {
   activo          Boolean  @default(true)
   variantes       Json?
   foto            String?  // URL of the service photo
+  esDomicilio     Boolean  @default(false)
+  tiempoDesplazamiento Int? // minutes to travel to client location
   creadoEn        DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

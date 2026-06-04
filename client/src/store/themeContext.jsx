@@ -4,12 +4,12 @@ const ThemeContext = createContext();
 
 const defaultColors = {
   light: {
-    primary: '#00464b',
-    secondary: '#4a6363',
+    primary: '#4648d4',
+    secondary: '#5d5d67',
   },
   dark: {
-    primary: '#85d3db',
-    secondary: '#b1cccb',
+    primary: '#c0c1ff',
+    secondary: '#c7c5d1',
   },
 };
 
@@ -28,7 +28,7 @@ export function ThemeProvider({ children }) {
       const saved = localStorage.getItem('slotify-custom-colors');
       if (saved) return JSON.parse(saved);
     }
-    return { primary: '#00464b', secondary: '#4a6363' };
+    return { primary: '#4648d4', secondary: '#5d5d67' };
   });
 
   useEffect(() => {

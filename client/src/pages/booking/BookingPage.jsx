@@ -48,16 +48,16 @@ export default function BookingPage() {
               <span className="text-white font-bold">{nombreNegocio.charAt(0)}</span>
             </div>
           )}
-          <span className="text-xl font-bold tracking-tight text-teal-900 font-headline">
+          <span className="text-xl font-bold tracking-tight text-on-surface font-headline">
             {nombreNegocio}
           </span>
         </div>
         {paso > 1 && typeof paso === 'number' && (
           <button
             onClick={reset}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+            className="p-2 rounded-full hover:bg-surface-container-high transition-colors"
           >
-            <span className="material-symbols-outlined" style={{ color: '#00464b' }}>close</span>
+            <span className="material-symbols-outlined text-on-surface-variant">close</span>
           </button>
         )}
       </header>

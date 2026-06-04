@@ -11,7 +11,7 @@ const TIPO_ICONS = {
 };
 
 const TIPO_COLORS = {
-  NUEVO_TURNO: '#00464b',
+  NUEVO_TURNO: '#4648d4',
   PAGO_RECIBIDO: '#22c55e',
   TURNO_MANANA: '#eab308',
 };
@@ -80,9 +80,9 @@ export default function NotificationBell() {
       {/* Bell button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-[rgba(0,70,75,0.08)] transition-colors relative"
+        className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors relative"
       >
-        <span className="material-symbols-outlined" style={{ color: '#00464b' }}>
+        <span className="material-symbols-outlined text-on-surface-variant">
           {isOpen ? 'notifications' : 'notifications'}
         </span>
         {count > 0 && (
@@ -99,16 +99,15 @@ export default function NotificationBell() {
       {isOpen && (
         <div
           className="absolute right-0 top-12 w-80 rounded-2xl shadow-xl border overflow-hidden z-50"
-          style={{ backgroundColor: '#ffffff', borderColor: 'rgba(190, 200, 201, 0.3)' }}
+          style={{ backgroundColor: '#ffffff', borderColor: 'rgba(199, 196, 215, 0.3)' }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: 'rgba(190, 200, 201, 0.2)' }}>
-            <h3 className="font-bold text-sm font-headline" style={{ color: '#181c20' }}>Notificaciones</h3>
+          <div className="flex items-center justify-between px-4 py-3 border-b" style={{ borderColor: 'rgba(199, 196, 215, 0.2)' }}>
+            <h3 className="font-bold text-sm font-headline text-on-surface">Notificaciones</h3>
             {count > 0 && (
               <button
                 onClick={handleMarcarTodas}
-                className="text-xs font-medium font-label"
-                style={{ color: '#00464b' }}
+                className="text-xs font-medium font-label text-primary"
               >
                 Marcar todas leídas
               </button>
@@ -119,14 +118,14 @@ export default function NotificationBell() {
           <div className="max-h-[400px] overflow-y-auto">
             {loading ? (
               <div className="flex justify-center py-8">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2" style={{ borderColor: '#00464b' }}></div>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
               </div>
             ) : notificaciones.length === 0 ? (
               <div className="text-center py-8">
-                <span className="material-symbols-outlined text-3xl" style={{ color: '#bec8c9' }}>
+                <span className="material-symbols-outlined text-3xl text-outline">
                   notifications_off
                 </span>
-                <p className="text-xs mt-2" style={{ color: '#6f7979' }}>Sin notificaciones</p>
+                <p className="text-xs mt-2 text-on-surface-variant">Sin notificaciones</p>
               </div>
             ) : (
               notificaciones.map((notif) => (
@@ -135,9 +134,9 @@ export default function NotificationBell() {
                   onClick={() => !notif.leida && handleMarcarLeida(notif.id)}
                   className={clsx(
                     'flex gap-3 px-4 py-3 border-b cursor-pointer transition-colors',
-                    !notif.leida ? 'bg-[rgba(0,70,75,0.04)]' : 'hover:bg-gray-50'
+                    !notif.leida ? 'bg-primary/5' : 'hover:bg-surface-container-low'
                   )}
-                  style={{ borderColor: 'rgba(190, 200, 201, 0.1)' }}
+                  style={{ borderColor: 'rgba(199, 196, 215, 0.1)' }}
                 >
                   {/* Icon */}
                   <div
@@ -155,17 +154,17 @@ export default function NotificationBell() {
                   {/* Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold font-label truncate" style={{ color: '#181c20' }}>
+                      <p className="text-sm font-semibold font-label truncate text-on-surface">
                         {notif.titulo}
                       </p>
                       {!notif.leida && (
-                        <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: '#00464b' }} />
+                        <span className="w-2 h-2 rounded-full shrink-0 bg-primary" />
                       )}
                     </div>
-                    <p className="text-xs mt-0.5 line-clamp-2" style={{ color: '#6f7979' }}>
+                    <p className="text-xs mt-0.5 line-clamp-2 text-on-surface-variant">
                       {notif.mensaje}
                     </p>
-                    <p className="text-[10px] mt-1 font-label" style={{ color: '#bec8c9' }}>
+                    <p className="text-[10px] mt-1 font-label text-outline">
                       {formatDistanceToNow(new Date(notif.creadoEn), { addSuffix: true, locale: es })}
                     </p>
                   </div>

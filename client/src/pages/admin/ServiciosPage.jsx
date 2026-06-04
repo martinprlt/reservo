@@ -4,9 +4,7 @@ import Modal from '../../components/ui/Modal';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useToast } from '../../store/toastContext';
 import { useLanguage } from '../../store/languageContext';
-import clsx from 'clsx';
 
-// Rubro icons will be loaded from tenant config with fallbacks
 const defaultRubroIcons = {
   'uñas': 'front_hand',
   'pelo': 'cut',
@@ -19,7 +17,6 @@ export default function ServiciosPage() {
   const [servicios, setServicios] = useState([]);
   const [rubros, setRubros] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [configLoading, setConfigLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [servicioToDelete, setServicioToDelete] = useState(null);
@@ -34,6 +31,8 @@ export default function ServiciosPage() {
   const [fotoPreview, setFotoPreview] = useState('');
   const [subiendoFoto, setSubiendoFoto] = useState(false);
   const [puntos, setPuntos] = useState('1');
+  const [esDomicilio, setEsDomicilio] = useState(false);
+  const [tiempoDesplazamiento, setTiempoDesplazamiento] = useState('');
   const [guardando, setGuardando] = useState(false);
   const toast = useToast();
   const { t } = useLanguage();
@@ -63,6 +62,8 @@ export default function ServiciosPage() {
     setDuracion('');
     setSeña('');
     setPuntos('1');
+    setEsDomicilio(false);
+    setTiempoDesplazamiento('');
     setFoto('');
     setFotoFile(null);
     setFotoPreview('');
@@ -70,7 +71,6 @@ export default function ServiciosPage() {
   };
 
   const fetchConfig = async () => {
-    setConfigLoading(true);
     try {
       const { data } = await api.get('/admin/config');
       if (data.rubros && Array.isArray(data.rubros)) {
@@ -78,16 +78,6 @@ export default function ServiciosPage() {
       }
     } catch (err) {
       console.error('Error fetching config:', err);
-      // Fallback to default rubros if config fetch fails
-      setRubros([
-        { id: 'unas', nombre: 'Uñas', icono: 'front_hand', colorPrimario: '#E91E63', colorSecundario: '#9C27B0' },
-        { id: 'pelo', nombre: 'Pelo', icono: 'cut', colorPrimario: '#3F51B5', colorSecundario: '#2196F3' },
-        { id: 'pestanas', nombre: 'Pestañas', icono: 'visibility', colorPrimario: '#FF9800', colorSecundario: '#FFC107' },
-        { id: 'masajes', nombre: 'Masajes', icono: 'spa', colorPrimario: '#4CAF50', colorSecundario: '#8BC34A' },
-        { id: 'general', nombre: 'General', icono: 'spa', colorPrimario: '#607D8B', colorSecundario: '#78909C' }
-      ]);
-    } finally {
-      setConfigLoading(false);
     }
   };
 
@@ -97,7 +87,7 @@ export default function ServiciosPage() {
     return rubro ? rubro.icono : 'spa';
   };
 
-    const handleEditar = (s) => {
+  const handleEditar = (s) => {
     setEditando(s);
     setNombre(s.nombre);
     setRubro(s.rubro || '');
@@ -105,6 +95,8 @@ export default function ServiciosPage() {
     setDuracion(String(s.duracionMinutos));
     setSeña(String(s.montoSenia));
     setPuntos(String(s.puntosOtorgados || 1));
+    setEsDomicilio(s.esDomicilio || false);
+    setTiempoDesplazamiento(String(s.tiempoDesplazamiento || ''));
     setFoto(s.foto || '');
     setFotoFile(null);
     setFotoPreview(s.foto || '');
@@ -154,6 +146,8 @@ export default function ServiciosPage() {
         montoSenia: parseFloat(seña),
         puntosOtorgados: parseInt(puntos) || 1,
         foto: fotoUrl || null,
+        esDomicilio,
+        tiempoDesplazamiento: tiempoDesplazamiento ? parseInt(tiempoDesplazamiento) : null,
       };
 
       if (editando) {
@@ -193,25 +187,22 @@ export default function ServiciosPage() {
   return (
     <div>
       {/* Header */}
-      <section className="mb-8">
-        <div className="flex justify-between items-end">
-          <div>
-            <h1 className="text-3xl font-extrabold font-headline text-on-surface tracking-tight">
-              Servicios
-            </h1>
-            <p className="text-on-surface-variant font-body mt-1">
-              Gestiona tu catálogo de servicios
-            </p>
-          </div>
-          <button
-            onClick={handleNuevo}
-            className="bg-gradient-to-br from-primary to-primary-container text-on-primary px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-primary/10 flex items-center gap-2 hover:scale-[1.02] active:scale-95 transition-all duration-200"
-          >
-            <span className="material-symbols-outlined text-xl">add</span>
-            <span>Agregar</span>
-          </button>
+      <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-2">
+          <p className="font-label text-label-caps text-primary tracking-widest">ADMINISTRACIÓN</p>
+          <h1 className="font-headline text-headline-xl text-on-background">Configuración de Servicios</h1>
+          <p className="text-on-surface-variant max-w-xl">
+            Personaliza tu catálogo de servicios, durations, y precios para optimizar tu agenda.
+          </p>
         </div>
-      </section>
+        <button
+          onClick={handleNuevo}
+          className="flex items-center gap-2 bg-primary text-on-primary px-6 py-3 rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+        >
+          <span className="material-symbols-outlined">add</span>
+          <span className="font-label text-label-caps">AGREGAR SERVICIO</span>
+        </button>
+      </div>
 
       {loading ? (
         <div className="flex justify-center py-12">
@@ -219,7 +210,6 @@ export default function ServiciosPage() {
         </div>
       ) : servicios.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-4xl mb-3">💅</div>
           <p className="text-on-surface-variant mb-4">No hay servicios registrados</p>
           <button
             onClick={handleNuevo}
@@ -229,77 +219,141 @@ export default function ServiciosPage() {
           </button>
         </div>
       ) : (
-        /* Bento Grid */
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {servicios.map((s) => (
+        /* Bento Grid for Services */
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          {/* First service - Large Card */}
+          {servicios.length > 0 && (
+            <div className="md:col-span-8 glass-card rounded-2xl p-6 flex flex-col justify-between group hover:shadow-xl hover:shadow-tertiary/5 transition-all duration-300">
+              <div className="flex justify-between items-start mb-8">
+                <div className="space-y-4">
+                  <div className="w-12 h-12 rounded-2xl bg-primary-container/20 flex items-center justify-center text-primary">
+                    <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      {getRubroIcon(servicios[0].rubro)}
+                    </span>
+                  </div>
+                  <div>
+                    <h3 className="font-headline text-headline-lg text-on-surface">{servicios[0].nombre}</h3>
+                    {servicios[0].foto && (
+                      <div className="mt-3 w-full h-40 rounded-xl overflow-hidden">
+                        <img src={servicios[0].foto} alt={servicios[0].nombre} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-headline-lg font-bold text-primary">${servicios[0].precio?.toLocaleString()}</span>
+                  <span className="text-on-surface-variant text-sm">por sesión</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between border-t border-outline-variant/30 pt-6">
+                <div className="flex gap-4">
+                  <div className="slot-pill px-4 py-2 rounded-full flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm">schedule</span>
+                    <span className="font-label text-label-caps">{servicios[0].duracionMinutos} MIN</span>
+                  </div>
+                  <div className="slot-pill px-4 py-2 rounded-full flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm">category</span>
+                    <span className="font-label text-label-caps">{(servicios[0].rubro || 'general').toUpperCase()}</span>
+                  </div>
+                  {servicios[0].esDomicilio && (
+                    <div className="slot-pill px-4 py-2 rounded-full flex items-center gap-2">
+                      <span className="material-symbols-outlined text-sm">home</span>
+                      <span className="font-label text-label-caps">A DOMICILIO</span>
+                    </div>
+                  )}
+                </div>
+                <button
+                  onClick={() => handleEditar(servicios[0])}
+                  className="p-2 rounded-full hover:bg-surface-container-high transition-colors"
+                >
+                  <span className="material-symbols-outlined text-outline">edit</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Stats Card */}
+          <div className="md:col-span-4 bg-primary text-on-primary rounded-2xl p-8 flex flex-col justify-between relative overflow-hidden">
+            <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+            <div>
+              <h4 className="font-label text-label-caps mb-4 opacity-80">SERVICIOS ACTIVOS</h4>
+              <p className="text-headline-xl font-bold">{servicios.length}</p>
+            </div>
+            <div className="space-y-4">
+              <p className="text-body-sm opacity-90">
+                Tu catálogo está optimizado. Considera agregar servicios para cubrir más horarios.
+              </p>
+              <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
+                <div className="bg-white h-full rounded-full" style={{ width: `${Math.min(servicios.length * 10, 100)}%` }}></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Remaining services - Smaller Cards */}
+          {servicios.slice(1).map((s) => (
             <div
               key={s.id}
-              className="bg-surface-container-lowest p-6 rounded-xl shadow-card group hover:scale-[1.02] transition-all duration-300 border border-outline-variant/10 hover:border-primary/20 dark:bg-slate-800 dark:border-slate-700"
+              className="md:col-span-4 glass-card rounded-2xl p-6 flex flex-col group hover:shadow-xl hover:shadow-tertiary/5 transition-all"
             >
-               <div className="flex justify-between items-start mb-4">
-                 <div className="w-12 h-12 bg-primary-fixed-dim/20 rounded-lg flex items-center justify-center text-primary dark:bg-teal-900/30">
-                   <span className="material-symbols-outlined text-2xl">
-                     {getRubroIcon(s.rubro) || 'spa'}
-                   </span>
-                 </div>
-                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <button
-                     onClick={() => handleEditar(s)}
-                     className="p-2 rounded-full hover:bg-surface-container-low transition text-on-surface-variant hover:text-primary dark:hover:bg-slate-700"
-                   >
-                     <span className="material-symbols-outlined text-lg">edit</span>
-                   </button>
-                   <button
-                     onClick={() => handleEliminar(s.id)}
-                     className="p-2 rounded-full hover:bg-error-container transition text-on-surface-variant hover:text-error dark:hover:bg-red-900/30"
-                   >
-                     <span className="material-symbols-outlined text-lg">delete</span>
-                   </button>
-                 </div>
-               </div>
-
-               {s.foto && (
-                 <div className="w-full h-36 rounded-lg overflow-hidden mb-4">
-                   <img
-                     src={s.foto}
-                     alt={`${s.nombre} foto`}
-                     className="w-full h-full object-cover"
-                     onError={(e) => {
-                       e.target.style.display = 'none';
-                     }}
-                   />
-                 </div>
-               )}
-
-               <h3 className="text-xl font-bold text-on-surface mb-1 font-headline dark:text-slate-100">
-                 {s.nombre}
-               </h3>
-
-              {s.rubro && (
-                <span className="text-xs text-on-surface-variant uppercase tracking-wider font-label font-medium dark:text-slate-400">
-                  {s.rubro}
-                </span>
-              )}
-
-              <div className="flex flex-wrap gap-2 mt-4">
-                <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-secondary-container text-on-secondary-container text-sm font-medium">
-                  ${s.precio?.toLocaleString()}
-                </span>
-                <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant text-sm font-medium dark:bg-slate-700 dark:text-slate-400">
-                  <span className="material-symbols-outlined text-[16px] mr-1">schedule</span>
-                  {s.duracionMinutos} min
-                </span>
-                <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-tertiary-container/20 text-tertiary text-sm font-medium dark:bg-teal-900/30 dark:text-teal-300">
-                  <span className="material-symbols-outlined text-[16px] mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                  {s.puntosOtorgados || 1} pts
+              <div className="w-10 h-10 rounded-xl bg-tertiary-container/20 flex items-center justify-center text-tertiary mb-4">
+                <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  {getRubroIcon(s.rubro)}
                 </span>
               </div>
-
-              <div className="mt-3 text-xs text-on-surface-variant dark:text-slate-500">
-                Seña: <span className="font-medium">${s.montoSenia?.toLocaleString()}</span>
+              <h3 className="font-headline text-headline-lg-mobile font-semibold mb-1">{s.nombre}</h3>
+              {s.foto && (
+                <div className="w-full h-28 rounded-xl overflow-hidden mb-3">
+                  <img src={s.foto} alt={s.nombre} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div className="mt-auto space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="font-label text-label-caps text-outline">DURACIÓN</span>
+                  <span className="font-semibold text-on-surface">{s.duracionMinutos} min</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-label text-label-caps text-outline">PRECIO</span>
+                  <span className="font-semibold text-primary">${s.precio?.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="font-label text-label-caps text-outline">SEÑA</span>
+                  <span className="font-semibold text-on-surface">${s.montoSenia?.toLocaleString()}</span>
+                </div>
+                {s.esDomicilio && (
+                  <div className="flex items-center gap-2 text-xs text-tertiary font-medium">
+                    <span className="material-symbols-outlined text-sm">home</span>
+                    A domicilio{s.tiempoDesplazamiento ? ` • ${s.tiempoDesplazamiento} min` : ''}
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-2 mt-4 pt-4 border-t border-outline-variant/30">
+                <button
+                  onClick={() => handleEditar(s)}
+                  className="flex-1 p-2 rounded-lg hover:bg-surface-container-high transition-colors text-on-surface-variant hover:text-primary"
+                >
+                  <span className="material-symbols-outlined text-lg">edit</span>
+                </button>
+                <button
+                  onClick={() => handleEliminar(s.id)}
+                  className="p-2 rounded-lg hover:bg-error/10 transition-colors text-on-surface-variant hover:text-error"
+                >
+                  <span className="material-symbols-outlined text-lg">delete</span>
+                </button>
               </div>
             </div>
           ))}
+
+          {/* Empty Placeholder */}
+          <div
+            onClick={handleNuevo}
+            className="md:col-span-12 border-2 border-dashed border-outline-variant/50 rounded-2xl p-8 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-primary/50 transition-colors"
+          >
+            <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center text-outline group-hover:text-primary transition-colors mb-3">
+              <span className="material-symbols-outlined">add</span>
+            </div>
+            <p className="font-semibold text-on-surface-variant group-hover:text-primary transition-colors">Añadir otro servicio</p>
+            <p className="text-sm text-outline">Define el precio, duración y descripción</p>
+          </div>
         </div>
       )}
 
@@ -309,124 +363,153 @@ export default function ServiciosPage() {
         onClose={() => setModalOpen(false)}
         title={editando ? 'Editar servicio' : 'Nuevo servicio'}
       >
-         <form onSubmit={handleGuardar} className="space-y-4">
-           <div>
-             <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Nombre</label>
-             <input
-               placeholder="Ej: Manicura francesa"
-               value={nombre}
-               onChange={e => setNombre(e.target.value)}
-               required
-               className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-             />
-           </div>
+        <form onSubmit={handleGuardar} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-on-surface mb-1.5 font-label">Nombre</label>
+            <input
+              placeholder="Ej: Manicura francesa"
+              value={nombre}
+              onChange={e => setNombre(e.target.value)}
+              required
+              className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"
+            />
+          </div>
 
-           <div>
-             <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Rubro</label>
-             <select
-               value={rubro}
-               onChange={e => setRubro(e.target.value)}
-               className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-             >
-               <option value="">Seleccionar...</option>
-               <option value="uñas">Uñas</option>
-               <option value="pelo">Pelo</option>
-               <option value="pestañas">Pestañas</option>
-               <option value="masajes">Masajes</option>
-               <option value="otro">Otro</option>
-             </select>
-           </div>
+          <div>
+            <label className="block text-sm font-medium text-on-surface mb-1.5 font-label">Rubro</label>
+            <select
+              value={rubro}
+              onChange={e => setRubro(e.target.value)}
+              className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"
+            >
+              <option value="">Seleccionar...</option>
+              <option value="uñas">Uñas</option>
+              <option value="pelo">Pelo</option>
+              <option value="pestañas">Pestañas</option>
+              <option value="masajes">Masajes</option>
+              <option value="otro">Otro</option>
+            </select>
+          </div>
 
-           <div className="grid grid-cols-2 gap-4">
-             <div>
-               <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Precio ($)</label>
-               <input
-                 type="number"
-                 placeholder="0"
-                 value={precio}
-                 onChange={e => setPrecio(e.target.value)}
-                 required
-                 className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-               />
-             </div>
-             <div>
-               <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Duración (min)</label>
-               <input
-                 type="number"
-                 placeholder="60"
-                 value={duracion}
-                 onChange={e => setDuracion(e.target.value)}
-                 required
-                 className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-               />
-             </div>
-           </div>
-           
-            <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-on-surface mb-1.5 font-label">Precio ($)</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={precio}
+                onChange={e => setPrecio(e.target.value)}
+                required
+                className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-on-surface mb-1.5 font-label">Duración (min)</label>
+              <input
+                type="number"
+                placeholder="60"
+                value={duracion}
+                onChange={e => setDuracion(e.target.value)}
+                required
+                className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-on-surface mb-1.5 font-label">Foto del servicio</label>
+            {fotoPreview ? (
+              <div className="relative">
+                <img src={fotoPreview} alt="Preview" className="w-full h-32 object-cover rounded-xl border border-outline-variant/20" />
+                <button
+                  type="button"
+                  onClick={() => { setFoto(''); setFotoFile(null); setFotoPreview(''); }}
+                  className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center text-white hover:bg-black/80 transition"
+                >
+                  <span className="material-symbols-outlined text-sm">close</span>
+                </button>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-outline-variant/30 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition">
+                <span className="material-symbols-outlined text-2xl text-on-surface-variant/50 mb-1">add_photo_alternate</span>
+                <p className="text-xs text-on-surface-variant font-body">Subir imagen</p>
+                <input type="file" accept="image/*" onChange={handleFotoChange} className="hidden" />
+              </label>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-on-surface mb-1.5 font-label">Seña ($)</label>
+              <input
+                type="number"
+                placeholder="0"
+                value={seña}
+                onChange={e => setSeña(e.target.value)}
+                className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-on-surface mb-1.5 font-label">
+                <span className="flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                  Puntos
+                </span>
+              </label>
+              <input
+                type="number"
+                min="1"
+                placeholder="1"
+                value={puntos}
+                onChange={e => setPuntos(e.target.value)}
+                className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"
+              />
+            </div>
+          </div>
+
+          <p className="text-xs text-on-surface-variant font-label">
+            {t('services.pointsDescription')}
+          </p>
+
+          {/* Home Service Toggle */}
+          <div className="flex items-center justify-between p-3 bg-surface-container-low rounded-xl">
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined text-primary">home</span>
               <div>
-                <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Foto del servicio</label>
-                {fotoPreview ? (
-                  <div className="relative">
-                    <img src={fotoPreview} alt="Preview" className="w-full h-32 object-cover rounded-xl border border-outline-variant/20" />
-                    <button
-                      type="button"
-                      onClick={() => { setFoto(''); setFotoFile(null); setFotoPreview(''); }}
-                      className="absolute top-2 right-2 w-7 h-7 bg-black/60 rounded-full flex items-center justify-center text-white hover:bg-black/80 transition"
-                    >
-                      <span className="material-symbols-outlined text-sm">close</span>
-                    </button>
-                  </div>
-                ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-outline-variant/30 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition">
-                    <span className="material-symbols-outlined text-2xl text-on-surface-variant/50 mb-1">add_photo_alternate</span>
-                    <p className="text-xs text-on-surface-variant font-body">Subir imagen</p>
-                    <input type="file" accept="image/*" onChange={handleFotoChange} className="hidden" />
-                  </label>
-                )}
+                <p className="text-sm font-medium text-on-surface">Servicio a domicilio</p>
+                <p className="text-xs text-on-surface-variant">El cliente puede elegir que vayas a su ubicación</p>
               </div>
             </div>
+            <button
+              type="button"
+              onClick={() => setEsDomicilio(!esDomicilio)}
+              className={`relative w-12 h-6 rounded-full transition-colors ${esDomicilio ? 'bg-primary' : 'bg-surface-container-highest'}`}
+            >
+              <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${esDomicilio ? 'translate-x-6' : ''}`} />
+            </button>
+          </div>
 
-           <div className="grid grid-cols-2 gap-4">
-             <div>
-               <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">Seña ($)</label>
-               <input
-                 type="number"
-                 placeholder="0"
-                 value={seña}
-                 onChange={e => setSeña(e.target.value)}
-                 className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-               />
-             </div>
-             <div>
-               <label className="block text-sm font-medium text-on-surface mb-1.5 font-label dark:text-slate-200">
-                 <span className="flex items-center gap-1">
-                   <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                   Puntos
-                 </span>
-               </label>
-               <input
-                 type="number"
-                 min="1"
-                 placeholder="1"
-                 value={puntos}
-                 onChange={e => setPuntos(e.target.value)}
-                 className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100"
-               />
-             </div>
-           </div>
+          {esDomicilio && (
+            <div>
+              <label className="block text-sm font-medium text-on-surface mb-1.5 font-label">Tiempo de desplazamiento (min)</label>
+              <input
+                type="number"
+                placeholder="30"
+                value={tiempoDesplazamiento}
+                onChange={e => setTiempoDesplazamiento(e.target.value)}
+                className="w-full px-4 py-3 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"
+              />
+            </div>
+          )}
 
-           <p className="text-xs text-on-surface-variant dark:text-slate-500 font-label">
-             {t('services.pointsDescription')}
-           </p>
-
-           <button
-             type="submit"
-             disabled={guardando}
-             className="w-full bg-gradient-to-br from-primary to-primary-container text-on-primary py-3.5 rounded-xl font-semibold shadow-lg shadow-primary/20 disabled:opacity-50 transition-all"
-           >
-             {guardando ? 'Guardando...' : 'Guardar servicio'}
-           </button>
-         </form>
+          <button
+            type="submit"
+            disabled={guardando}
+            className="w-full bg-primary text-on-primary py-3.5 rounded-xl font-semibold shadow-lg shadow-primary/20 disabled:opacity-50 transition-all"
+          >
+            {guardando ? 'Guardando...' : 'Guardar servicio'}
+          </button>
+        </form>
       </Modal>
 
       {/* Confirm Dialog */}

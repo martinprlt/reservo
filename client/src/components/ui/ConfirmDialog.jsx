@@ -28,7 +28,7 @@ export function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, conf
   const variantStyles = {
     danger: { bg: '#dc2626', hover: '#b91c1c' },
     warning: { bg: '#f59e0b', hover: '#d97706' },
-    primary: { bg: '#00464b', hover: '#005a60' },
+    primary: { bg: '#4648d4', hover: '#3a3cb8' },
   };
 
   return (

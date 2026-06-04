@@ -33,7 +33,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-primary-container to-teal-900 p-4 font-body dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-primary-container to-tertiary-container p-4 font-body dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Theme toggle */}
       <button
         onClick={toggle}

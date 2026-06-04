@@ -1,12 +1,14 @@
 import logger from '../utils/logger.js';
 
 export default function errorHandler(err, req, res, next) {
+  // Log the error
   if (process.env.NODE_ENV === 'production') {
     logger.error(err.message);
   } else {
     logger.error(err.stack);
   }
 
+  // Map error codes to HTTP status codes
   const errorCodes = {
     CREDENCIALES_INVALIDAS: 401,
     NO_AUTORIZADO: 401,
@@ -18,7 +20,15 @@ export default function errorHandler(err, req, res, next) {
   };
 
   const status = errorCodes[err.message] || 500;
-  const message = status === 500 ? 'Error interno' : err.message;
 
-  res.status(status).json({ error: message });
+  // In production, don't expose internal error details
+  const message = status === 500 ? 'Error interno del servidor' : err.message;
+
+  // Don't leak stack traces in production
+  const response = { error: message };
+  if (process.env.NODE_ENV !== 'production') {
+    response.stack = err.stack;
+  }
+
+  res.status(status).json(response);
 }

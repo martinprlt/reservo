@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useBookingStore } from '../../store/bookingStore';
 import { useLanguage } from '../../store/languageContext';
 import api from '../../api/client';
-import clsx from 'clsx';
 
 const rubroIcons = {
   'uñas': 'front_hand',
@@ -62,7 +61,7 @@ export default function Step1Servicio() {
   return (
     <div>
       <div className="mb-8">
-        <h2 className="text-3xl font-extrabold font-headline text-on-surface tracking-tight">
+        <h2 className="font-headline text-headline-xl text-on-background tracking-tight">
           {t('booking.choose_service')}
         </h2>
         <p className="text-on-surface-variant mt-1 font-body">
@@ -75,48 +74,72 @@ export default function Step1Servicio() {
           <div
             key={s.id}
             onClick={() => seleccionarServicio(s)}
-            className="bg-surface-container-lowest p-6 rounded-xl shadow-card group hover:scale-[1.02] hover:shadow-card-hover transition-all duration-300 cursor-pointer border border-outline-variant/10 hover:border-primary/20 dark:bg-slate-800 dark:border-slate-700 dark:hover:border-teal-600"
+            className="glass-card rounded-2xl shadow-card group hover:shadow-card-hover transition-all duration-300 cursor-pointer overflow-hidden"
           >
-            <div className="flex justify-between items-start mb-4">
-              <div className="w-12 h-12 bg-primary-fixed-dim/20 rounded-lg flex items-center justify-center text-primary dark:bg-teal-900/30">
-                <span className="material-symbols-outlined text-2xl">
+            {/* Service Image */}
+            {s.foto ? (
+              <div className="w-full h-40 overflow-hidden">
+                <img
+                  src={s.foto}
+                  alt={s.nombre}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            ) : (
+              <div className="w-full h-40 bg-gradient-to-br from-primary/10 to-primary-container/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-5xl text-primary/30">
                   {rubroIcons[s.rubro] || 'spa'}
                 </span>
               </div>
-              <span className="text-on-surface-variant/50 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-medium">
-                Seleccionar →
-              </span>
-            </div>
-
-            <h3 className="text-xl font-bold text-on-surface mb-1 font-headline dark:text-slate-100">
-              {s.nombre}
-            </h3>
-
-            {s.rubro && (
-              <span className="text-xs text-on-surface-variant uppercase tracking-wider font-label font-medium dark:text-slate-400">
-                {s.rubro}
-              </span>
             )}
 
-            <div className="flex flex-wrap gap-2 mt-4">
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-secondary-container text-on-secondary-container text-sm font-medium">
-                ${s.precio?.toLocaleString('es-AR')}
-              </span>
-              <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant text-sm font-medium dark:bg-slate-700 dark:text-slate-400">
-                <span className="material-symbols-outlined text-[16px] mr-1">schedule</span>
-                {s.duracionMinutos} {t('general.min')}
-              </span>
-              {incentivosActivos && (
-                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium"
-                  style={{ backgroundColor: 'rgba(49, 82, 160, 0.1)', color: 'var(--tertiary)' }}>
-                  <span className="material-symbols-outlined text-[16px] mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                  +{s.puntosOtorgados || 1} pts
+            <div className="p-5">
+              <div className="flex justify-between items-start mb-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                  <span className="material-symbols-outlined text-xl">
+                    {rubroIcons[s.rubro] || 'spa'}
+                  </span>
+                </div>
+                <span className="text-on-surface-variant/50 opacity-0 group-hover:opacity-100 transition-opacity text-xs font-medium">
+                  Seleccionar →
+                </span>
+              </div>
+
+              <h3 className="text-xl font-bold text-on-surface mb-1 font-headline">
+                {s.nombre}
+              </h3>
+
+              {s.rubro && (
+                <span className="text-xs text-on-surface-variant uppercase tracking-wider font-label font-medium">
+                  {s.rubro}
                 </span>
               )}
-            </div>
 
-            <div className="mt-3 text-xs text-on-surface-variant dark:text-slate-500">
-              {t('services.deposit')}: <span className="font-medium">${s.montoSenia?.toLocaleString('es-AR')}</span>
+              <div className="flex flex-wrap gap-2 mt-4">
+                <span className="slot-pill inline-flex items-center px-3 py-1.5 rounded-full text-primary text-sm font-medium">
+                  ${s.precio?.toLocaleString('es-AR')}
+                </span>
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant text-sm font-medium">
+                  <span className="material-symbols-outlined text-[16px] mr-1">schedule</span>
+                  {s.duracionMinutos} {t('general.min')}
+                </span>
+                {s.esDomicilio && (
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-tertiary-fixed text-tertiary text-sm font-medium">
+                    <span className="material-symbols-outlined text-[16px] mr-1">home</span>
+                    A domicilio
+                  </span>
+                )}
+                {incentivosActivos && (
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-tertiary-fixed text-tertiary text-sm font-medium">
+                    <span className="material-symbols-outlined text-[16px] mr-1" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                    +{s.puntosOtorgados || 1} pts
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-3 text-xs text-on-surface-variant">
+                {t('services.deposit')}: <span className="font-medium">${s.montoSenia?.toLocaleString('es-AR')}</span>
+              </div>
             </div>
           </div>
         ))}

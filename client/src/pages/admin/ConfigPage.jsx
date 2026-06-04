@@ -19,7 +19,7 @@ export default function ConfigPage() {
   const { theme, setTheme, customColors, setCustomColors } = useTheme();
   const { language, setLanguage, t } = useLanguage();
 
-  const [colorPrimario, setColorPrimario] = useState(customColors?.primary || '#00464b');
+  const [colorPrimario, setColorPrimario] = useState(customColors?.primary || '#4648d4');
   const [colorSecundario, setColorSecundario] = useState(customColors?.secondary || '#4a6363');
   const [adminEmail, setAdminEmail] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
@@ -240,7 +240,7 @@ export default function ConfigPage() {
               <span className="material-symbols-outlined text-2xl">light_mode</span>
               <span className="text-sm font-medium font-label">Claro</span>
               <div className="w-12 h-8 rounded bg-gray-100 border border-gray-200 mt-1">
-                <div className="w-full h-2 bg-teal-700 rounded-t"></div>
+                <div className="w-full h-2 bg-primary/40 rounded-t"></div>
               </div>
             </button>
 
@@ -260,7 +260,7 @@ export default function ConfigPage() {
               <span className="material-symbols-outlined text-2xl">dark_mode</span>
               <span className="text-sm font-medium font-label">Oscuro</span>
               <div className="w-12 h-8 rounded bg-slate-800 border border-slate-700 mt-1">
-                <div className="w-full h-2 bg-teal-500 rounded-t"></div>
+                <div className="w-full h-2 bg-primary rounded-t"></div>
               </div>
             </button>
 

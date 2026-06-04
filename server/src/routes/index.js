@@ -10,17 +10,21 @@ import webhooksRoutes from './webhooks.routes.js';
 import uploadRoutes from './upload.routes.js';
 import platformRoutes from './platform.routes.js';
 import resolveTenant from '../middleware/tenant.js';
+import { apiLimiter, platformLimiter } from '../middleware/rateLimiter.js';
 import prisma from '../config/prisma.js';
 
 const router = Router();
 
 // Routes that DON'T need tenant resolution
-router.use('/platform', platformRoutes);
+router.use('/platform', platformLimiter, platformRoutes);
 router.use('/auth', authRoutes);
 router.use('/admin', adminRoutes);
 
 // Tenant resolution for public/booking routes
 router.use(resolveTenant);
+
+// Apply API rate limit to tenant routes
+router.use(apiLimiter);
 
 // Public tenant config for booking
 router.get('/config', async (req, res) => {

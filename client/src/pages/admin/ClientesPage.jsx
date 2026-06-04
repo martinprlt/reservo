@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../../api/client';
 import ClientDetailPage from './ClientDetailPage';
-import clsx from 'clsx';
 
 export default function ClientesPage() {
   const [clientes, setClientes] = useState([]);
@@ -30,7 +29,6 @@ export default function ClientesPage() {
     }
   };
 
-  // Show client detail if selected
   if (selectedClientId) {
     return (
       <ClientDetailPage
@@ -43,28 +41,23 @@ export default function ClientesPage() {
   return (
     <div>
       {/* Header */}
-      <section className="mb-8">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-extrabold font-headline text-on-surface tracking-tight">
-              Clientes
-            </h1>
-            <p className="text-on-surface-variant font-body mt-1">
-              Gestiona tu base de clientes
-            </p>
-          </div>
-          <a
-            href="/api/admin/export/clientes"
-            className="flex items-center gap-2 bg-surface-container-lowest text-on-surface-variant border border-outline-variant/20 px-4 py-2 rounded-xl text-sm font-medium hover:bg-surface-container-low transition"
-          >
-            <span className="material-symbols-outlined text-lg">download</span>
-            Exportar CSV
-          </a>
+      <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-2">
+          <p className="font-label text-label-caps text-primary tracking-widest">ADMINISTRACIÓN</p>
+          <h1 className="font-headline text-headline-xl text-on-background">Clientes</h1>
+          <p className="text-on-surface-variant max-w-xl">Gestiona tu base de clientes y su historial de servicios.</p>
         </div>
-      </section>
+        <a
+          href="/api/admin/export/clientes"
+          className="flex items-center gap-2 bg-surface-container-high text-primary px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-container hover:text-on-primary-container transition-all"
+        >
+          <span className="material-symbols-outlined text-lg">download</span>
+          <span className="font-label text-label-caps">EXPORTAR CSV</span>
+        </a>
+      </div>
 
       {/* Search */}
-      <div className="mb-6">
+      <div className="mb-8">
         <div className="relative">
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-xl">
             search
@@ -88,23 +81,21 @@ export default function ClientesPage() {
         </div>
       ) : clientes.length === 0 ? (
         <div className="text-center py-12">
-          <div className="text-4xl mb-3">👥</div>
           <p className="text-on-surface-variant">No hay clientes registrados</p>
         </div>
       ) : (
         <>
-          {/* Client Cards - Stitch style */}
           <div className="space-y-4">
             {clientes.map((cliente) => (
               <div
                 key={cliente.id}
                 onClick={() => setSelectedClientId(cliente.id)}
-                className="group bg-surface-container-lowest p-5 rounded-xl shadow-card hover:shadow-card-hover transition-all duration-300 border border-outline-variant/10 hover:border-primary/20 cursor-pointer"
+                className="glass-card p-5 rounded-2xl shadow-card hover:shadow-card-hover transition-all duration-300 cursor-pointer group"
               >
                 <div className="flex gap-4 items-start">
                   {/* Avatar */}
-                  <div className="w-12 h-12 rounded-full bg-primary-fixed-dim/20 flex items-center justify-center shrink-0">
-                    <span className="text-primary font-bold text-sm">
+                  <div className="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+                    <span className="text-on-primary-container font-bold text-sm">
                       {cliente.nombre.charAt(0)}{cliente.apellido.charAt(0)}
                     </span>
                   </div>
@@ -123,7 +114,7 @@ export default function ClientesPage() {
                       </div>
 
                       {/* Points badge */}
-                      <div className="bg-tertiary-container/10 text-tertiary px-3 py-1.5 rounded-full font-bold text-xs shrink-0">
+                      <div className="slot-pill px-3 py-1.5 rounded-full font-bold text-xs shrink-0 text-primary">
                         {cliente.puntos} PTS
                       </div>
                     </div>

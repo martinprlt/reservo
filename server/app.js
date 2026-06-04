@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import env from './src/config/env.js';
 import logger from './src/utils/logger.js';
 import errorHandler from './src/middleware/errorHandler.js';
+import { sanitizeInput } from './src/middleware/sanitize.js';
 import routes from './src/routes/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -15,16 +16,36 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// Security headers
 app.use(helmet({
-  contentSecurityPolicy: false,
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      connectSrc: ["'self'", "https://api.mercadopago.com"],
+      frameSrc: ["'self'", "https://www.mercadopago.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
 }));
+
 app.use(cors({
   origin: (origin, cb) => cb(null, true),
   credentials: true,
 }));
-app.use(express.json());
+
+// Body parsing with size limits
+app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 app.use(morgan('combined', { stream: logger.stream }));
+
+// Input sanitization
+app.use(sanitizeInput);
 
 // Health check BEFORE routes
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
