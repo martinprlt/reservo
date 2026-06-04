@@ -166,23 +166,4 @@ export default {
       next(error);
     }
   },
-
-  async createSuperAdmin(req, res, next) {
-    try {
-      const bcrypt = await import('bcryptjs');
-      const prisma = (await import('../config/prisma.js')).default;
-      const { email, password, nombre } = req.body;
-
-      const existing = await prisma.admin.findUnique({ where: { email } });
-      if (existing) return res.json({ ok: true, message: 'Ya existe' });
-
-      const passwordHash = await bcrypt.default.hash(password, 12);
-      await prisma.admin.create({
-        data: { email, passwordHash, nombre: nombre || 'Super Admin', role: 'SUPER_ADMIN' },
-      });
-      res.json({ ok: true, message: 'Super admin creado' });
-    } catch (error) {
-      next(error);
-    }
-  },
 };

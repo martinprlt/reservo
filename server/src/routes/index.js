@@ -16,21 +16,6 @@ const router = Router();
 
 // Routes that DON'T need tenant resolution
 router.use('/platform', platformRoutes);
-router.post('/auth/create-super-admin', async (req, res) => {
-  try {
-    const bcrypt = await import('bcryptjs');
-    const { email, password, nombre } = req.body;
-    const existing = await prisma.admin.findUnique({ where: { email } });
-    if (existing) return res.json({ ok: true, message: 'Ya existe' });
-    const passwordHash = await bcrypt.default.hash(password, 12);
-    await prisma.admin.create({
-      data: { email, passwordHash, nombre: nombre || 'Super Admin', role: 'SUPER_ADMIN' },
-    });
-    res.json({ ok: true, message: 'Super admin creado' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 router.use('/auth', authRoutes);
 router.use('/admin', adminRoutes);
 
