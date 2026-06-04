@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import api, { cachedApi, setTenantSlug } from '../../api/client';
+import api, { cachedApi, setTenantSlug, getTenantSlug } from '../../api/client';
 import { useLanguage } from '../../store/languageContext';
 import { useAdminStore } from '../../store/adminStore';
 
