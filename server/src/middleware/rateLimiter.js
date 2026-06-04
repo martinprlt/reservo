@@ -44,3 +44,12 @@ export const platformLimiter = rateLimit({
   keyGenerator: (req) => req.adminId || req.ip,
   message: { error: 'Demasiadas solicitudes.' },
 });
+
+// Strict rate limit: 3 requests per hour (registration, password reset)
+export const strictLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  message: { error: 'Demasiados intentos. Intentá en una hora.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});

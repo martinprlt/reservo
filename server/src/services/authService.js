@@ -79,3 +79,50 @@ export async function crearAdmin(tenantId, email, password, nombre) {
     select: { id: true, email: true, nombre: true },
   });
 }
+
+export async function register({ nombreNegocio, nombreAdmin, email, password, telefono }) {
+  const existing = await prisma.admin.findUnique({ where: { email } });
+  if (existing) throw new Error('EMAIL_YA_REGISTRADO');
+
+  const baseSlug = nombreNegocio
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 30);
+
+  let slug = baseSlug;
+  let i = 2;
+  while (await prisma.tenant.findUnique({ where: { slug } })) {
+    slug = `${baseSlug}-${i++}`;
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+
+  const tenant = await prisma.tenant.create({
+    data: {
+      nombre: nombreNegocio,
+      slug,
+      config: {
+        nombreNegocio,
+        telefonoAdmin: telefono || '',
+        horarios: {},
+        incentivosActivos: true,
+      },
+    },
+  });
+
+  const admin = await prisma.admin.create({
+    data: {
+      tenantId: tenant.id,
+      email,
+      passwordHash,
+      nombre: nombreAdmin,
+    },
+    select: { id: true, email: true, nombre: true },
+  });
+
+  const token = signToken({ adminId: admin.id, tenantId: tenant.id, role: 'ADMIN' });
+
+  return { token, admin, slug };
+}

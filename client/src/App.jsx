@@ -9,6 +9,7 @@ import PrivateRoute from './components/admin/PrivateRoute';
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const BookingPage = lazy(() => import('./pages/booking/BookingPage'));
 const LoginPage = lazy(() => import('./pages/admin/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/admin/RegisterPage'));
 const AdminLayout = lazy(() => import('./pages/admin/AdminLayout'));
 const SuperAdminLayout = lazy(() => import('./pages/superadmin/SuperAdminLayout'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -37,6 +38,7 @@ function App() {
                   <Route path="/booking" element={<BookingPage />} />
                   <Route path="/booking/confirmacion" element={<BookingPage />} />
                   <Route path="/admin/login" element={<LoginPage />} />
+                  <Route path="/registro" element={<RegisterPage />} />
                   <Route
                     path="/admin/*"
                     element={

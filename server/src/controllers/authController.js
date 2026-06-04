@@ -1,4 +1,5 @@
-import { login, obtenerAdmin } from '../services/authService.js';
+import { login, obtenerAdmin, register } from '../services/authService.js';
+import { registerSchema } from '../schemas/turno.schema.js';
 
 export default {
   async login(req, res, next) {
@@ -13,6 +14,23 @@ export default {
         path: '/',
       });
       res.json({ admin: result.admin });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async register(req, res, next) {
+    try {
+      const parsed = registerSchema.parse(req.body);
+      const result = await register(parsed);
+      res.cookie('token', result.token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 8 * 60 * 60 * 1000,
+        path: '/',
+      });
+      res.status(201).json({ admin: result.admin, slug: result.slug });
     } catch (error) {
       next(error);
     }

@@ -158,7 +158,7 @@ export default function LandingPage() {
           </div>
           <div style={{ display: "flex", gap: 10 }}>
             <a href="/admin/login" style={{ fontSize: 13, fontWeight: 500, color: "#464554", textDecoration: "none", padding: "10px 18px" }}>Iniciar sesión</a>
-            <a href="#contacto" className="btn-primary" style={{ padding: "10px 18px", fontSize: 13 }} onClick={(e) => { e.preventDefault(); setDemoModalOpen(true); }}>Solicitá tu demo</a>
+            <a href="/registro" className="btn-primary" style={{ padding: "10px 18px", fontSize: 13 }}>Empezá gratis</a>
           </div>
         </div>
       </nav>
@@ -416,17 +416,22 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
-            <a
-              href="#"
-              onClick={(e) => { e.preventDefault(); setDemoModalOpen(true); }}
-              style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 32px", borderRadius: 14, background: "#fff", color: "#4648d4", textDecoration: "none", fontWeight: 700, fontSize: 16, transition: "all 0.2s", boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}
-            >
-              Solicitá tu demo
-              <span className="msym" style={{ fontSize: 18 }}>arrow_forward</span>
-            </a>
-            <p style={{ marginTop: 16, fontSize: 13, color: "rgba(255,255,255,0.5)", fontWeight: 400 }}>
-              <span className="msym" style={{ fontSize: 14, verticalAlign: "middle" }}>chat</span> Te respondemos al instante
-            </p>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <a
+                href="/registro"
+                style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 32px", borderRadius: 14, background: "#fff", color: "#4648d4", textDecoration: "none", fontWeight: 700, fontSize: 16, transition: "all 0.2s", boxShadow: "0 8px 24px rgba(0,0,0,0.15)" }}
+              >
+                Empezá gratis
+                <span className="msym" style={{ fontSize: 18 }}>arrow_forward</span>
+              </a>
+              <a
+                href="#"
+                onClick={(e) => { e.preventDefault(); setDemoModalOpen(true); }}
+                style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 32px", borderRadius: 14, background: "rgba(255,255,255,0.15)", color: "#fff", textDecoration: "none", fontWeight: 600, fontSize: 15, transition: "all 0.2s", border: "1px solid rgba(255,255,255,0.25)" }}
+              >
+                Solicitá tu demo
+              </a>
+            </div>
           </div>
           <div className="hide-mobile" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             {[

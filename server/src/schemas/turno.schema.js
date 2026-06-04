@@ -9,6 +9,14 @@ export const crearTurnoSchema = z.object({
   telefono: z.string().min(8, 'Teléfono inválido'),
 });
 
+export const registerSchema = z.object({
+  nombreNegocio: z.string().min(2, 'Nombre del negocio muy corto'),
+  nombreAdmin: z.string().min(2, 'Tu nombre es muy corto'),
+  email: z.string().email('Email inválido'),
+  password: z.string().min(6, 'Contraseña mínima 6 caracteres'),
+  telefono: z.string().min(8, 'Teléfono inválido').optional(),
+});
+
 export const loginSchema = z.object({
   email: z.string().email('Email inválido'),
   password: z.string().min(6, 'Contraseña mínima 6 caracteres'),
