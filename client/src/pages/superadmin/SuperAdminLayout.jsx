@@ -284,7 +284,7 @@ function TenantsList({ tenants, onRefresh, toast }) {
               </div>
               <div>
                 <p className="font-bold text-gray-900">{t.nombre}</p>
-                <p className="text-sm text-gray-500">{t.slug}.slotify.app · {t.plan}</p>
+                <p className="text-sm text-gray-500">{t.slug}.slotifyapp.site · {t.plan}</p>
               </div>
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-500">

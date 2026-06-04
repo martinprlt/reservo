@@ -42,16 +42,16 @@ async function main() {
   console.log('Creando super admin...');
   const superAdminHash = await bcrypt.hash('slotify2026', 12);
   await prisma.admin.upsert({
-    where: { email: 'admin@slotify.app' },
+    where: { email: 'admin@slotifyapp.site' },
     update: {},
     create: {
-      email: 'admin@slotify.app',
+      email: 'admin@slotifyapp.site',
       passwordHash: superAdminHash,
       nombre: 'Super Admin',
       role: 'SUPER_ADMIN',
     },
   });
-  console.log('Super admin: admin@slotify.app / slotify2026');
+  console.log('Super admin: admin@slotifyapp.site / slotify2026');
 
   console.log('Creando admin del tenant...');
   const passwordHash = await bcrypt.hash('admin123', 12);

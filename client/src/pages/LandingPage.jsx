@@ -331,7 +331,7 @@ export default function LandingPage() {
           <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 24 }}>
             {[
               { step: "01", icon: "settings", title: "Configurás tu perfil", desc: "Cargás tus servicios con precios, duración y monto de seña. Configurás tus horarios de atención. 15 minutos y listo.", color: "rgba(70,72,212,0.06)" },
-              { step: "02", icon: "share", title: "Compartís tu link", desc: "Ponés tunegocio.slotify.app en tu bio de Instagram. Tus clientas entran, eligen servicio, fecha y pagan la seña.", color: "rgba(106,99,242,0.06)" },
+              { step: "02", icon: "share", title: "Compartís tu link", desc: "Ponés tunegocio.slotifyapp.site en tu bio de Instagram. Tus clientas entran, eligen servicio, fecha y pagan la seña.", color: "rgba(106,99,242,0.06)" },
               { step: "03", icon: "notifications", title: "Te llega el turno", desc: "Recibís un WhatsApp automático. El turno aparece en tu agenda. La seña está acreditada. No tenés que hacer nada.", color: "rgba(81,72,215,0.06)" },
             ].map((s, i) => (
               <div key={i} className="card" style={{ position: "relative", overflow: "hidden" }}>

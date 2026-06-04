@@ -4,8 +4,8 @@ import axios from 'axios';
 function getSubdomainTenant() {
   const host = window.location.hostname;
   if (host === 'localhost' || host === '127.0.0.1') return null;
-  // Only on slotify.app domain — e.g., tusnailslr.slotify.app
-  if (!host.endsWith('.slotify.app')) return null;
+  // Only on slotifyapp.site domain — e.g., tusnailslr.slotifyapp.site
+  if (!host.endsWith('.slotifyapp.site')) return null;
   const parts = host.split('.');
   if (parts.length >= 3) return parts[0];
   return null;
@@ -47,7 +47,7 @@ api.interceptors.request.use((config) => {
   const isPublicRoute = !config.url?.startsWith('/auth') && !config.url?.startsWith('/admin') && !config.url?.startsWith('/platform');
 
   if (isPublicRoute && !config.params?.tenant) {
-    // 1. Subdomain (e.g., tusnailslr.slotify.app)
+    // 1. Subdomain (e.g., tusnailslr.slotifyapp.site)
     let tenantSlug = subdomainTenant;
 
     // 2. URL query param (?tenant=tusnailslr)

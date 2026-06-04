@@ -52,7 +52,7 @@ export default function RegisterPage() {
             Ir al panel de administración
           </a>
           <p className="text-on-surface-variant/50 text-xs mt-4 font-label">
-            Tu URL: <strong>{slug}.slotify.app</strong>
+            Tu URL: <strong>{slug}.slotifyapp.site</strong>
           </p>
         </div>
       </div>
