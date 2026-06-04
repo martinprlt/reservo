@@ -508,7 +508,7 @@ export default function LandingPage() {
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   const msg = `Hola! Quiero una demo de Slotify.\n\nNombre: ${demoNombre}\nNegocio: ${demoNegocio}\nTeléfono: ${demoTelefono}`;
-                  window.open(`https://wa.me/5493804100986?text=${encodeURIComponent(msg)}`, '_blank');
+                  window.open(`https://wa.me/542966249491?text=${encodeURIComponent(msg)}`, '_blank');
                   setDemoEnviado(true);
                 }} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                   <input
