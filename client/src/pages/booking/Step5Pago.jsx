@@ -12,8 +12,8 @@ export default function Step5Pago() {
   const { t } = useLanguage();
   const toast = useToast();
 
-  const precioTotal = servicioSeleccionado.precio + (varianteSeleccionada?.precioExtra || 0);
-  const seña = servicioSeleccionado.montoSenia + (varianteSeleccionada?.precioExtra || 0);
+  const precioTotal = (servicioSeleccionado?.precio || 0) + (varianteSeleccionada?.precioExtra || 0);
+  const seña = (servicioSeleccionado?.montoSenia || 0) + (varianteSeleccionada?.precioExtra || 0);
 
   const handlePagar = async () => {
     setLoading(true);

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import api from '../../api/client';
+import { useAdminStore } from '../../store/adminStore';
 
 export default function PrivateRoute({ children, requiredRole }) {
   const [checking, setChecking] = useState(true);
   const [isAuth, setIsAuth] = useState(false);
-  const [admin, setAdmin] = useState(null);
+  const { admin, setAdmin } = useAdminStore();
 
   useEffect(() => {
     api.get('/auth/me')

@@ -133,7 +133,7 @@ function Dashboard({ stats }) {
     { label: 'Negocios activos', value: stats.tenantsActivos, icon: 'business', color: 'bg-indigo-500' },
     { label: 'Turnos hoy', value: stats.turnosHoy, icon: 'event', color: 'bg-emerald-500' },
     { label: 'Total clientes', value: stats.totalClientes, icon: 'group', color: 'bg-amber-500' },
-    { label: 'Ingresos del mes', value: `$${stats.ingresosMes.toLocaleString('es-AR')}`, icon: 'payments', color: 'bg-rose-500' },
+    { label: 'Ingresos del mes', value: `$${(stats.ingresosMes || 0).toLocaleString('es-AR')}`, icon: 'payments', color: 'bg-rose-500' },
   ];
 
   return (

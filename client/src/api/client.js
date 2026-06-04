@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// In development, API runs on port 3000. In production, same origin.
 const api = axios.create({
   baseURL: window.location.hostname === 'localhost'
     ? 'http://localhost:3000/api'
@@ -8,13 +7,14 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// For booking pages, attach tenant slug from URL params or subdomain
+// For public/booking routes, attach tenant from URL params only (not hostname)
 api.interceptors.request.use((config) => {
-  // Only add tenant param if not already present and not an admin/platform route
-  if (!config.params?.tenant && !config.url?.startsWith('/auth') && !config.url?.startsWith('/admin') && !config.url?.startsWith('/platform')) {
+  const isPublicRoute = !config.url?.startsWith('/auth') && !config.url?.startsWith('/admin') && !config.url?.startsWith('/platform');
+
+  if (isPublicRoute && !config.params?.tenant) {
     const urlParams = new URLSearchParams(window.location.search);
-    const tenantSlug = urlParams.get('tenant') || window.location.hostname.split('.')[0];
-    if (tenantSlug && tenantSlug !== 'localhost') {
+    const tenantSlug = urlParams.get('tenant');
+    if (tenantSlug) {
       config.params = { ...config.params, tenant: tenantSlug };
     }
   }

@@ -127,13 +127,18 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
       {/* Turno Card */}
       <div className="p-6 rounded-xl shadow-card border mb-6" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
         <div className="flex justify-between items-start mb-4">
-          <div>
-            <h2 className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>
-              {turno.servicio.nombre}
-            </h2>
-            <p className="text-sm mt-1 font-body" style={{ color: 'var(--on-surface-variant)' }}>
-              {format(fecha, "EEEE d 'de' MMMM 'a las' HH:mm", { locale: es })}
-            </p>
+          <div className="flex items-start gap-4">
+            {turno.servicio.foto && (
+              <img src={turno.servicio.foto} alt={turno.servicio.nombre} className="w-16 h-16 rounded-xl object-cover border border-outline-variant/20" />
+            )}
+            <div>
+              <h2 className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>
+                {turno.servicio.nombre}
+              </h2>
+              <p className="text-sm mt-1 font-body" style={{ color: 'var(--on-surface-variant)' }}>
+                {format(fecha, "EEEE d 'de' MMMM 'a las' HH:mm", { locale: es })}
+              </p>
+            </div>
           </div>
           <span className={clsx('text-xs px-3 py-1.5 rounded-full font-bold uppercase font-label', estadoColors[turno.estado])}>
             {turno.estado}

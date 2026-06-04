@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import api from '../../api/client';
 import { useLanguage } from '../../store/languageContext';
+import { useAdminStore } from '../../store/adminStore';
 
 export default function DashboardPage({ onNavigate }) {
   const [turnosHoy, setTurnosHoy] = useState([]);
@@ -10,8 +11,11 @@ export default function DashboardPage({ onNavigate }) {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const { t } = useLanguage();
+  const { admin } = useAdminStore();
 
-  const bookingUrl = `${window.location.origin}/booking`;
+  const bookingUrl = admin?.tenantSlug
+    ? `${window.location.origin}/booking?tenant=${admin.tenantSlug}`
+    : `${window.location.origin}/booking`;
 
   useEffect(() => {
     fetchDashboard();
@@ -79,7 +83,7 @@ export default function DashboardPage({ onNavigate }) {
       {/* Welcome Header */}
       <section className="mb-12">
         <h1 className="font-headline text-headline-xl text-on-background mb-2">
-          {t('admin.welcome')}
+          Bienvenido{admin?.nombre ? `, ${admin.nombre}` : ''}
         </h1>
         <p className="text-on-surface-variant font-body max-w-2xl">
           {format(new Date(), "EEEE, d 'de' MMMM", { locale: es })}.{' '}

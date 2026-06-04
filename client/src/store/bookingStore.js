@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import api from '../api/client';
 
 export const useBookingStore = create((set, get) => ({
   paso: 1,
@@ -19,18 +20,16 @@ export const useBookingStore = create((set, get) => ({
   setADomicilio: (value) => set({ aDomicilio: value }),
 
   seleccionarServicio: (servicio, variante = null) => {
-    // Fetch tenant config to check if incentives are active
-    fetch('/api/config')
-      .then(res => res.json())
-      .then(config => {
-        const incentivosActivos = config?.horarios?.incentivosActivos !== false;
+    api.get('/config')
+      .then(({ data }) => {
+        const incentivosActivos = data?.incentivosActivos !== false;
         set({
           servicioSeleccionado: servicio,
           varianteSeleccionada: variante,
           paso: 2,
           error: null,
           incentivosActivos,
-          tenantConfig: config
+          tenantConfig: data
         });
       })
       .catch(() => {
@@ -39,7 +38,7 @@ export const useBookingStore = create((set, get) => ({
           varianteSeleccionada: variante,
           paso: 2,
           error: null,
-          incentivosActivos: false, // Default to false if we can't fetch config
+          incentivosActivos: false,
           tenantConfig: null
         });
       });

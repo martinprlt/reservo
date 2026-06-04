@@ -117,7 +117,7 @@ export default function Step1Servicio() {
 
               <div className="flex flex-wrap gap-2 mt-4">
                 <span className="slot-pill inline-flex items-center px-3 py-1.5 rounded-full text-primary text-sm font-medium">
-                  ${s.precio?.toLocaleString('es-AR')}
+                  ${(s.precio || 0).toLocaleString('es-AR')}
                 </span>
                 <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-surface-container-high text-on-surface-variant text-sm font-medium">
                   <span className="material-symbols-outlined text-[16px] mr-1">schedule</span>
@@ -138,7 +138,7 @@ export default function Step1Servicio() {
               </div>
 
               <div className="mt-3 text-xs text-on-surface-variant">
-                {t('services.deposit')}: <span className="font-medium">${s.montoSenia?.toLocaleString('es-AR')}</span>
+                {t('services.deposit')}: <span className="font-medium">${(s.montoSenia || 0).toLocaleString('es-AR')}</span>
               </div>
             </div>
           </div>

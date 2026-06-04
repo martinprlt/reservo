@@ -33,6 +33,7 @@ export default function ServiciosPage() {
   const [puntos, setPuntos] = useState('1');
   const [esDomicilio, setEsDomicilio] = useState(false);
   const [tiempoDesplazamiento, setTiempoDesplazamiento] = useState('');
+  const [customRubro, setCustomRubro] = useState('');
   const [guardando, setGuardando] = useState(false);
   const toast = useToast();
   const { t } = useLanguage();
@@ -64,6 +65,7 @@ export default function ServiciosPage() {
     setPuntos('1');
     setEsDomicilio(false);
     setTiempoDesplazamiento('');
+    setCustomRubro('');
     setFoto('');
     setFotoFile(null);
     setFotoPreview('');
@@ -97,6 +99,7 @@ export default function ServiciosPage() {
     setPuntos(String(s.puntosOtorgados || 1));
     setEsDomicilio(s.esDomicilio || false);
     setTiempoDesplazamiento(String(s.tiempoDesplazamiento || ''));
+    setCustomRubro(s.rubro && !['uñas','pelo','pestañas','masajes','general'].includes(s.rubro) ? s.rubro : '');
     setFoto(s.foto || '');
     setFotoFile(null);
     setFotoPreview(s.foto || '');
@@ -140,7 +143,7 @@ export default function ServiciosPage() {
 
       const payload = {
         nombre,
-        rubro: rubro || 'general',
+        rubro: rubro === 'otro' ? (customRubro || 'general') : (rubro || 'general'),
         precio: parseFloat(precio),
         duracionMinutos: parseInt(duracion),
         montoSenia: parseFloat(seña),
@@ -241,7 +244,7 @@ export default function ServiciosPage() {
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-headline-lg font-bold text-primary">${servicios[0].precio?.toLocaleString()}</span>
+                  <span className="text-headline-lg font-bold text-primary">${(servicios[0].precio || 0).toLocaleString()}</span>
                   <span className="text-on-surface-variant text-sm">por sesión</span>
                 </div>
               </div>
@@ -313,11 +316,11 @@ export default function ServiciosPage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="font-label text-label-caps text-outline">PRECIO</span>
-                  <span className="font-semibold text-primary">${s.precio?.toLocaleString()}</span>
+                  <span className="font-semibold text-primary">${(s.precio || 0).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="font-label text-label-caps text-outline">SEÑA</span>
-                  <span className="font-semibold text-on-surface">${s.montoSenia?.toLocaleString()}</span>
+                  <span className="font-semibold text-on-surface">${(s.montoSenia || 0).toLocaleString()}</span>
                 </div>
                 {s.esDomicilio && (
                   <div className="flex items-center gap-2 text-xs text-tertiary font-medium">
@@ -389,6 +392,15 @@ export default function ServiciosPage() {
               <option value="masajes">Masajes</option>
               <option value="otro">Otro</option>
             </select>
+            {rubro === 'otro' && (
+              <input
+                type="text"
+                placeholder="Escribí tu rubro..."
+                value={customRubro}
+                onChange={e => setCustomRubro(e.target.value)}
+                className="w-full px-4 py-3 mt-2 bg-surface-container-low rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 font-body text-sm"
+              />
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

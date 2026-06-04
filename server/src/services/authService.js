@@ -59,6 +59,16 @@ export async function obtenerAdmin(adminId) {
   });
 
   if (!admin) throw new Error('RECURSO_NO_ENCONTRADO');
+
+  // Include tenant slug for regular admins
+  if (admin.tenantId) {
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: admin.tenantId },
+      select: { slug: true },
+    });
+    return { ...admin, tenantSlug: tenant?.slug || null };
+  }
+
   return admin;
 }
 
