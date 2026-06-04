@@ -2,6 +2,7 @@ import prisma from '../config/prisma.js';
 import { calcularSlotsLibres } from './disponibilidadService.js';
 import { procesarPagoAprobado } from './pagosService.js';
 import { notificarNuevoTurno } from './notificacionesService.js';
+import { enviarNuevoTurnoAdmin } from './whatsappService.js';
 
 export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas, fotoUrl, fotoPublicId }) {
   const servicio = await prisma.servicio.findFirst({
@@ -87,9 +88,12 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
     initPoint = pref.init_point;
   }
 
-  // Create notification for admin
+  // Create notification for admin + WhatsApp
   try {
     await notificarNuevoTurno(tenantId, { cliente, servicio });
+  } catch {}
+  try {
+    await enviarNuevoTurnoAdmin(tenant, { cliente, servicio, fechaHora });
   } catch {}
 
   return { turnoId: turno.id, initPoint };

@@ -14,7 +14,6 @@ async function enviarRecordatorios24h() {
     const mananaFin = new Date(manana);
     mananaFin.setHours(23, 59, 59, 999);
 
-    // Find all confirmed/señado turns for tomorrow
     const turnos = await prisma.turno.findMany({
       where: {
         fechaHora: { gte: manana, lte: mananaFin },
@@ -27,20 +26,25 @@ async function enviarRecordatorios24h() {
       },
     });
 
+    let enviados = 0;
+
     for (const turno of turnos) {
-      const config = turno.tenant?.config || {};
-      if (config.telefonoAdmin) {
-        try {
-          await enviarRecordatorio(turno);
-          logger.info(`Recordatorio enviado para turno ${turno.id}`);
-        } catch (err) {
-          logger.warn(`Error enviando recordatorio para turno ${turno.id}: ${err.message}`);
-        }
+      // In-app notification for admin
+      try {
+        await notificarTurnoManana(turno.tenantId, turno);
+      } catch {}
+
+      // WhatsApp to client (always, regardless of admin phone)
+      try {
+        await enviarRecordatorio(turno);
+        enviados++;
+      } catch (err) {
+        logger.warn(`Error enviando recordatorio para turno ${turno.id}: ${err.message}`);
       }
     }
 
     if (turnos.length > 0) {
-      logger.info(`Enviados ${turnos.length} recordatorios para mañana`);
+      logger.info(`Recordatorios: ${enviados}/${turnos.length} WhatsApp enviados, ${turnos.length} in-app notificaciones`);
     }
   } catch (error) {
     logger.error(`Error en job recordatorios: ${error.message}`);

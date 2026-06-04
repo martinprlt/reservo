@@ -3,6 +3,7 @@ import { listar as listarClientes, obtenerPorId } from './clientesService.js';
 import { listar as listarServicios } from './serviciosService.js';
 import { calcularSlotsLibres } from './disponibilidadService.js';
 import cloudinaryService from './cloudinaryService.js';
+import { enviarConfirmacionCliente, enviarCancelacionCliente } from './whatsappService.js';
 
 export async function obtenerStats(tenantId) {
   const hoy = new Date();
@@ -224,6 +225,18 @@ export async function actualizarTurno(tenantId, turnoId, { estado, notas, client
 
     return updated;
   });
+
+  // Send WhatsApp after transaction
+  if (estado === 'CONFIRMADO' && estadoAnterior !== 'CONFIRMADO') {
+    try {
+      await enviarConfirmacionCliente(result);
+    } catch {}
+  }
+  if (estado === 'CANCELADO' && estadoAnterior !== 'CANCELADO') {
+    try {
+      await enviarCancelacionCliente(result);
+    } catch {}
+  }
 
   return result;
 }
