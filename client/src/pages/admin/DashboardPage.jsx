@@ -10,6 +10,7 @@ export default function DashboardPage({ onNavigate }) {
   const [stats, setStats] = useState({ turnosHoy: 0, clientesNuevos: 0, clientesTotal: 0, ingresosMes: 0, turnosPorDia: [0,0,0,0,0,0,0] });
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [testingWhatsApp, setTestingWhatsApp] = useState(false);
   const { t } = useLanguage();
   const { admin } = useAdminStore();
 
@@ -265,6 +266,23 @@ export default function DashboardPage({ onNavigate }) {
               >
                 Exportar Turnos
               </a>
+              <button
+                onClick={async () => {
+                  setTestingWhatsApp(true);
+                  try {
+                    const { data } = await api.post('/admin/test-whatsapp');
+                    alert(data.mensaje);
+                  } catch (err) {
+                    alert(err.response?.data?.error || 'Error al enviar');
+                  } finally {
+                    setTestingWhatsApp(false);
+                  }
+                }}
+                disabled={testingWhatsApp}
+                className="px-4 py-2 rounded-full bg-green-100 text-green-700 text-xs font-semibold hover:bg-green-200 transition-all disabled:opacity-50"
+              >
+                {testingWhatsApp ? 'Enviando...' : '📱 Test WhatsApp'}
+              </button>
             </div>
           </div>
 

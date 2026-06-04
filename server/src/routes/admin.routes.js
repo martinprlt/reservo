@@ -4,6 +4,8 @@ import exportController from '../controllers/exportController.js';
 import reportesController from '../controllers/reportesController.js';
 import notificacionesController from '../controllers/notificacionesController.js';
 import verifyJWT from '../middleware/auth.js';
+import { enviarWhatsApp } from '../config/twilio.js';
+import prisma from '../config/prisma.js';
 
 const router = Router();
 
@@ -38,5 +40,27 @@ router.get('/export/turnos', exportController.turnosCSV);
 router.get('/reportes/turnos', reportesController.reporteTurnos);
 router.get('/reportes/ganancias', reportesController.reporteGanancias);
 router.get('/reportes/trabajos', reportesController.reporteTrabajos);
+
+// Test WhatsApp — POST /admin/test-whatsapp
+router.post('/test-whatsapp', async (req, res) => {
+  try {
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: req.tenantId },
+      select: { config: true, nombre: true },
+    });
+    const telefono = tenant?.config?.telefonoAdmin;
+    if (!telefono) {
+      return res.status(400).json({ error: 'No tenés telefonoAdmin configurado. Andá a Configuración y poné tu número.' });
+    }
+    const ok = await enviarWhatsApp(telefono, `✅ Test de Slotify\n\nSi ves este mensaje, las notificaciones WhatsApp están funcionando!\n\nNegocio: ${tenant.nombre}`);
+    if (ok) {
+      res.json({ ok: true, mensaje: `Mensaje enviado a +${telefono}. Checkeá tu WhatsApp.` });
+    } else {
+      res.status(500).json({ error: 'Twilio falló. Verificá las env vars TWILIO_* en Render.' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 export default router;
