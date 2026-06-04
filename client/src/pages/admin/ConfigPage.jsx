@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import api from '../../api/client';
+import api, { cachedApi } from '../../api/client';
 import { useTheme } from '../../store/themeContext';
 import { useLanguage } from '../../store/languageContext';
 import { useToast } from '../../store/toastContext';
@@ -87,6 +87,7 @@ export default function ConfigPage() {
         colorSecundario: theme === 'custom' ? colorSecundario : undefined,
         incentivosActivos,
       });
+      cachedApi.clear(); // Invalidate config cache
       toast.success('Configuración guardada');
     } catch {
       toast.error('Error al guardar');

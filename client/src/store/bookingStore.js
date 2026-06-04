@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import api from '../api/client';
+import { cachedApi } from '../api/client';
 
 export const useBookingStore = create((set, get) => ({
   paso: 1,
@@ -20,7 +20,7 @@ export const useBookingStore = create((set, get) => ({
   setADomicilio: (value) => set({ aDomicilio: value }),
 
   seleccionarServicio: (servicio, variante = null) => {
-    api.get('/config')
+    cachedApi.get('/config')
       .then(({ data }) => {
         const incentivosActivos = data?.incentivosActivos !== false;
         set({

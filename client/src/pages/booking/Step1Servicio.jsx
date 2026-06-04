@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useBookingStore } from '../../store/bookingStore';
 import { useLanguage } from '../../store/languageContext';
-import api from '../../api/client';
+import { cachedApi } from '../../api/client';
 
 const rubroIcons = {
   'uñas': 'front_hand',
@@ -21,8 +21,8 @@ export default function Step1Servicio() {
 
   useEffect(() => {
     Promise.all([
-      api.get('/servicios'),
-      api.get('/config'),
+      cachedApi.get('/servicios'),
+      cachedApi.get('/config'),
     ])
       .then(([servRes, configRes]) => {
         setServicios(servRes.data);

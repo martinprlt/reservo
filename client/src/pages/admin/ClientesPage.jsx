@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import api from '../../api/client';
 import ClientDetailPage from './ClientDetailPage';
 
@@ -6,13 +6,31 @@ export default function ClientesPage() {
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState('');
+  const [debouncedBusqueda, setDebouncedBusqueda] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [selectedClientId, setSelectedClientId] = useState(null);
+  const debounceTimer = useRef(null);
+
+  // Debounce search input
+  const handleBusqueda = useCallback((value) => {
+    setBusqueda(value);
+    setPage(1);
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      setDebouncedBusqueda(value);
+    }, 300);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, []);
 
   useEffect(() => {
     fetchClientes();
-  }, [busqueda, page]);
+  }, [debouncedBusqueda, page]);
 
   const fetchClientes = async () => {
     setLoading(true);
@@ -66,10 +84,7 @@ export default function ClientesPage() {
             type="text"
             placeholder="Buscar por nombre o teléfono..."
             value={busqueda}
-            onChange={(e) => {
-              setBusqueda(e.target.value);
-              setPage(1);
-            }}
+            onChange={(e) => handleBusqueda(e.target.value)}
             className="w-full pl-11 pr-4 py-3 bg-surface-container-lowest rounded-xl border border-outline-variant/20 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all font-body text-sm"
           />
         </div>

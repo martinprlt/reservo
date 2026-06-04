@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import api from '../../api/client';
+import api, { cachedApi, setTenantSlug } from '../../api/client';
 import { useLanguage } from '../../store/languageContext';
 import { useAdminStore } from '../../store/adminStore';
 
@@ -18,8 +18,12 @@ export default function DashboardPage({ onNavigate }) {
     : `${window.location.origin}/booking`;
 
   useEffect(() => {
+    // Persist tenant slug for booking page
+    if (admin?.tenantSlug) {
+      setTenantSlug(admin.tenantSlug);
+    }
     fetchDashboard();
-  }, []);
+  }, [admin?.tenantSlug]);
 
   const fetchDashboard = async () => {
     setLoading(true);
@@ -45,6 +49,10 @@ export default function DashboardPage({ onNavigate }) {
   };
 
   const handleCopy = async () => {
+    // Persist tenant slug so booking page can resolve it
+    if (admin?.tenantSlug) {
+      setTenantSlug(admin.tenantSlug);
+    }
     try {
       await navigator.clipboard.writeText(bookingUrl);
       setCopied(true);

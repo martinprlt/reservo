@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useBookingStore } from '../../store/bookingStore';
 import { useLanguage } from '../../store/languageContext';
-import api from '../../api/client';
+import { cachedApi } from '../../api/client';
 import Step1Servicio from './Step1Servicio';
 import Step2Horario from './Step2Horario';
 import Step3Datos from './Step3Datos';
@@ -15,7 +15,7 @@ export default function BookingPage() {
   const [tenantConfig, setTenantConfig] = useState(null);
 
   useEffect(() => {
-    api.get('/config')
+    cachedApi.get('/config')
       .then(({ data }) => setTenantConfig(data))
       .catch(() => {});
   }, []);

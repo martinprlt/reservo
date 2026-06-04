@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAdminStore } from '../../store/adminStore';
 import { useLanguage } from '../../store/languageContext';
-import api from '../../api/client';
+import { cachedApi } from '../../api/client';
 import DashboardPage from './DashboardPage';
 import AgendaPage from './AgendaPage';
 import ClientesPage from './ClientesPage';
@@ -29,7 +29,7 @@ export default function AdminLayout() {
   const { t } = useLanguage();
 
   useEffect(() => {
-    api.get('/admin/config')
+    cachedApi.get('/admin/config')
       .then(({ data }) => {
         setIncentivosActivos(data.incentivosActivos !== false);
       })
