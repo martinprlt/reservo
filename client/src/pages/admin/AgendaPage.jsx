@@ -16,7 +16,7 @@ const RUBRO_COLORS = {
   general: { bg: 'rgba(70, 72, 212, 0.08)', border: '#4648d4', text: '#4648d4' },
 };
 
-export default function AgendaPage() {
+export default function AgendaPage({ onNavigate }) {
   const [turnos, setTurnos] = useState([]);
   const [rubros, setRubros] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -146,6 +146,18 @@ export default function AgendaPage() {
 
   return (
     <main className="pb-32">
+      {/* Back Button */}
+      {onNavigate && (
+        <button
+          onClick={() => onNavigate('dashboard')}
+          className="text-sm font-medium mb-4 transition flex items-center gap-1 font-label"
+          style={{ color: 'var(--primary)' }}
+        >
+          <span className="material-symbols-outlined text-lg">arrow_back</span>
+          Volver al inicio
+        </button>
+      )}
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
         <div>

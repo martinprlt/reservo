@@ -59,15 +59,16 @@ export default function AdminLayout() {
   };
 
   const renderPage = () => {
+    const nav = (page) => setActivePage(page);
     switch (activePage) {
       case 'dashboard': return <DashboardPage onNavigate={setActivePage} />;
-      case 'agenda': return <AgendaPage />;
-      case 'clientes': return <ClientesPage />;
-      case 'servicios': return <ServiciosPage />;
-      case 'incentivos': return <IncentivosPage />;
-      case 'config': return <ConfigPage />;
-      case 'reportes': return <ReportesPage />;
-      default: return <DashboardPage />;
+      case 'agenda': return <AgendaPage onNavigate={nav} />;
+      case 'clientes': return <ClientesPage onNavigate={nav} />;
+      case 'servicios': return <ServiciosPage onNavigate={nav} />;
+      case 'incentivos': return <IncentivosPage onNavigate={nav} />;
+      case 'config': return <ConfigPage onNavigate={nav} />;
+      case 'reportes': return <ReportesPage onNavigate={nav} />;
+      default: return <DashboardPage onNavigate={setActivePage} />;
     }
   };
 

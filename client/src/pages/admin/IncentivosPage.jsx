@@ -5,7 +5,7 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { useToast } from '../../store/toastContext';
 import clsx from 'clsx';
 
-export default function IncentivosPage() {
+export default function IncentivosPage({ onNavigate }) {
   const [incentivos, setIncentivos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -105,6 +105,18 @@ export default function IncentivosPage() {
 
   return (
     <div>
+      {/* Back Button */}
+      {onNavigate && (
+        <button
+          onClick={() => onNavigate('dashboard')}
+          className="text-sm font-medium mb-4 transition flex items-center gap-1 font-label"
+          style={{ color: 'var(--primary)' }}
+        >
+          <span className="material-symbols-outlined text-lg">arrow_back</span>
+          Volver al inicio
+        </button>
+      )}
+
       {/* Header */}
       <section className="mb-8">
         <div className="flex justify-between items-end">

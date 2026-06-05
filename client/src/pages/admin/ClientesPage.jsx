@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import api from '../../api/client';
 import ClientDetailPage from './ClientDetailPage';
 
-export default function ClientesPage() {
+export default function ClientesPage({ onNavigate }) {
   const [clientes, setClientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busqueda, setBusqueda] = useState('');
@@ -58,6 +58,18 @@ export default function ClientesPage() {
 
   return (
     <div>
+      {/* Back Button */}
+      {onNavigate && (
+        <button
+          onClick={() => onNavigate('dashboard')}
+          className="text-sm font-medium mb-4 transition flex items-center gap-1 font-label"
+          style={{ color: 'var(--primary)' }}
+        >
+          <span className="material-symbols-outlined text-lg">arrow_back</span>
+          Volver al inicio
+        </button>
+      )}
+
       {/* Header */}
       <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">

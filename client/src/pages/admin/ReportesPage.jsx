@@ -13,7 +13,7 @@ const estadoColors = {
   CANCELADO: 'bg-red-100 text-red-600',
 };
 
-export default function ReportesPage() {
+export default function ReportesPage({ onNavigate }) {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('turnos');
   const [desde, setDesde] = useState('');
@@ -58,6 +58,18 @@ export default function ReportesPage() {
 
   return (
     <div>
+      {/* Back Button */}
+      {onNavigate && (
+        <button
+          onClick={() => onNavigate('dashboard')}
+          className="text-sm font-medium mb-4 transition flex items-center gap-1 font-label"
+          style={{ color: 'var(--primary)' }}
+        >
+          <span className="material-symbols-outlined text-lg">arrow_back</span>
+          Volver al inicio
+        </button>
+      )}
+
       <section className="mb-8">
         <h1 className="text-3xl font-extrabold font-headline tracking-tight" style={{ color: 'var(--on-surface)' }}>
           Reportes

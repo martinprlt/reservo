@@ -13,7 +13,7 @@ const defaultRubroIcons = {
   'general': 'spa',
 };
 
-export default function ServiciosPage() {
+export default function ServiciosPage({ onNavigate }) {
   const [servicios, setServicios] = useState([]);
   const [rubros, setRubros] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -195,6 +195,18 @@ export default function ServiciosPage() {
 
   return (
     <div>
+      {/* Back Button */}
+      {onNavigate && (
+        <button
+          onClick={() => onNavigate('dashboard')}
+          className="text-sm font-medium mb-4 transition flex items-center gap-1 font-label"
+          style={{ color: 'var(--primary)' }}
+        >
+          <span className="material-symbols-outlined text-lg">arrow_back</span>
+          Volver al inicio
+        </button>
+      )}
+
       {/* Header */}
       <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
