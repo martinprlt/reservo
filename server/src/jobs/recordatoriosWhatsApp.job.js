@@ -3,8 +3,12 @@ import prisma from '../config/prisma.js';
 import logger from '../utils/logger.js';
 import { enviarRecordatorio } from '../services/whatsappService.js';
 import { notificarTurnoManana } from '../services/notificacionesService.js';
+import { acquireLock, releaseLock } from '../utils/lock.js';
 
 async function enviarRecordatorios24h() {
+  if (!acquireLock('recordatorios', 55 * 60 * 1000)) {
+    return; // Another instance is running this job
+  }
   try {
     const ahora = new Date();
     const manana = new Date(ahora);
@@ -48,6 +52,8 @@ async function enviarRecordatorios24h() {
     }
   } catch (error) {
     logger.error(`Error en job recordatorios: ${error.message}`);
+  } finally {
+    releaseLock('recordatorios');
   }
 }
 

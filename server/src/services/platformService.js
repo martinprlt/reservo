@@ -124,9 +124,30 @@ export async function actualizarTenant(id, data) {
   const tenant = await prisma.tenant.findUnique({ where: { id } });
   if (!tenant) throw new Error('RECURSO_NO_ENCONTRADO');
 
+  const updateData = {};
+
+  // Basic fields
+  if (data.nombre !== undefined) updateData.nombre = data.nombre;
+  if (data.slug !== undefined) {
+    // Check slug uniqueness if changed
+    if (data.slug !== tenant.slug) {
+      const existing = await prisma.tenant.findUnique({ where: { slug: data.slug } });
+      if (existing) throw new Error('SLUG_YA_EXISTE');
+    }
+    updateData.slug = data.slug;
+  }
+  if (data.plan !== undefined) updateData.plan = data.plan;
+  if (data.activo !== undefined) updateData.activo = data.activo;
+
+  // Config merge (preserves existing config fields)
+  if (data.config) {
+    const currentConfig = tenant.config || {};
+    updateData.config = { ...currentConfig, ...data.config };
+  }
+
   return prisma.tenant.update({
     where: { id },
-    data: { nombre: data.nombre, slug: data.slug, plan: data.plan, activo: data.activo },
+    data: updateData,
   });
 }
 
@@ -186,4 +207,26 @@ export async function eliminarAdmin(id) {
   if (admin.role === 'SUPER_ADMIN') throw new Error('NO_SE_PUEDE_ELIMINAR_SUPER_ADMIN');
 
   return prisma.admin.delete({ where: { id } });
+}
+
+export async function resetAdminPassword(adminId, newPassword) {
+  const admin = await prisma.admin.findUnique({ where: { id: adminId } });
+  if (!admin) throw new Error('RECURSO_NO_ENCONTRADO');
+
+  const passwordHash = await bcrypt.hash(newPassword, 12);
+  return prisma.admin.update({
+    where: { id: adminId },
+    data: { passwordHash },
+    select: { id: true, email: true, nombre: true },
+  });
+}
+
+export async function toggleTenantActivo(id) {
+  const tenant = await prisma.tenant.findUnique({ where: { id } });
+  if (!tenant) throw new Error('RECURSO_NO_ENCONTRADO');
+
+  return prisma.tenant.update({
+    where: { id },
+    data: { activo: !tenant.activo },
+  });
 }

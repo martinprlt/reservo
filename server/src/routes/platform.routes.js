@@ -13,10 +13,12 @@ router.get('/tenants', platformController.listarTenants);
 router.get('/tenants/:id', platformController.obtenerTenant);
 router.post('/tenants', platformController.crearTenant);
 router.patch('/tenants/:id', platformController.actualizarTenant);
+router.patch('/tenants/:id/toggle', platformController.toggleTenantActivo);
 router.delete('/tenants/:id', platformController.eliminarTenant);
 
 router.get('/admins', platformController.listarAdmins);
 router.post('/admins', platformController.crearAdmin);
+router.patch('/admins/:id/reset-password', platformController.resetAdminPassword);
 router.delete('/admins/:id', platformController.eliminarAdmin);
 
 export default router;

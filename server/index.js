@@ -21,11 +21,12 @@ import logger from './src/utils/logger.js';
 import prisma from './src/config/prisma.js';
 
 async function main() {
+  let server;
   try {
     await prisma.$connect();
     logger.info('Database connected');
 
-    const server = app.listen(env.PORT, () => {
+    server = app.listen(env.PORT, () => {
       logger.info(`Server running on port ${env.PORT}`);
     });
 
@@ -48,6 +49,35 @@ async function main() {
     logger.error(`Failed to start server: ${error.message}`);
     process.exit(1);
   }
+
+  // Graceful shutdown
+  const shutdown = async (signal) => {
+    logger.info(`${signal} received. Shutting down gracefully...`);
+    if (server) {
+      server.close(() => {
+        logger.info('HTTP server closed');
+      });
+    }
+    // Wait up to 10s for connections to drain
+    const forceExit = setTimeout(() => {
+      logger.warn('Forced shutdown after timeout');
+      process.exit(1);
+    }, 10000);
+    forceExit.unref();
+
+    try {
+      await prisma.$disconnect();
+      logger.info('Database disconnected');
+      clearTimeout(forceExit);
+      process.exit(0);
+    } catch (err) {
+      logger.error(`Error during shutdown: ${err.message}`);
+      process.exit(1);
+    }
+  };
+
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
 }
 
 main();

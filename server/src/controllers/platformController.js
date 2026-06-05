@@ -91,4 +91,26 @@ export default {
       next(error);
     }
   },
+
+  async resetAdminPassword(req, res, next) {
+    try {
+      const { password } = req.body;
+      if (!password || password.length < 6) {
+        return res.status(400).json({ error: 'Contraseña mínima 6 caracteres' });
+      }
+      const admin = await platformService.resetAdminPassword(req.params.id, password);
+      res.json(admin);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async toggleTenantActivo(req, res, next) {
+    try {
+      const tenant = await platformService.toggleTenantActivo(req.params.id);
+      res.json(tenant);
+    } catch (error) {
+      next(error);
+    }
+  },
 };

@@ -29,6 +29,12 @@ export default function ConfigPage() {
   const [adminNombre, setAdminNombre] = useState('');
   const [creandoAdmin, setCreandoAdmin] = useState(false);
 
+  // Password change
+  const [passwordActual, setPasswordActual] = useState('');
+  const [passwordNueva, setPasswordNueva] = useState('');
+  const [passwordNueva2, setPasswordNueva2] = useState('');
+  const [cambiandoPassword, setCambiandoPassword] = useState(false);
+
   useEffect(() => {
     api.get('/admin/config').then(({ data }) => {
       setHorarios(data.horarios || {});
@@ -135,6 +141,36 @@ export default function ConfigPage() {
       toast.error(err.response?.data?.error || 'Error al crear usuario');
     } finally {
       setCreandoAdmin(false);
+    }
+  };
+
+  const handleCambiarPassword = async () => {
+    if (!passwordActual || !passwordNueva) {
+      toast.error('Todos los campos son obligatorios');
+      return;
+    }
+    if (passwordNueva !== passwordNueva2) {
+      toast.error('Las contraseñas no coinciden');
+      return;
+    }
+    if (passwordNueva.length < 6) {
+      toast.error('Mínimo 6 caracteres');
+      return;
+    }
+    setCambiandoPassword(true);
+    try {
+      await api.post('/auth/cambiar-password', {
+        passwordActual,
+        passwordNueva,
+      });
+      toast.success('Contraseña cambiada');
+      setPasswordActual('');
+      setPasswordNueva('');
+      setPasswordNueva2('');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Error al cambiar contraseña');
+    } finally {
+      setCambiandoPassword(false);
     }
   };
 
@@ -540,6 +576,51 @@ export default function ConfigPage() {
             <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>
               Estos datos se mostrarán a tus clientes en la página de reservas para que puedan pagarte por transferencia o MercadoPago.
             </p>
+          </div>
+        </div>
+
+        {/* Usuarios Admin */}
+        <div className="p-6 rounded-xl shadow-card border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+          <h2 className="text-lg font-bold mb-4 font-headline flex items-center gap-2" style={{ color: 'var(--on-surface)' }}>
+            <span className="material-symbols-outlined" style={{ color: 'var(--primary)' }}>lock</span>
+            Cambiar Contraseña
+          </h2>
+          <p className="text-xs mb-4 font-label" style={{ color: 'var(--on-surface-variant)' }}>
+            Cambiá tu contraseña de acceso al panel.
+          </p>
+          <div className="space-y-3">
+            <input
+              value={passwordActual}
+              onChange={(e) => setPasswordActual(e.target.value)}
+              type="password"
+              className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
+              style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+              placeholder="Contraseña actual"
+            />
+            <input
+              value={passwordNueva}
+              onChange={(e) => setPasswordNueva(e.target.value)}
+              type="password"
+              className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
+              style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+              placeholder="Nueva contraseña"
+            />
+            <input
+              value={passwordNueva2}
+              onChange={(e) => setPasswordNueva2(e.target.value)}
+              type="password"
+              className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm"
+              style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+              placeholder="Confirmar nueva contraseña"
+            />
+            <button
+              onClick={handleCambiarPassword}
+              disabled={cambiandoPassword || !passwordActual || !passwordNueva}
+              className="w-full py-3 rounded-xl font-semibold text-sm border transition active:scale-[0.98] disabled:opacity-40"
+              style={{ borderColor: 'var(--primary)', color: 'var(--primary)', backgroundColor: 'var(--surface-container-lowest)' }}
+            >
+              {cambiandoPassword ? 'Cambiando...' : 'Cambiar contraseña'}
+            </button>
           </div>
         </div>
 

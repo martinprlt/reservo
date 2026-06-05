@@ -134,3 +134,18 @@ export async function verificarEmail(adminId) {
     select: { id: true, email: true, emailVerificado: true },
   });
 }
+
+export async function cambiarPassword(adminId, passwordActual, passwordNueva) {
+  const admin = await prisma.admin.findUnique({ where: { id: adminId } });
+  if (!admin) throw new Error('RECURSO_NO_ENCONTRADO');
+
+  const ok = await bcrypt.compare(passwordActual, admin.passwordHash);
+  if (!ok) throw new Error('CREDENCIALES_INVALIDAS');
+
+  const passwordHash = await bcrypt.hash(passwordNueva, 12);
+  return prisma.admin.update({
+    where: { id: adminId },
+    data: { passwordHash },
+    select: { id: true, email: true },
+  });
+}
