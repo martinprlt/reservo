@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { useBookingStore } from '../../store/bookingStore';
 import { useLanguage } from '../../store/languageContext';
-import { cachedApi } from '../../api/client';
+import api from '../../api/client';
 
 const Step1Servicio = lazy(() => import('./Step1Servicio'));
 const Step2Horario = lazy(() => import('./Step2Horario'));
@@ -16,7 +16,7 @@ export default function BookingPage() {
   const [tenantConfig, setTenantConfig] = useState(null);
 
   useEffect(() => {
-    cachedApi.get('/config')
+    api.get('/config')
       .then(({ data }) => setTenantConfig(data))
       .catch(() => {});
   }, []);
