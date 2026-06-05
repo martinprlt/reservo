@@ -466,7 +466,7 @@ export default function LandingPage() {
           <div style={{ display: "flex", gap: 20 }}>
             <a href="/terminos" style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>Términos</a>
             <a href="/privacidad" style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>Privacidad</a>
-            <a href="mailto:admin@slotifyapp.site" style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>Contacto</a>
+            <a href="https://wa.me/542966249491?text=Hola!%20Tengo%20una%20consulta%20sobre%20Slotify." target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", textDecoration: "none" }}>Contacto</a>
           </div>
         </div>
       </footer>

@@ -130,7 +130,7 @@ export default function DashboardPage({ onNavigate }) {
             </div>
           </div>
           {planLimits.plan === 'FREE' && (
-            <a href="#planes" className="text-xs font-semibold px-3 py-1.5 rounded-lg" style={{ backgroundColor: 'var(--primary)', color: 'var(--on-primary)' }}>
+            <a href="https://wa.me/542966249491?text=Hola!%20Quiero%20upgradear%20mi%20plan%20de%20Slotify%20(FREE%20%E2%86%92%20PRO)." target="_blank" rel="noopener noreferrer" className="text-xs font-semibold px-3 py-1.5 rounded-lg" style={{ backgroundColor: 'var(--primary)', color: 'var(--on-primary)' }}>
               Upgrade
             </a>
           )}
