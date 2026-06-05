@@ -10,6 +10,7 @@ import logger from './src/utils/logger.js';
 import errorHandler from './src/middleware/errorHandler.js';
 import { sanitizeInput } from './src/middleware/sanitize.js';
 import routes from './src/routes/index.js';
+import prisma from './src/config/prisma.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,7 +44,14 @@ app.use(morgan('combined', { stream: logger.stream }));
 app.use(sanitizeInput);
 
 // Health check BEFORE routes
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+app.get('/api/health', async (req, res) => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({ status: 'ok', db: 'connected', timestamp: new Date().toISOString() });
+  } catch (error) {
+    res.status(503).json({ status: 'error', db: 'disconnected', timestamp: new Date().toISOString() });
+  }
+});
 
 // API routes
 app.use('/api', routes);

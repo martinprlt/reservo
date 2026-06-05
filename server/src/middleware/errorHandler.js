@@ -1,6 +1,12 @@
+import * as Sentry from '@sentry/node';
 import logger from '../utils/logger.js';
 
 export default function errorHandler(err, req, res, next) {
+  // Send to Sentry in production
+  if (process.env.NODE_ENV === 'production' && process.env.SENTRY_DSN) {
+    Sentry.captureException(err);
+  }
+
   // Log the error
   if (process.env.NODE_ENV === 'production') {
     logger.error(err.message);

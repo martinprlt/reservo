@@ -3,6 +3,16 @@ import 'dotenv/config';
 // Set timezone to Argentina for consistent date handling
 process.env.TZ = process.env.TZ || 'America/Argentina/Buenos_Aires';
 
+// Initialize Sentry for error tracking
+import * as Sentry from '@sentry/node';
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || 'development',
+    tracesSampleRate: 0.1,
+  });
+}
+
 import './src/jobs/liberarReservas.job.js';
 import './src/jobs/recordatoriosWhatsApp.job.js';
 import app from './app.js';

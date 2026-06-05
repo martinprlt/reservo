@@ -22,6 +22,9 @@ const env = cleanEnv(process.env, {
   VAPID_PUBLIC_KEY: str({ default: '' }),
   VAPID_PRIVATE_KEY: str({ default: '' }),
 
+  // Sentry (error tracking)
+  SENTRY_DSN: str({ default: '' }),
+
   // App
   FRONTEND_URL: str({ default: 'http://localhost:3000' }),
 });

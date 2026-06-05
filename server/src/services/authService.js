@@ -17,7 +17,7 @@ export async function login(email, password, tenantSlugOrId) {
     const token = signToken({ adminId: admin.id, role: 'SUPER_ADMIN' });
     return {
       token,
-      admin: { id: admin.id, email: admin.email, nombre: admin.nombre, role: admin.role },
+      admin: { id: admin.id, email: admin.email, nombre: admin.nombre, role: admin.role, emailVerificado: admin.emailVerificado },
     };
   }
 
@@ -28,7 +28,7 @@ export async function login(email, password, tenantSlugOrId) {
       const token = signToken({ adminId: admin.id, tenantId: admin.tenantId, role: 'ADMIN' });
       return {
         token,
-        admin: { id: admin.id, email: admin.email, nombre: admin.nombre, role: admin.role },
+        admin: { id: admin.id, email: admin.email, nombre: admin.nombre, role: admin.role, emailVerificado: admin.emailVerificado },
       };
     }
     throw new Error('VALIDATION_ERROR');
@@ -48,7 +48,7 @@ export async function login(email, password, tenantSlugOrId) {
 
   return {
     token,
-    admin: { id: admin.id, email: admin.email, nombre: admin.nombre, role: admin.role },
+    admin: { id: admin.id, email: admin.email, nombre: admin.nombre, role: admin.role, emailVerificado: admin.emailVerificado },
   };
 }
 
@@ -125,4 +125,12 @@ export async function register({ nombreNegocio, nombreAdmin, email, password, te
   const token = signToken({ adminId: admin.id, tenantId: tenant.id, role: 'ADMIN' });
 
   return { token, admin, slug };
+}
+
+export async function verificarEmail(adminId) {
+  return prisma.admin.update({
+    where: { id: adminId },
+    data: { emailVerificado: true },
+    select: { id: true, email: true, emailVerificado: true },
+  });
 }

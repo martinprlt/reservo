@@ -1,4 +1,4 @@
-import { login, obtenerAdmin, register } from '../services/authService.js';
+import { login, obtenerAdmin, register, verificarEmail } from '../services/authService.js';
 import { registerSchema } from '../schemas/turno.schema.js';
 
 export default {
@@ -49,6 +49,15 @@ export default {
   async me(req, res, next) {
     try {
       const admin = await obtenerAdmin(req.adminId);
+      res.json(admin);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async verificarEmail(req, res, next) {
+    try {
+      const admin = await verificarEmail(req.adminId);
       res.json(admin);
     } catch (error) {
       next(error);
