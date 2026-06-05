@@ -77,13 +77,13 @@ export default function ClientesPage({ onNavigate }) {
           <h1 className="font-headline text-headline-xl text-on-background">Clientes</h1>
           <p className="text-on-surface-variant max-w-xl">Gestiona tu base de clientes y su historial de servicios.</p>
         </div>
-        <a
-          href="/api/admin/export/clientes"
+        <button
+          onClick={() => window.open('/api/admin/export/clientes', '_blank')}
           className="flex items-center gap-2 bg-surface-container-high text-primary px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-primary-container hover:text-on-primary-container transition-all"
         >
           <span className="material-symbols-outlined text-lg">download</span>
           <span className="font-label text-label-caps">EXPORTAR CSV</span>
-        </a>
+        </button>
       </div>
 
       {/* Search */}

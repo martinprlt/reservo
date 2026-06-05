@@ -79,6 +79,7 @@ export async function obtenerReporteGanancias(tenantId, { desde, hasta }) {
   };
 
   turnos.forEach(t => {
+    const esCompletado = t.estado === 'COMPLETADO';
     stats.totalSenias += t.montoSenia || 0;
     stats.totalPrecios += t.precioTotal || 0;
 
@@ -91,9 +92,10 @@ export async function obtenerReporteGanancias(tenantId, { desde, hasta }) {
       }
     });
 
-    // Group by month
+    // Group by month - use precioTotal for completed, montoSenia for pending
     const mes = new Date(t.fechaHora).toISOString().substring(0, 7); // YYYY-MM
-    stats.porMes[mes] = (stats.porMes[mes] || 0) + (t.montoSenia || 0);
+    const monto = esCompletado ? (t.precioTotal || 0) : (t.montoSenia || 0);
+    stats.porMes[mes] = (stats.porMes[mes] || 0) + monto;
   });
 
   return { turnos, stats };

@@ -405,18 +405,18 @@ export default function DashboardPage({ onNavigate }) {
               >
                 Agregar Cliente
               </button>
-              <a
-                href="/api/admin/export/clientes"
+              <button
+                onClick={() => window.open('/api/admin/export/clientes', '_blank')}
                 className="px-4 py-2 rounded-full bg-surface-container-high text-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all"
               >
                 Exportar Clientes
-              </a>
-              <a
-                href="/api/admin/export/turnos"
+              </button>
+              <button
+                onClick={() => window.open('/api/admin/export/turnos', '_blank')}
                 className="px-4 py-2 rounded-full bg-surface-container-high text-primary text-xs font-semibold hover:bg-primary-container hover:text-on-primary-container transition-all"
               >
                 Exportar Turnos
-              </a>
+              </button>
               <button
                 onClick={async () => {
                   setTestingWhatsApp(true);

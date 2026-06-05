@@ -161,10 +161,14 @@ export default function ReportesPage({ onNavigate }) {
           )}
 
           {activeTab === 'ganancias' && data.stats && (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-4 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
                 <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>Total Señado</p>
                 <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>${(data.stats.totalSenias || 0).toLocaleString('es-AR')}</p>
+              </div>
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+                <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>Total Facturado</p>
+                <p className="text-2xl font-bold font-headline" style={{ color: 'var(--on-surface)' }}>${(data.stats.totalPrecios || 0).toLocaleString('es-AR')}</p>
               </div>
               <div className="p-4 rounded-xl border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
                 <p className="text-xs font-label" style={{ color: 'var(--on-surface-variant)' }}>Por MercadoPago</p>
