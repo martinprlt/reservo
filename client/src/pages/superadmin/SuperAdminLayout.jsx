@@ -161,6 +161,7 @@ function Dashboard({ stats }) {
 
 function TenantsList({ tenants, onRefresh, toast }) {
   const [showCreate, setShowCreate] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ nombre: '', slug: '', email: '', password: '', plan: 'FREE' });
   const [creating, setCreating] = useState(false);
 
@@ -201,6 +202,21 @@ function TenantsList({ tenants, onRefresh, toast }) {
       onRefresh();
     } catch {
       toast.error('Error al eliminar');
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      await api.patch(`/platform/tenants/${editing.id}`, {
+        nombre: editing.nombre,
+        slug: editing.slug,
+        plan: editing.plan,
+      });
+      toast.success('Negocio actualizado');
+      setEditing(null);
+      onRefresh();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Error al actualizar');
     }
   };
 
@@ -275,6 +291,81 @@ function TenantsList({ tenants, onRefresh, toast }) {
         </div>
       )}
 
+      {/* Edit Modal */}
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}>
+          <div className="bg-white rounded-2xl p-6 shadow-xl w-full max-w-md">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-gray-900 text-lg">Editar negocio</h3>
+              <button onClick={() => setEditing(null)} className="p-1 hover:bg-gray-100 rounded-lg">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                <input
+                  value={editing.nombre}
+                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Slug (subdominio)</label>
+                <div className="flex items-center gap-0">
+                  <input
+                    value={editing.slug}
+                    onChange={(e) => setEditing({ ...editing, slug: e.target.value.toLowerCase().replace(/\s+/g, '') })}
+                    className="flex-1 px-4 py-3 rounded-l-xl border border-r-0 border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                  <span className="px-4 py-3 bg-gray-50 border border-gray-200 rounded-r-xl text-sm text-gray-500">.slotifyapp.site</span>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Plan</label>
+                <select
+                  value={editing.plan}
+                  onChange={(e) => setEditing({ ...editing, plan: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                >
+                  <option value="FREE">Free</option>
+                  <option value="BASICO">Básico ($149.999)</option>
+                  <option value="PRO">Pro ($299.999)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                <div className="flex items-center gap-3">
+                  <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${editing.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                    {editing.activo ? 'Activo' : 'Inactivo'}
+                  </span>
+                  <button
+                    onClick={() => setEditing({ ...editing, activo: !editing.activo })}
+                    className="text-sm text-indigo-600 hover:underline"
+                  >
+                    {editing.activo ? 'Desactivar' : 'Activar'}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleSaveEdit}
+                className="flex-1 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
+              >
+                Guardar cambios
+              </button>
+              <button
+                onClick={() => setEditing(null)}
+                className="px-6 py-2.5 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {tenants.map((t) => (
           <div key={t.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center justify-between">
@@ -287,16 +378,19 @@ function TenantsList({ tenants, onRefresh, toast }) {
                 <p className="text-sm text-gray-500">{t.slug}.slotifyapp.site · {t.plan}</p>
               </div>
             </div>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
               <span>{t._count?.servicios || 0} servicios</span>
               <span>{t._count?.clientes || 0} clientes</span>
-              <span>{t._count?.turnos || 0} turnos</span>
-              <span className={clsx(
-                'px-2 py-1 rounded-full text-xs font-bold',
-                t.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-              )}>
+              <span className={`px-2 py-1 rounded-full text-xs font-bold ${t.activo ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                 {t.activo ? 'Activo' : 'Inactivo'}
               </span>
+              <button
+                onClick={() => setEditing(t)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                title="Editar"
+              >
+                <span className="material-symbols-outlined text-lg">edit</span>
+              </button>
               <button
                 onClick={() => handleToggleActivo(t)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition"
@@ -323,6 +417,7 @@ function TenantsList({ tenants, onRefresh, toast }) {
 
 function AdminsList({ admins, tenants, onRefresh, toast }) {
   const [showCreate, setShowCreate] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ email: '', password: '', nombre: '', tenantId: '' });
   const [creating, setCreating] = useState(false);
 
@@ -353,6 +448,34 @@ function AdminsList({ admins, tenants, onRefresh, toast }) {
       onRefresh();
     } catch {
       toast.error('Error al eliminar');
+    }
+  };
+
+  const handleResetPassword = async (admin) => {
+    const newPassword = prompt(`Nueva contraseña para ${admin.email}:`);
+    if (!newPassword || newPassword.length < 6) {
+      if (newPassword !== null) toast.error('Mínimo 6 caracteres');
+      return;
+    }
+    try {
+      await api.patch(`/platform/admins/${admin.id}/reset-password`, { password: newPassword });
+      toast.success('Contraseña actualizada');
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Error al actualizar contraseña');
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      // Update password if provided
+      if (editing._newPassword) {
+        await api.patch(`/platform/admins/${editing.id}/reset-password`, { password: editing._newPassword });
+      }
+      toast.success('Usuario actualizado');
+      setEditing(null);
+      onRefresh();
+    } catch (err) {
+      toast.error(err.response?.data?.error || 'Error al actualizar');
     }
   };
 
@@ -422,6 +545,83 @@ function AdminsList({ admins, tenants, onRefresh, toast }) {
         </div>
       )}
 
+      {/* Edit Modal */}
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}>
+          <div className="bg-white rounded-2xl p-6 shadow-xl w-full max-w-md">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-gray-900 text-lg">Editar usuario</h3>
+              <button onClick={() => setEditing(null)} className="p-1 hover:bg-gray-100 rounded-lg">
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                <input
+                  value={editing.nombre || ''}
+                  onChange={(e) => setEditing({ ...editing, nombre: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  value={editing.email}
+                  disabled
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 text-gray-500"
+                />
+                <p className="text-xs text-gray-400 mt-1">El email no se puede cambiar</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Negocio asignado</label>
+                <select
+                  value={editing.tenantId || ''}
+                  disabled
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm bg-gray-50 text-gray-500"
+                >
+                  <option value="">Sin negocio</option>
+                  {tenants.map((t) => (
+                    <option key={t.id} value={t.id}>{t.nombre}</option>
+                  ))}
+                </select>
+                <p className="text-xs text-gray-400 mt-1">Para reasignar, eliminá y creá de nuevo</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nueva contraseña (dejar vacío para no cambiar)</label>
+                <input
+                  type="password"
+                  value={editing._newPassword || ''}
+                  onChange={(e) => setEditing({ ...editing, _newPassword: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  placeholder="Mínimo 6 caracteres"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Rol</label>
+                <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${editing.role === 'SUPER_ADMIN' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
+                  {editing.role}
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={handleSaveEdit}
+                className="flex-1 px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
+              >
+                Guardar cambios
+              </button>
+              <button
+                onClick={() => setEditing(null)}
+                className="px-6 py-2.5 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition"
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         {admins.map((a) => (
           <div key={a.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center justify-between">
@@ -434,18 +634,30 @@ function AdminsList({ admins, tenants, onRefresh, toast }) {
                 <p className="text-sm text-gray-500">{a.email}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500">{a.tenant?.nombre || 'Sin negocio'}</span>
-              <span className={clsx(
-                'px-2 py-1 rounded-full text-xs font-bold',
-                a.role === 'SUPER_ADMIN' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
-              )}>
+              <span className={`px-2 py-1 rounded-full text-xs font-bold ${a.role === 'SUPER_ADMIN' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}`}>
                 {a.role}
               </span>
+              <button
+                onClick={() => setEditing(a)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                title="Editar"
+              >
+                <span className="material-symbols-outlined text-lg">edit</span>
+              </button>
+              <button
+                onClick={() => handleResetPassword(a)}
+                className="p-2 hover:bg-amber-50 text-amber-600 rounded-lg transition"
+                title="Resetear contraseña"
+              >
+                <span className="material-symbols-outlined text-lg">lock_reset</span>
+              </button>
               {a.role !== 'SUPER_ADMIN' && (
                 <button
                   onClick={() => handleDelete(a)}
                   className="p-2 hover:bg-red-50 text-red-500 rounded-lg transition"
+                  title="Eliminar"
                 >
                   <span className="material-symbols-outlined text-lg">delete</span>
                 </button>
