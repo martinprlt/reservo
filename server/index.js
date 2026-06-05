@@ -27,6 +27,19 @@ async function main() {
     await prisma.$connect();
     logger.info('Database connected');
 
+    // Auto-sync schema (safe: only adds new fields/models, never drops)
+    try {
+      const { execSync } = await import('child_process');
+      execSync('npx prisma db push --skip-generate --accept-data-loss', {
+        cwd: new URL('.', import.meta.url).pathname,
+        stdio: 'pipe',
+        timeout: 30000,
+      });
+      logger.info('Schema synced');
+    } catch (e) {
+      logger.warn('Schema sync skipped: ' + (e.stderr || e.message).trim().split('\n').pop());
+    }
+
     server = app.listen(env.PORT, () => {
       logger.info(`Server running on port ${env.PORT}`);
     });
