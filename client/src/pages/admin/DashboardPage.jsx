@@ -70,8 +70,10 @@ export default function DashboardPage({ onNavigate }) {
       // Fetch global announcements
       try {
         const { data } = await api.get('/admin/announcements');
-        setAnnouncements(data);
-      } catch {}
+        setAnnouncements(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error('Error fetching announcements:', err);
+      }
     } catch (err) {
       console.error('Dashboard error:', err);
     } finally {

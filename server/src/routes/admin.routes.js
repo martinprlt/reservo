@@ -115,7 +115,8 @@ router.get('/announcements', async (req, res) => {
     });
     res.json(announcements);
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener anuncios' });
+    // Table might not exist yet - return empty array
+    res.json([]);
   }
 });
 
