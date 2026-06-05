@@ -97,4 +97,26 @@ router.post('/test-whatsapp', async (req, res) => {
   }
 });
 
+// Active announcements (visible to all tenant admins)
+router.get('/announcements', async (req, res) => {
+  try {
+    const now = new Date();
+    const announcements = await prisma.announcement.findMany({
+      where: {
+        activo: true,
+        OR: [
+          { expiraEn: null },
+          { expiraEn: { gt: now } },
+        ],
+      },
+      orderBy: { creadoEn: 'desc' },
+      take: 10,
+      select: { id: true, titulo: true, mensaje: true, tipo: true, creadoEn: true },
+    });
+    res.json(announcements);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener anuncios' });
+  }
+});
+
 export default router;

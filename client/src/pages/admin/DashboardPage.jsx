@@ -14,6 +14,7 @@ export default function DashboardPage({ onNavigate }) {
   const [planLimits, setPlanLimits] = useState(null);
   const [serviciosCount, setServiciosCount] = useState(null);
   const [trialInfo, setTrialInfo] = useState(null);
+  const [announcements, setAnnouncements] = useState([]);
   const { t } = useLanguage();
   const { admin } = useAdminStore();
 
@@ -64,6 +65,12 @@ export default function DashboardPage({ onNavigate }) {
             setTrialInfo({ fin, diasRestantes, plan: configRes.data.plan });
           }
         }
+      } catch {}
+
+      // Fetch global announcements
+      try {
+        const { data } = await api.get('/admin/announcements');
+        setAnnouncements(data);
       } catch {}
     } catch (err) {
       console.error('Dashboard error:', err);
@@ -219,6 +226,28 @@ export default function DashboardPage({ onNavigate }) {
           </div>
         </div>
       )}
+
+      {/* Global Announcements */}
+      {announcements.map((a) => (
+        <div
+          key={a.id}
+          className="mb-4 p-4 rounded-xl border flex items-start gap-3"
+          style={{
+            backgroundColor: a.tipo === 'warning' ? 'rgba(245,158,11,0.05)' : a.tipo === 'update' ? 'rgba(16,185,129,0.05)' : 'rgba(59,130,246,0.05)',
+            borderColor: a.tipo === 'warning' ? 'rgba(245,158,11,0.2)' : a.tipo === 'update' ? 'rgba(16,185,129,0.2)' : 'rgba(59,130,246,0.2)',
+          }}
+        >
+          <span className="material-symbols-outlined text-lg mt-0.5" style={{
+            color: a.tipo === 'warning' ? '#f59e0b' : a.tipo === 'update' ? '#10b981' : '#3b82f6',
+          }}>
+            {a.tipo === 'warning' ? 'warning' : a.tipo === 'update' ? 'new_releases' : 'info'}
+          </span>
+          <div>
+            <p className="text-sm font-semibold" style={{ color: 'var(--on-surface)' }}>{a.titulo}</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--on-surface-variant)' }}>{a.mensaje}</p>
+          </div>
+        </div>
+      ))}
 
       {/* Bento Grid Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter">

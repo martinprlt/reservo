@@ -102,8 +102,17 @@ export default function BookingPage() {
         </div>
       )}
 
+      {/* Welcome Banner */}
+      {tenantConfig?.mensajeBienvenida && (
+        <div className="mt-20 bg-primary/5 border-b border-primary/10 px-4 py-3 text-center">
+          <p className="text-sm font-medium text-primary/80 font-body">
+            {tenantConfig.mensajeBienvenida}
+          </p>
+        </div>
+      )}
+
       {/* Main Content */}
-      <main className="pt-32 pb-8 px-4 max-w-2xl mx-auto">
+      <main className={`pt-32 pb-8 px-4 max-w-2xl mx-auto ${tenantConfig?.mensajeBienvenida ? 'pt-36' : ''}`}>
         <Suspense fallback={
           <div className="flex items-center justify-center py-20">
             <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-full animate-spin"></div>

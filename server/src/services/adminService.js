@@ -316,7 +316,14 @@ export async function actualizarConfig(tenantId, config) {
     select: { config: true },
   });
 
-  const merged = { ...current.config, ...config };
+  const merged = { ...current.config };
+  for (const [key, value] of Object.entries(config)) {
+    if (typeof value === 'object' && value !== null && !Array.isArray(value) && typeof merged[key] === 'object' && merged[key] !== null) {
+      merged[key] = { ...merged[key], ...value };
+    } else {
+      merged[key] = value;
+    }
+  }
 
   return prisma.tenant.update({
     where: { id: tenantId },

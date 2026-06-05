@@ -28,6 +28,7 @@ export default function ConfigPage() {
   const [adminPassword, setAdminPassword] = useState('');
   const [adminNombre, setAdminNombre] = useState('');
   const [creandoAdmin, setCreandoAdmin] = useState(false);
+  const [mensajeBienvenida, setMensajeBienvenida] = useState('');
 
   // Password change
   const [passwordActual, setPasswordActual] = useState('');
@@ -45,6 +46,7 @@ export default function ConfigPage() {
       setLogoUrl(data.logoUrl || '');
       setLogoPreview(data.logoUrl || '');
       setIncentivosActivos(data.incentivosActivos !== false);
+      setMensajeBienvenida(data.booking?.mensajeBienvenida || '');
     }).catch(() => {});
   }, []);
 
@@ -94,6 +96,7 @@ export default function ConfigPage() {
         colorPrimario: theme === 'custom' ? colorPrimario : undefined,
         colorSecundario: theme === 'custom' ? colorSecundario : undefined,
         incentivosActivos,
+        booking: { mensajeBienvenida },
       });
       cachedApi.clear(); // Invalidate config cache
       toast.success('Configuración guardada');
@@ -257,6 +260,29 @@ export default function ConfigPage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Mensaje de bienvenida en booking */}
+        <div className="p-6 rounded-xl shadow-card border" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+          <h2 className="text-lg font-bold mb-4 font-headline flex items-center gap-2" style={{ color: 'var(--on-surface)' }}>
+            <span className="material-symbols-outlined" style={{ color: 'var(--primary)' }}>waving_hand</span>
+            Mensaje de bienvenida
+          </h2>
+          <p className="text-xs mb-4 font-label" style={{ color: 'var(--on-surface-variant)' }}>
+            Este mensaje se muestra arriba en la página de reservas de tus clientes.
+          </p>
+          <textarea
+            value={mensajeBienvenida}
+            onChange={(e) => setMensajeBienvenida(e.target.value)}
+            rows={2}
+            maxLength={200}
+            className="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 transition font-body text-sm resize-none"
+            style={{ backgroundColor: 'var(--surface-container-low)', borderColor: 'var(--outline-variant)', color: 'var(--on-surface)' }}
+            placeholder="Ej: Bienvenidos a TuStudio! Reservá tu turno online."
+          />
+          <p className="text-xs mt-1 font-label" style={{ color: 'var(--on-surface-variant)', opacity: 0.6 }}>
+            {mensajeBienvenida.length}/200 caracteres
+          </p>
         </div>
 
         {/* Theme - 3 options */}

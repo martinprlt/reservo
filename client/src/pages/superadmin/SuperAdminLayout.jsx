@@ -62,6 +62,7 @@ export default function SuperAdminLayout() {
     { id: 'metrics', label: 'Métricas', icon: 'analytics' },
     { id: 'tenants', label: 'Negocios', icon: 'business' },
     { id: 'admins', label: 'Usuarios', icon: 'group' },
+    { id: 'announcements', label: 'Avisos', icon: 'campaign' },
   ];
 
   return (
@@ -121,6 +122,7 @@ export default function SuperAdminLayout() {
             {activePage === 'metrics' && <MetricsDashboard />}
             {activePage === 'tenants' && <TenantsList tenants={tenants} onRefresh={loadTenants} toast={toast} />}
             {activePage === 'admins' && <AdminsList admins={admins} tenants={tenants} onRefresh={loadAdmins} toast={toast} />}
+            {activePage === 'announcements' && <AnnouncementsList toast={toast} />}
           </>
         )}
       </main>
@@ -242,6 +244,172 @@ function MetricsDashboard() {
           <span className="text-xs text-gray-400">{registros[registros.length - 1]?.fecha || ''}</span>
         </div>
       </div>
+    </div>
+  );
+}
+
+function AnnouncementsList({ toast }) {
+  const [announcements, setAnnouncements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ titulo: '', mensaje: '', tipo: 'info', expiraEn: '' });
+  const [saving, setSaving] = useState(false);
+
+  const load = async () => {
+    try {
+      const { data } = await api.get('/platform/announcements');
+      setAnnouncements(data);
+    } catch {} finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const handleCreate = async () => {
+    if (!form.titulo || !form.mensaje) {
+      toast.error('Título y mensaje son requeridos');
+      return;
+    }
+    setSaving(true);
+    try {
+      await api.post('/platform/announcements', {
+        ...form,
+        expiraEn: form.expiraEn || null,
+      });
+      toast.success('Aviso creado');
+      setForm({ titulo: '', mensaje: '', tipo: 'info', expiraEn: '' });
+      setShowForm(false);
+      load();
+    } catch {
+      toast.error('Error al crear aviso');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('¿Eliminar este aviso?')) return;
+    try {
+      await api.delete(`/platform/announcements/${id}`);
+      toast.success('Aviso eliminado');
+      load();
+    } catch {
+      toast.error('Error al eliminar');
+    }
+  };
+
+  const tipoColors = {
+    info: 'bg-blue-100 text-blue-800',
+    warning: 'bg-amber-100 text-amber-800',
+    update: 'bg-green-100 text-green-800',
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-16">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-gray-900 font-headline">Avisos Globales</h2>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-xl font-medium hover:bg-indigo-700 transition"
+        >
+          <span className="material-symbols-outlined text-lg">add</span>
+          Nuevo aviso
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 mb-6">
+          <h3 className="font-bold text-gray-900 mb-4">Crear aviso</h3>
+          <div className="space-y-3">
+            <input
+              value={form.titulo}
+              onChange={(e) => setForm({ ...form, titulo: e.target.value })}
+              placeholder="Título del aviso"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            />
+            <textarea
+              value={form.mensaje}
+              onChange={(e) => setForm({ ...form, mensaje: e.target.value })}
+              placeholder="Mensaje que verán todos los administradores..."
+              rows={3}
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none resize-none"
+            />
+            <div className="flex gap-3">
+              <select
+                value={form.tipo}
+                onChange={(e) => setForm({ ...form, tipo: e.target.value })}
+                className="px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              >
+                <option value="info">Info</option>
+                <option value="warning">Warning</option>
+                <option value="update">Update</option>
+              </select>
+              <input
+                type="datetime-local"
+                value={form.expiraEn}
+                onChange={(e) => setForm({ ...form, expiraEn: e.target.value })}
+                className="px-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none flex-1"
+              />
+            </div>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setShowForm(false)} className="px-4 py-2 text-gray-600 text-sm rounded-xl hover:bg-gray-100">Cancelar</button>
+              <button
+                onClick={handleCreate}
+                disabled={saving}
+                className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-xl font-medium hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {saving ? 'Creando...' : 'Crear aviso'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {announcements.length === 0 ? (
+        <div className="text-center py-16 text-gray-400">
+          <span className="material-symbols-outlined text-5xl mb-3 block">campaign</span>
+          <p>No hay avisos creados</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {announcements.map((a) => (
+            <div key={a.id} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${tipoColors[a.tipo] || tipoColors.info}`}>
+                    {a.tipo}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    {new Date(a.creadoEn).toLocaleDateString('es-AR')}
+                  </span>
+                  {a.expiraEn && (
+                    <span className="text-xs text-gray-400">
+                      · expira {new Date(a.expiraEn).toLocaleDateString('es-AR')}
+                    </span>
+                  )}
+                </div>
+                <h4 className="font-bold text-gray-900">{a.titulo}</h4>
+                <p className="text-sm text-gray-600 mt-1">{a.mensaje}</p>
+              </div>
+              <button
+                onClick={() => handleDelete(a.id)}
+                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
+              >
+                <span className="material-symbols-outlined text-lg">delete</span>
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

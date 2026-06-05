@@ -120,7 +120,10 @@ const translations = {
      'booking.deposit_amount': 'Seña a pagar',
      'booking.points_earned_label': 'Puntos que ganarás:',
      'booking.points_earned_value': '10 PTS',
-     'booking.terms': 'Al pagar aceptás los términos y condiciones del servicio.',
+      'booking.terms': 'Al pagar aceptás los términos y condiciones del servicio.',
+      'booking.slot_held': 'Horario reservado por',
+      'booking.slot_expires': 'Si no completás el pago, se libera automáticamente.',
+      'booking.welcome_message': 'Bienvenido',
      'booking.loyal_client': 'Cliente frecuente',
      'booking.next_reward': 'puntos para',
 
@@ -270,7 +273,10 @@ const translations = {
      'booking.deposit_amount': 'Deposit to pay',
      'booking.points_earned_label': 'Points you will earn:',
      'booking.points_earned_value': '10 PTS',
-     'booking.terms': 'By paying you agree to the service terms and conditions.',
+      'booking.terms': 'By paying you agree to the service terms and conditions.',
+      'booking.slot_held': 'Slot held for',
+      'booking.slot_expires': 'If you don\'t complete payment, the slot will be released.',
+      'booking.welcome_message': 'Welcome',
      'booking.loyal_client': 'Frequent client',
      'booking.next_reward': 'points for',
 

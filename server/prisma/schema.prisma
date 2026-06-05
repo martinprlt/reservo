@@ -209,3 +209,16 @@ model Metric {
   @@index([creadoEn])
   @@index([tenantId])
 }
+
+model Announcement {
+  id         String   @id @default(cuid())
+  titulo     String
+  mensaje    String
+  tipo       String   @default("info") // info, warning, update
+  activo     Boolean  @default(true)
+  creadoEn   DateTime @default(now())
+  expiraEn   DateTime?
+
+  @@index([activo])
+  @@index([creadoEn])
+}

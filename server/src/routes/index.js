@@ -42,6 +42,7 @@ router.get('/config', async (req, res) => {
       mpLink: tenant?.config?.mpLink || '',
       billeteraVirtual: tenant?.config?.billeteraVirtual || '',
       incentivosActivos: tenant?.config?.incentivosActivos !== false,
+      mensajeBienvenida: tenant?.config?.booking?.mensajeBienvenida || '',
     });
   } catch (error) {
     res.status(500).json({ error: 'Error' });
