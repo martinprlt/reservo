@@ -27,7 +27,7 @@ export async function obtenerStats(tenantId) {
         fechaHora: { gte: inicioMes, lte: finMes },
         estado: { in: ['SENIADO', 'CONFIRMADO', 'COMPLETADO'] },
       },
-      select: { montoSenia: true },
+      select: { montoSenia: true, precioTotal: true, estado: true },
     }),
     prisma.cliente.count({
       where: { tenantId, creadoEn: { gte: hace7dias } },
@@ -44,7 +44,12 @@ export async function obtenerStats(tenantId) {
     }),
   ]);
 
-  const ingresosMes = turnosMes.reduce((sum, t) => sum + (t.montoSenia || 0), 0);
+  const ingresosMes = turnosMes.reduce((sum, t) => {
+    if (t.estado === 'COMPLETADO') {
+      return sum + (t.precioTotal || 0);
+    }
+    return sum + (t.montoSenia || 0);
+  }, 0);
 
   // Turnos by day for chart
   const turnosPorDia = [];
