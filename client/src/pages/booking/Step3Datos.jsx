@@ -75,21 +75,7 @@ export default function Step3Datos() {
                   placeholder="Ej: 5493804123456"
                   onBlur={handleVerificarPuntos}
                 />
-        {/* WhatsApp Consent */}
-        <label className="flex items-start gap-3 p-4 rounded-xl border cursor-pointer" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
-          <input
-            type="checkbox"
-            checked={useBookingStore.getState().aceptaNotificaciones}
-            onChange={(e) => useBookingStore.getState().setAceptaNotificaciones(e.target.checked)}
-            className="mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary"
-          />
-          <div>
-            <p className="text-sm font-medium text-on-surface font-label">Acepto recibir notificaciones por WhatsApp</p>
-            <p className="text-xs text-on-surface-variant font-label mt-0.5">Recordatorios, confirmaciones y cancelaciones de tus turnos</p>
-          </div>
-        </label>
-
-        <button
+                <button
                   type="button"
                   onClick={handleVerificarPuntos}
                   disabled={verificando}
@@ -108,6 +94,20 @@ export default function Step3Datos() {
             </div>
           )}
         />
+
+        {/* WhatsApp Consent */}
+        <label className="flex items-start gap-3 p-4 rounded-xl border cursor-pointer" style={{ backgroundColor: 'var(--surface-container-lowest)', borderColor: 'var(--outline-variant)' }}>
+          <input
+            type="checkbox"
+            checked={useBookingStore.getState().aceptaNotificaciones}
+            onChange={(e) => useBookingStore.getState().setAceptaNotificaciones(e.target.checked)}
+            className="mt-0.5 w-4 h-4 rounded border-outline-variant text-primary focus:ring-primary"
+          />
+          <div>
+            <p className="text-sm font-medium text-on-surface font-label">Acepto recibir notificaciones por WhatsApp</p>
+            <p className="text-xs text-on-surface-variant font-label mt-0.5">Recordatorios, confirmaciones y cancelaciones de tus turnos</p>
+          </div>
+        </label>
 
         {/* Loyalty Card - Stitch style */}
         {puntosInfo?.encontrado && puntosInfo?.incentivosActivos !== false && (

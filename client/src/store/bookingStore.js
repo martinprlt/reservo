@@ -22,6 +22,16 @@ export const useBookingStore = create((set, get) => ({
   setADomicilio: (value) => set({ aDomicilio: value }),
 
   seleccionarServicio: (servicio, variante = null) => {
+    const existing = get().tenantConfig;
+    if (existing) {
+      set({
+        servicioSeleccionado: servicio,
+        varianteSeleccionada: variante,
+        paso: 2,
+        error: null,
+      });
+      return;
+    }
     cachedApi.get('/config')
       .then(({ data }) => {
         const incentivosActivos = data?.incentivosActivos !== false;

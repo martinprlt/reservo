@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import api from '../../api/client';
@@ -25,6 +25,8 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
   const [guardandoNotas, setGuardandoNotas] = useState(false);
   const [guardandoCliente, setGuardandoCliente] = useState(false);
   const toast = useToast();
+  const notasTimerRef = useRef(null);
+  const notasValueRef = useRef('');
 
   useEffect(() => {
     api.get(`/admin/turnos/${turnoId}`)
@@ -34,6 +36,22 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
       })
       .catch(() => setLoading(false));
   }, [turnoId]);
+
+  const debouncedNotasSave = useCallback((notas) => {
+    if (notasTimerRef.current) clearTimeout(notasTimerRef.current);
+    notasTimerRef.current = setTimeout(async () => {
+      setGuardandoNotas(true);
+      try {
+        const { data } = await api.patch(`/admin/turnos/${turnoId}`, { notas });
+        setTurno(data);
+        toast.success('Notas guardadas');
+      } catch {
+        toast.error('Error al guardar notas');
+      } finally {
+        setGuardandoNotas(false);
+      }
+    }, 800);
+  }, [turnoId, toast]);
 
   const handleEstadoChange = async (nuevoEstado) => {
     setCambiandoEstado(true);
@@ -48,32 +66,30 @@ export default function TurnoDetailPage({ turnoId, onBack }) {
     }
   };
 
-  const handleNotasChange = async (notas) => {
-    setGuardandoNotas(true);
-    try {
-      const { data } = await api.patch(`/admin/turnos/${turnoId}`, { notas });
-      setTurno(data);
-      toast.success('Notas actualizadas');
-    } catch {
-      toast.error('Error al actualizar notas');
-    } finally {
-      setGuardandoNotas(false);
-    }
+  const handleNotasChange = (e) => {
+    const notas = e.target.value;
+    setTurno(prev => ({ ...prev, notas }));
+    debouncedNotasSave(notas);
   };
 
-  const handleClienteChange = async (campo, valor) => {
-    setGuardandoCliente(true);
-    try {
-      const { data } = await api.patch(`/admin/turnos/${turnoId}`, {
-        cliente: { [campo]: valor },
-      });
-      setTurno(data);
-      toast.success('Datos del cliente actualizados');
-    } catch {
-      toast.error('Error al actualizar datos del cliente');
-    } finally {
-      setGuardandoCliente(false);
-    }
+  const clienteTimerRef = useRef(null);
+
+  const handleClienteChange = (campo, valor) => {
+    setTurno(prev => ({ ...prev, cliente: { ...prev.cliente, [campo]: valor } }));
+    if (clienteTimerRef.current) clearTimeout(clienteTimerRef.current);
+    clienteTimerRef.current = setTimeout(async () => {
+      setGuardandoCliente(true);
+      try {
+        const { data } = await api.patch(`/admin/turnos/${turnoId}`, {
+          cliente: { [campo]: valor },
+        });
+        setTurno(data);
+      } catch {
+        toast.error('Error al actualizar datos del cliente');
+      } finally {
+        setGuardandoCliente(false);
+      }
+    }, 800);
   };
 
   const handleEliminar = () => {

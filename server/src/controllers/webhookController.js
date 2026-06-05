@@ -65,7 +65,10 @@ export default {
 
       // Verify signature with tenant's webhook secret if configured
       const isValid = await verifySignature(req, turno.tenant?.config?.mpWebhookSecret);
-      if (!isValid) return;
+      if (!isValid) {
+        console.warn(`Webhook MP: firma inválida para turno ${turnoId}`);
+        return;
+      }
 
       // Confirm the payment
       await confirmarPago(turnoId, data.id);

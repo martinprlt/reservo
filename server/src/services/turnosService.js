@@ -5,6 +5,7 @@ import { notificarNuevoTurno } from './notificacionesService.js';
 import { enviarNuevoTurnoAdmin } from './whatsappService.js';
 import { enviarPushAdmin } from './pushService.js';
 import { getPlanLimits } from '../config/plans.js';
+import { stripHtml, truncate } from '../utils/sanitize.js';
 
 export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas, fotoUrl, fotoPublicId, aceptaNotificaciones }) {
   // Check plan limit for turns per month
@@ -60,7 +61,7 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
       precioTotal: servicio.precio + precioExtra,
       montoSenia,
       expiraEn: new Date(Date.now() + 15 * 60 * 1000),
-      notas: notas || null,
+      notas: truncate(stripHtml(notas), 500) || null,
       fotoUrl: fotoUrl || null,
       fotoPublicId: fotoPublicId || null,
       aceptaNotificaciones: aceptaNotificaciones || false,
@@ -72,33 +73,39 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
   const mpAccessToken = tenant?.config?.mpAccessToken || process.env.MP_ACCESS_TOKEN;
 
   if (mpAccessToken) {
-    const { MercadoPagoConfig, Preference } = await import('mercadopago');
-    const mpClient = new MercadoPagoConfig({ accessToken: mpAccessToken });
-    const pref = await new Preference(mpClient).create({
-      body: {
-        items: [{
-          title: servicio.nombre + (variante ? ` - ${variante.nombre}` : ''),
-          unit_price: montoSenia,
-          quantity: 1,
-          currency_id: 'ARS',
-        }],
-        payer: { name: nombre, surname: apellido },
-        back_urls: {
-          success: `${process.env.MP_BACK_URL}/booking/confirmacion?turnoId=${turno.id}&status=success&tenant=${tenant.slug}`,
-          failure: `${process.env.MP_BACK_URL}/booking/confirmacion?turnoId=${turno.id}&status=failure&tenant=${tenant.slug}`,
-          pending: `${process.env.MP_BACK_URL}/booking/confirmacion?turnoId=${turno.id}&status=pending&tenant=${tenant.slug}`,
+    try {
+      const { MercadoPagoConfig, Preference } = await import('mercadopago');
+      const mpClient = new MercadoPagoConfig({ accessToken: mpAccessToken });
+      const pref = await new Preference(mpClient).create({
+        body: {
+          items: [{
+            title: servicio.nombre + (variante ? ` - ${variante.nombre}` : ''),
+            unit_price: montoSenia,
+            quantity: 1,
+            currency_id: 'ARS',
+          }],
+          payer: { name: nombre, surname: apellido },
+          back_urls: {
+            success: `${process.env.MP_BACK_URL}/booking/confirmacion?turnoId=${turno.id}&status=success&tenant=${tenant.slug}`,
+            failure: `${process.env.MP_BACK_URL}/booking/confirmacion?turnoId=${turno.id}&status=failure&tenant=${tenant.slug}`,
+            pending: `${process.env.MP_BACK_URL}/booking/confirmacion?turnoId=${turno.id}&status=pending&tenant=${tenant.slug}`,
+          },
+          auto_return: 'approved',
+          external_reference: turno.id,
         },
-        auto_return: 'approved',
-        external_reference: turno.id,
-      },
-    });
+      });
 
-    await prisma.turno.update({
-      where: { id: turno.id },
-      data: { mpPrefId: pref.id },
-    });
+      await prisma.turno.update({
+        where: { id: turno.id },
+        data: { mpPrefId: pref.id },
+      });
 
-    initPoint = pref.init_point;
+      initPoint = pref.init_point;
+    } catch (mpError) {
+      // MP token expired or invalid — continue without payment link
+      console.error(`MP Preference error for tenant ${tenant.slug}:`, mpError.message);
+      initPoint = null;
+    }
   }
 
   // Create notification for admin + WhatsApp + Push
@@ -141,4 +148,39 @@ export async function obtenerEstado(turnoId, tenantId) {
 
 export async function confirmarPago(turnoId, mpPaymentId) {
   return procesarPagoAprobado(turnoId, mpPaymentId);
+}
+
+export async function cancelarTurno(turnoId, tenantId, telefono) {
+  const turno = await prisma.turno.findFirst({
+    where: { id: turnoId, tenantId },
+    include: { cliente: true, servicio: true, tenant: true },
+  });
+
+  if (!turno) throw new Error('RECURSO_NO_ENCONTRADO');
+
+  // Verify client's phone matches
+  if (telefono && turno.cliente.telefono !== telefono) {
+    throw new Error('CREDENCIALES_INVALIDAS');
+  }
+
+  // Can only cancel RESERVADO or SENIADO turns
+  if (!['RESERVADO', 'SENIADO'].includes(turno.estado)) {
+    throw new Error('NO_SE_PUEDE_CANCELAR');
+  }
+
+  const turnoActualizado = await prisma.turno.update({
+    where: { id: turnoId },
+    data: { estado: 'CANCELADO' },
+  });
+
+  // Notify admin
+  try {
+    await notificarNuevoTurno(turno.tenantId, {
+      cliente: turno.cliente,
+      servicio: turno.servicio,
+      tipo: 'TURNO_CANCELADO_CLIENTE',
+    });
+  } catch {}
+
+  return { ok: true, estado: turnoActualizado.estado };
 }

@@ -12,6 +12,7 @@ export default function DashboardPage({ onNavigate }) {
   const [copied, setCopied] = useState(false);
   const [testingWhatsApp, setTestingWhatsApp] = useState(false);
   const [planLimits, setPlanLimits] = useState(null);
+  const [serviciosCount, setServiciosCount] = useState(null);
   const { t } = useLanguage();
   const { admin } = useAdminStore();
 
@@ -48,6 +49,7 @@ export default function DashboardPage({ onNavigate }) {
       try {
         const limitsRes = await api.get('/admin/limits');
         setPlanLimits(limitsRes.data);
+        setServiciosCount(limitsRes.data.usage?.servicios || 0);
       } catch {}
     } catch (err) {
       console.error('Dashboard error:', err);
@@ -106,6 +108,51 @@ export default function DashboardPage({ onNavigate }) {
           {stats.turnosHoy} turnos hoy.
         </p>
       </section>
+
+      {/* Onboarding — show when no services configured */}
+      {serviciosCount === 0 && (
+        <div className="mb-6 p-6 rounded-xl border" style={{ backgroundColor: 'rgba(70,72,212,0.05)', borderColor: 'rgba(70,72,212,0.2)' }}>
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: 'rgba(70,72,212,0.1)' }}>
+              <span className="material-symbols-outlined text-2xl" style={{ color: '#4648d4' }}>rocket_launch</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-lg font-headline mb-1" style={{ color: 'var(--on-surface)' }}>
+                Configurá tu negocio en 3 pasos
+              </h3>
+              <p className="text-sm mb-4" style={{ color: 'var(--on-surface-variant)' }}>
+                Así tus clientes pueden empezar a reservar.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  onClick={() => onNavigate?.('servicios')}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition active:scale-95"
+                  style={{ backgroundColor: '#4648d4', color: '#fff' }}
+                >
+                  <span className="material-symbols-outlined text-lg">add</span>
+                  1. Crear servicio
+                </button>
+                <button
+                  onClick={() => onNavigate?.('config')}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition active:scale-95"
+                  style={{ borderColor: '#4648d4', color: '#4648d4', backgroundColor: 'transparent' }}
+                >
+                  <span className="material-symbols-outlined text-lg">schedule</span>
+                  2. Configurar horarios
+                </button>
+                <button
+                  onClick={handleCopy}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition active:scale-95"
+                  style={{ borderColor: 'var(--outline-variant)', color: 'var(--on-surface)', backgroundColor: 'transparent' }}
+                >
+                  <span className="material-symbols-outlined text-lg">content_copy</span>
+                  3. Compartir link
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Plan Limits Banner */}
       {planLimits && planLimits.limits.maxTurnosMes && (

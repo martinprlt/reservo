@@ -20,5 +20,6 @@ const router = Router();
 
 router.post('/', bookingLimiter, validate(crearTurnoSchema), turnosController.crear);
 router.get('/:id/estado', turnosController.obtenerEstado);
+router.post('/:id/cancelar', turnosController.cancelarTurno);
 
 export default router;

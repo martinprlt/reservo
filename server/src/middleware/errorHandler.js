@@ -23,6 +23,11 @@ export default function errorHandler(err, req, res, next) {
     RESERVA_EXPIRADA: 410,
     VALIDATION_ERROR: 400,
     RATE_LIMIT_EXCEEDED: 429,
+    LIMITE_TURNOS_MES_ALCANZADO: 429,
+    LIMITE_SERVICIOS_ALCANZADO: 429,
+    NO_SE_PUEDE_CANCELAR: 400,
+    SLUG_YA_EXISTE: 409,
+    EMAIL_YA_REGISTRADO: 409,
   };
 
   const status = errorCodes[err.message] || 500;
