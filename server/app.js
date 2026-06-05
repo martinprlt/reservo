@@ -16,22 +16,10 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Security headers
+// Security headers — no CSP (Workbox SW needs unrestricted fetch for font caching)
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "https://api.mercadopago.com", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
-      imgSrc: ["'self'", "data:", "https:", "blob:", "https://res.cloudinary.com"],
-      frameSrc: ["'self'", "https://www.mercadopago.com"],
-      objectSrc: ["'none'"],
-      upgradeInsecureRequests: [],
-    },
-  },
   crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: false,
 }));
 
 app.use(cors({
