@@ -13,6 +13,7 @@ export default function DashboardPage({ onNavigate }) {
   const [testingWhatsApp, setTestingWhatsApp] = useState(false);
   const [planLimits, setPlanLimits] = useState(null);
   const [serviciosCount, setServiciosCount] = useState(null);
+  const [trialInfo, setTrialInfo] = useState(null);
   const { t } = useLanguage();
   const { admin } = useAdminStore();
 
@@ -50,6 +51,19 @@ export default function DashboardPage({ onNavigate }) {
         const limitsRes = await api.get('/admin/limits');
         setPlanLimits(limitsRes.data);
         setServiciosCount(limitsRes.data.usage?.servicios || 0);
+      } catch {}
+
+      // Fetch trial info
+      try {
+        const configRes = await api.get('/admin/config');
+        if (configRes.data.trialFin) {
+          const fin = new Date(configRes.data.trialFin);
+          const ahora = new Date();
+          const diasRestantes = Math.ceil((fin - ahora) / (1000 * 60 * 60 * 24));
+          if (diasRestantes > 0) {
+            setTrialInfo({ fin, diasRestantes, plan: configRes.data.plan });
+          }
+        }
       } catch {}
     } catch (err) {
       console.error('Dashboard error:', err);
@@ -181,6 +195,28 @@ export default function DashboardPage({ onNavigate }) {
               Upgrade
             </a>
           )}
+        </div>
+      )}
+
+      {/* Trial Banner */}
+      {trialInfo && trialInfo.plan === 'FREE' && trialInfo.diasRestantes > 0 && (
+        <div className="mb-6 p-4 rounded-xl border" style={{ backgroundColor: 'rgba(70,72,212,0.05)', borderColor: 'rgba(70,72,212,0.2)' }}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="material-symbols-outlined" style={{ color: '#4648d4' }}>workspace_premium</span>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: 'var(--on-surface)' }}>
+                  Trial PRO — {trialInfo.diasRestantes} {trialInfo.diasRestantes === 1 ? 'día' : 'días'} restantes
+                </p>
+                <p className="text-xs" style={{ color: 'var(--on-surface-variant)' }}>
+                  Disfrutá de PRO gratis. Después baja a FREE.
+                </p>
+              </div>
+            </div>
+            <a href="https://wa.me/542966249491?text=Hola!%20Quiero%20mantener%20PRO%20después%20del%20trial." target="_blank" rel="noopener noreferrer" className="text-xs font-semibold px-3 py-1.5 rounded-lg" style={{ backgroundColor: '#4648d4', color: '#fff' }}>
+              Mantener PRO
+            </a>
+          </div>
         </div>
       )}
 

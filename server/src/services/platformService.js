@@ -1,5 +1,6 @@
 import prisma from '../config/prisma.js';
 import bcrypt from 'bcryptjs';
+import { track } from './metricsService.js';
 
 export async function obtenerStats() {
   const [totalTenants, tenantsActivos, totalAdmins, totalClientes, totalTurnos, turnosHoy] = await Promise.all([
@@ -129,17 +130,27 @@ export async function actualizarTenant(id, data) {
   // Basic fields
   if (data.nombre !== undefined) updateData.nombre = data.nombre;
   if (data.slug !== undefined) {
-    // Check slug uniqueness if changed
     if (data.slug !== tenant.slug) {
       const existing = await prisma.tenant.findUnique({ where: { slug: data.slug } });
       if (existing) throw new Error('SLUG_YA_EXISTE');
     }
     updateData.slug = data.slug;
   }
-  if (data.plan !== undefined) updateData.plan = data.plan;
+  if (data.plan !== undefined) {
+    updateData.plan = data.plan;
+    // Clear trial when plan is changed manually
+    if (data.plan !== 'FREE') {
+      updateData.trialFin = null;
+    }
+    // Track plan change
+    if (data.plan !== tenant.plan) {
+      const tipo = data.plan === 'FREE' ? 'DOWNGRADE' : 'UPGRADE';
+      track(tipo, id, { desde: tenant.plan, hacia: data.plan, razon: 'manual_superadmin' });
+    }
+  }
   if (data.activo !== undefined) updateData.activo = data.activo;
 
-  // Config merge (preserves existing config fields)
+  // Config merge
   if (data.config) {
     const currentConfig = tenant.config || {};
     updateData.config = { ...currentConfig, ...data.config };

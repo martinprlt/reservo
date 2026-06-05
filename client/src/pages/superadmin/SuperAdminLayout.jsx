@@ -59,6 +59,7 @@ export default function SuperAdminLayout() {
 
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
+    { id: 'metrics', label: 'Métricas', icon: 'analytics' },
     { id: 'tenants', label: 'Negocios', icon: 'business' },
     { id: 'admins', label: 'Usuarios', icon: 'group' },
   ];
@@ -117,6 +118,7 @@ export default function SuperAdminLayout() {
         ) : (
           <>
             {activePage === 'dashboard' && <Dashboard stats={stats} />}
+            {activePage === 'metrics' && <MetricsDashboard />}
             {activePage === 'tenants' && <TenantsList tenants={tenants} onRefresh={loadTenants} toast={toast} />}
             {activePage === 'admins' && <AdminsList admins={admins} tenants={tenants} onRefresh={loadAdmins} toast={toast} />}
           </>
@@ -154,6 +156,91 @@ function Dashboard({ stats }) {
         <p className="text-sm text-gray-500 font-label">
           Total tenants: {stats.totalTenants} · Total admins: {stats.totalAdmins} · Total turnos: {stats.totalTurnos}
         </p>
+      </div>
+    </div>
+  );
+}
+
+function MetricsDashboard() {
+  const [metrics, setMetrics] = useState(null);
+  const [registros, setRegistros] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [mRes, rRes] = await Promise.all([
+          api.get('/platform/metrics'),
+          api.get('/platform/metrics/registros?dias=30'),
+        ]);
+        setMetrics(mRes.data);
+        setRegistros(rRes.data || []);
+      } catch {
+        // Metrics not available yet
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-16">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
+      </div>
+    );
+  }
+
+  const maxRegistros = Math.max(...registros.map(r => r.count), 1);
+
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-gray-900 mb-6 font-headline">Métricas</h2>
+
+      {metrics && (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-indigo-600 font-headline">{metrics.registros}</p>
+            <p className="text-sm text-gray-500 font-label">Registros</p>
+          </div>
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-green-600 font-headline">{metrics.upgrades}</p>
+            <p className="text-sm text-gray-500 font-label">Upgrades</p>
+          </div>
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-amber-600 font-headline">{metrics.downgrades}</p>
+            <p className="text-sm text-gray-500 font-label">Downgrades</p>
+          </div>
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-blue-600 font-headline">{metrics.turnos}</p>
+            <p className="text-sm text-gray-500 font-label">Turnos</p>
+          </div>
+          <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-emerald-600 font-headline">{metrics.pagos}</p>
+            <p className="text-sm text-gray-500 font-label">Pagos</p>
+          </div>
+        </div>
+      )}
+
+      {/* Registros por día chart */}
+      <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+        <h3 className="font-bold text-gray-900 mb-4">Registros (últimos 30 días)</h3>
+        <div className="flex items-end gap-1 h-40">
+          {registros.map((r, i) => (
+            <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <div
+                className="w-full bg-indigo-500 rounded-t transition-all duration-300"
+                style={{ height: `${(r.count / maxRegistros) * 100}%`, minHeight: r.count > 0 ? 4 : 0 }}
+                title={`${r.fecha}: ${r.count}`}
+              />
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-between mt-2">
+          <span className="text-xs text-gray-400">{registros[0]?.fecha || ''}</span>
+          <span className="text-xs text-gray-400">{registros[registros.length - 1]?.fecha || ''}</span>
+        </div>
       </div>
     </div>
   );

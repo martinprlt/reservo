@@ -6,6 +6,7 @@ import { enviarNuevoTurnoAdmin } from './whatsappService.js';
 import { enviarPushAdmin } from './pushService.js';
 import { getPlanLimits } from '../config/plans.js';
 import { stripHtml, truncate } from '../utils/sanitize.js';
+import { track } from './metricsService.js';
 
 export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombre, apellido, telefono, notas, fotoUrl, fotoPublicId, aceptaNotificaciones }) {
   // Check plan limit for turns per month
@@ -125,6 +126,8 @@ export async function crear(tenantId, { servicioId, varianteId, fechaHora, nombr
       tag: 'nuevo-turno',
     });
   } catch {}
+
+  track('TURNO_CREADO', tenantId, { servicio: servicio.nombre, precio: servicio.precio });
 
   return { turnoId: turno.id, initPoint };
 }

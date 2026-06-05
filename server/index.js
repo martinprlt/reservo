@@ -15,6 +15,7 @@ if (process.env.SENTRY_DSN) {
 
 import './src/jobs/liberarReservas.job.js';
 import './src/jobs/recordatoriosWhatsApp.job.js';
+import './src/jobs/downgradeTrials.job.js';
 import app from './app.js';
 import env from './src/config/env.js';
 import logger from './src/utils/logger.js';

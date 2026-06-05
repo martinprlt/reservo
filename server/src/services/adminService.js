@@ -299,10 +299,15 @@ export async function eliminarServicio(tenantId, servicioId) {
 export async function obtenerConfig(tenantId) {
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
-    select: { config: true },
+    select: { config: true, plan: true, trialFin: true },
   });
 
-  return tenant?.config || {};
+  const config = tenant?.config || {};
+  return {
+    ...config,
+    plan: tenant?.plan || 'FREE',
+    trialFin: tenant?.trialFin || null,
+  };
 }
 
 export async function actualizarConfig(tenantId, config) {

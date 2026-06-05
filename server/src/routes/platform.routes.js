@@ -8,6 +8,8 @@ const router = Router();
 router.use(verifyJWT, requireSuperAdmin);
 
 router.get('/stats', platformController.obtenerStats);
+router.get('/metrics', platformController.obtenerMetricas);
+router.get('/metrics/registros', platformController.registrosPorDia);
 
 router.get('/tenants', platformController.listarTenants);
 router.get('/tenants/:id', platformController.obtenerTenant);

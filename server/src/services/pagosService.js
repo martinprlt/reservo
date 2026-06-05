@@ -3,6 +3,7 @@ import logger from '../utils/logger.js';
 import { enviarConfirmacionTurno } from './whatsappService.js';
 import { notificarPagoRecibido } from './notificacionesService.js';
 import { enviarPushAdmin } from './pushService.js';
+import { track } from './metricsService.js';
 
 export async function procesarPagoAprobado(turnoId, mpPaymentId) {
   try {
@@ -48,6 +49,8 @@ export async function procesarPagoAprobado(turnoId, mpPaymentId) {
         tag: 'pago-recibido',
       });
     } catch {}
+
+    track('PAGO_APROBADO', resultado.tenantId, { turnoId, monto: resultado.montoSenia, servicio: resultado.servicio.nombre });
 
     return resultado;
   } catch (error) {

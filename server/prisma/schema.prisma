@@ -30,14 +30,15 @@ enum Plan {
 }
 
 model Tenant {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   nombre    String
-  slug      String   @unique
-  plan      Plan     @default(FREE)
-  activo    Boolean  @default(true)
-  config    Json     @default("{}")
-  creadoEn  DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  slug      String    @unique
+  plan      Plan      @default(FREE)
+  activo    Boolean   @default(true)
+  trialFin DateTime?
+  config    Json      @default("{}")
+  creadoEn  DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   admins     Admin[]
   clientes   Cliente[]
@@ -194,5 +195,17 @@ model PushSubscription {
   tenant Tenant @relation(fields: [tenantId], references: [id])
 
   @@unique([tenantId, endpoint])
+  @@index([tenantId])
+}
+
+model Metric {
+  id        String   @id @default(cuid())
+  tipo      String   // REGISTRO, UPGRADE, DOWNGRADE, TURNO_CREADO, PAGO_APROBADO
+  tenantId  String?
+  detalle   Json?
+  creadoEn  DateTime @default(now())
+
+  @@index([tipo])
+  @@index([creadoEn])
   @@index([tenantId])
 }

@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import prisma from '../config/prisma.js';
 import { signToken } from '../utils/jwt.js';
+import { track } from './metricsService.js';
 
 export async function login(email, password, tenantSlugOrId) {
   const admin = await prisma.admin.findUnique({
@@ -99,10 +100,15 @@ export async function register({ nombreNegocio, nombreAdmin, email, password, te
 
   const passwordHash = await bcrypt.hash(password, 12);
 
+  const trialFin = new Date();
+  trialFin.setDate(trialFin.getDate() + 7);
+
   const tenant = await prisma.tenant.create({
     data: {
       nombre: nombreNegocio,
       slug,
+      plan: 'FREE',
+      trialFin,
       config: {
         nombreNegocio,
         telefonoAdmin: telefono || '',
@@ -123,6 +129,9 @@ export async function register({ nombreNegocio, nombreAdmin, email, password, te
   });
 
   const token = signToken({ adminId: admin.id, tenantId: tenant.id, role: 'ADMIN' });
+
+  // Track signup
+  track('REGISTRO', tenant.id, { email, nombreNegocio });
 
   return { token, admin, slug };
 }

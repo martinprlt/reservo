@@ -1,4 +1,5 @@
 import * as platformService from '../services/platformService.js';
+import * as metricsService from '../services/metricsService.js';
 
 export default {
   async obtenerStats(req, res, next) {
@@ -109,6 +110,26 @@ export default {
     try {
       const tenant = await platformService.toggleTenantActivo(req.params.id);
       res.json(tenant);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async obtenerMetricas(req, res, next) {
+    try {
+      const { desde, hasta } = req.query;
+      const metrics = await metricsService.obtenerMetricas({ desde, hasta });
+      res.json(metrics);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async registrosPorDia(req, res, next) {
+    try {
+      const { dias } = req.query;
+      const data = await metricsService.registrosPorDia({ dias: parseInt(dias) || 30 });
+      res.json(data);
     } catch (error) {
       next(error);
     }
