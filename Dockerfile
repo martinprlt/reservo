@@ -32,4 +32,4 @@ RUN npx prisma generate
 
 EXPOSE 4000
 
-CMD ["sh", "-c", "npx prisma db push --skip-generate && node index.js"]
+CMD ["sh", "-c", "for i in 1 2 3 4 5; do npx prisma db push --skip-generate && break || echo \"Attempt $i failed, retrying in 10s...\" && sleep 10; done && node index.js"]

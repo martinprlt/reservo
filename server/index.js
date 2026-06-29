@@ -23,23 +23,29 @@ import prisma from './src/config/prisma.js';
 
 async function main() {
   let server;
-  try {
-    await prisma.$connect();
-    logger.info('Database connected');
 
-    // Auto-sync schema (safe: only adds new fields/models, never drops)
+  // Retry DB connection (Render free tier DB sleeps after inactivity)
+  let connected = false;
+  for (let attempt = 1; attempt <= 5; attempt++) {
     try {
-      const { execSync } = await import('child_process');
-      execSync('npx prisma db push --skip-generate --accept-data-loss', {
-        cwd: new URL('.', import.meta.url).pathname,
-        stdio: 'pipe',
-        timeout: 30000,
-      });
-      logger.info('Schema synced');
-    } catch (e) {
-      logger.warn('Schema sync skipped: ' + (e.stderr || e.message).trim().split('\n').pop());
+      await prisma.$connect();
+      connected = true;
+      logger.info('Database connected');
+      break;
+    } catch (err) {
+      logger.warn(`DB connection attempt ${attempt}/5 failed: ${err.message}`);
+      if (attempt < 5) {
+        await new Promise(r => setTimeout(r, 10000));
+      }
     }
+  }
 
+  if (!connected) {
+    logger.error('Could not connect to database after 5 attempts');
+    process.exit(1);
+  }
+
+  try {
     server = app.listen(env.PORT, () => {
       logger.info(`Server running on port ${env.PORT}`);
     });
